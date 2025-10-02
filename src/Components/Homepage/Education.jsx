@@ -52,11 +52,11 @@ export default function Education() {
               <FaJava size={64} color="#ffffffff" className="opacity-70" />
             </div>
           </div>
-          <div className="bg-zinc-800 p-5 row-span-2 rounded-lg transition ease hover:scale-101 group">
+          <div className="bg-zinc-800 p-5 row-span-2 rounded-lg transition ease hover:scale-101 ">
             <img
               src={codeyTheBearPicture}
               alt="codeyTheBearPic"
-              className="rounded-lg cursor-pointer group-hover:opacity-50 transition ease-in-out"
+              className="rounded-lg cursor-pointer hover:opacity-50 transition ease-in-out"
             />
           </div>
           <div className="bg-zinc-800 p-5 rounded-lg transition ease hover:scale-101 flex flex-row justify-center items-center">

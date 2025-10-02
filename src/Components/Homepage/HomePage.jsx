@@ -1,20 +1,22 @@
 import React from "react";
 import Education from "./Education";
-import MainScreen from "./MainScreen";
 import Personal from "./Personal";
 import TopNavbar from "../TopNavbar.jsx";
+import AnimateIn from "../AnimateIn.jsx";
 export default function HomePage() {
   return (
     <div>
-      <div className="flex justify-center m-5 relative z-10">
-        <TopNavbar />
-      </div>
-      <div className="relative z-10">
-        <Personal />
-      </div>
-      <div className="mt-10 relative z-10">
-        <Education />
-      </div>
+      <AnimateIn delay={0}>
+        <div className="relative z-10">
+          <Personal />
+        </div>
+      </AnimateIn>
+
+      <AnimateIn delay={0.3}>
+        <div className="mt-10 relative z-10">
+          <Education />
+        </div>
+      </AnimateIn>
     </div>
   );
 }

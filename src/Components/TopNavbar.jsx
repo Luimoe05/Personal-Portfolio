@@ -1,10 +1,26 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function TopNavbar() {
-  const [activeOpt, setActiveOpt] = useState("Home");
+  // const [activeOpt, setActiveOpt] = useState();
+  const navigate = useNavigate();
+
+  const getCurrentOpt = () => {
+    if (location.pathname === "/") return "Home";
+    if (location.pathname === "/Experience") return "Experience";
+    if (location.pathname === "/Projects") return "Projects";
+  };
+
+  const activeOpt = getCurrentOpt();
 
   const clickedOn = (currentState) => {
-    setActiveOpt(currentState);
+    // setActiveOpt(currentState);
+    if (currentState == "Home") {
+      navigate("/");
+    } else {
+      navigate(`/${currentState}`);
+    }
   };
 
   return (
@@ -17,41 +33,53 @@ export default function TopNavbar() {
         }}
       >
         {activeOpt == "Home" ? (
-          <button className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease">
-            Home
-          </button>
-        ) : (
-          <button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 hover:bg-sky-600 rounded-3xl transition ease opacity-50 hover:opacity-100"
-            onClick={() => clickedOn("Home")}
+          <motion.button
+            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease-in-out duration-300 "
+            whileHover={{ scale: 1.05 }}
           >
             Home
-          </button>
+          </motion.button>
+        ) : (
+          <motion.button
+            className="text-sm font-semibold cursor-pointer px-4 py-2 rounded-3xl transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            onClick={() => clickedOn("Home")}
+            whileHover={{ scale: 1.05 }}
+          >
+            Home
+          </motion.button>
         )}
 
         {activeOpt == "Experience" ? (
-          <button className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease">
-            Experience
-          </button>
-        ) : (
-          <button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 hover:bg-sky-600 rounded-3xl transition ease opacity-50 hover:opacity-100"
-            onClick={() => clickedOn("Experience")}
+          <motion.button
+            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease-in-out duration-300"
+            whileHover={{ scale: 1.05 }}
           >
             Experience
-          </button>
+          </motion.button>
+        ) : (
+          <motion.button
+            className="text-sm font-semibold cursor-pointer px-4 py-2  rounded-3xl transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            onClick={() => clickedOn("Experience")}
+            whileHover={{ scale: 1.05 }}
+          >
+            Experience
+          </motion.button>
         )}
         {activeOpt == "Projects" ? (
-          <button className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease">
-            Projects
-          </button>
-        ) : (
-          <button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 hover:bg-sky-600 rounded-3xl transition ease opacity-50 hover:opacity-100"
-            onClick={() => clickedOn("Projects")}
+          <motion.button
+            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-3xl transition ease-in-out duration-300"
+            whileHover={{ scale: 1.05 }}
           >
             Projects
-          </button>
+          </motion.button>
+        ) : (
+          <motion.button
+            className="text-sm font-semibold cursor-pointer px-4 py-2  rounded-3xl transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            onClick={() => clickedOn("Projects")}
+            whileHover={{ scale: 1.05 }}
+          >
+            Projects
+          </motion.button>
         )}
       </div>
     </>
