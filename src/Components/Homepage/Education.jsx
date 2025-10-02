@@ -14,7 +14,7 @@ import codeyTheBearPicture from "../../assets/image.jpg";
 export default function Education() {
   return (
     <div className="flex justify-center">
-      <div className="text-white w-[90vh]">
+      <div className="text-white w-[100vh]">
         <div className="grid grid-cols-3 grid-row-3 gap-5 m-10 grid-flow-row-dense">
           <div className="bg-zinc-800 p-5 col-span-2 p-10 rounded-lg flex flex-col gap-2 transition ease hover:scale-101">
             <h1 className="text-3xl font-bold">About me</h1>
@@ -60,7 +60,7 @@ export default function Education() {
             />
           </div>
           <div className="bg-zinc-800 p-5 rounded-lg transition ease hover:scale-101 flex flex-row justify-center items-center">
-            <h1 className="text-3xl font-bold text-sky-400">
+            <h1 className="text-2xl font-bold text-sky-400">
               Software Developer
             </h1>
           </div>
