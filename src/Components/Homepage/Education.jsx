@@ -9,7 +9,7 @@ import {
 } from "react-icons/si";
 import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
-import codeyTheBearPicture from "../assets/image.jpg";
+import codeyTheBearPicture from "../../assets/image.jpg";
 
 export default function Education() {
   return (

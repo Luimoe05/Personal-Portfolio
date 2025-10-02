@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "../index.css";
+import "../../index.css";
 import {
   Menu,
   X,
@@ -22,17 +22,6 @@ export default function MainScreen() {
     // console.log("Nav option called");
     setActiveOpt(option);
   };
-
-  useEffect(() => {
-    const handleWheel = (e) => {
-      if (contentRef.current) {
-        contentRef.current.scrollTop += e.deltaY;
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    return () => window.removeEventListener("wheel", handleWheel);
-  }, []);
 
   return (
     <>

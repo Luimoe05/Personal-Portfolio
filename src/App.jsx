@@ -1,9 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import MainScreen from "./Components/MainScreen";
-import TopNavbar from "./Components/TopNavbar";
-import Personal from "./Components/Personal";
-import Education from "./Components/Education";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./Components/Homepage/HomePage";
 
 export default function App() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -31,17 +29,11 @@ export default function App() {
           mixBlendMode: "screen",
         }}
       />
-
-      {/* ACTUAL COMPONENTS BEING RENDERED */}
-      <div className="flex justify-center m-5 relative z-10">
-        <TopNavbar />
-      </div>
-      <div className="relative z-10">
-        <Personal />
-      </div>
-      <div className="mt-10 relative z-10">
-        <Education />
-      </div>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Mail, Github, Linkedin } from "lucide-react";
-import profile from "../assets/profile.jpg";
+import profile from "../../assets/profile.jpg";
 
 export default function Personal() {
   return (
