@@ -6,7 +6,7 @@ import AnimateIn from "../AnimateIn.jsx";
 export default function HomePage() {
   return (
     <div>
-      <AnimateIn delay={0}>
+      <AnimateIn delay={0.1}>
         <div className="relative z-10">
           <Personal />
         </div>
