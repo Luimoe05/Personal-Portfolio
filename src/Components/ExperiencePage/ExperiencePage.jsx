@@ -10,6 +10,7 @@ export default function ExperiencePage() {
     "Prisma",
     "Postgresql",
   ];
+  const initBuildInfo = ["React", "Firebase", "Tailwindcss"];
   return (
     <div>
       <AnimateIn delay={0.1}>
@@ -24,6 +25,17 @@ export default function ExperiencePage() {
         />
       </AnimateIn>
       <AnimateIn delay={0.3}>
+        <ExperienceBlock
+          position={"INIT Build"}
+          company={"INIT"}
+          duration={"Feb 2025 - April 2025"}
+          description={
+            "Collaborated on a 7-person team during the INIT Build program to construct CreatorsFIU, a full-stack student marketplace for trading used books and college supplies. My primary focus areas were establishing robust user security and authentication using Firebase and developing the responsive front-end homepage utilizing React and Tailwind CSS."
+          }
+          experienceInfo={initBuildInfo}
+        />
+      </AnimateIn>
+      <AnimateIn delay={0.5}>
         <ExperienceBlock
           position={"STARS Tutor"}
           company={"Florida International University"}
