@@ -9,7 +9,7 @@ export default function ExperienceBlock({
 }) {
   return (
     <div className="flex flex-col items-center m-20 text-white">
-      <div className="bg-zinc-800 p-5 w-[80vh] rounded-lg transition ease hover:scale-102 z-50">
+      <div className="bg-zinc-800 p-5 w-[80vh] rounded-lg transition ease-in-out hover:scale-102 z-50">
         <div>
           <h1 className="text-xl font-bold mb-2">{position}</h1>
         </div>
