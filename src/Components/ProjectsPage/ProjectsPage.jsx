@@ -1,8 +1,15 @@
 import React from "react";
-import TopNavbar from "../TopNavbar";
+import ProjectContainer from "./ProjectContainer";
+import CodificaImg from "../../assets/Codifica.png";
 
 export default function ProjectsPage() {
   return (
-    <div></div>
+    <div className=" mt-20">
+      <ProjectContainer
+        imgURL={CodificaImg}
+        ProjectName={"Codifica"}
+        Stack={"React, Express, Node, Prisma, Postgresql, Tailwindcss"}
+      />
+    </div>
   );
 }
