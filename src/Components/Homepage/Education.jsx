@@ -30,26 +30,26 @@ export default function Education() {
               Technologies I have worked with
             </h1>
             <div className="flex flex-row flex-wrap justify-center gap-3 mt-10">
-              <SiReact size={64} color="#ffffffff" className="opacity-70" />
-              <SiPrisma size={64} color="#ffffffff" className="opacity-70" />
-              <SiVite size={64} color="#ffffffff" className="opacity-70" />
+              <SiReact size={52} color="#ffffffff" className="opacity-70" />
+              <SiPrisma size={52} color="#ffffffff" className="opacity-70" />
+              <SiVite size={52} color="#ffffffff" className="opacity-70" />
               <SiPostgresql
-                size={64}
+                size={52}
                 color="#ffffffff"
                 className="opacity-70"
               />
-              <SiExpress size={64} color="#ffffffff" className="opacity-70" />
+              <SiExpress size={52} color="#ffffffff" className="opacity-70" />
               <IoLogoNodejs
-                size={64}
+                size={52}
                 color="#ffffffff"
                 className="opacity-70"
               />
               <SiTailwindcss
-                size={64}
+                size={52}
                 color="#ffffffff"
                 className="opacity-70"
               />
-              <FaJava size={64} color="#ffffffff" className="opacity-70" />
+              <FaJava size={52} color="#ffffffff" className="opacity-70" />
             </div>
           </div>
           <div className="bg-zinc-800 p-5 row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center">
