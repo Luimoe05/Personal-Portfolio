@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import ExperienceBlock from "./ExperienceBlock";
 import AnimateIn from "../AnimateIn.jsx";
+import { color } from "framer-motion";
 
-export default function ExperiencePage() {
+export default function ExperiencePage({ colorMode }) {
   const salesForceInfo = [
     "React",
     "Node.js",
@@ -22,6 +23,7 @@ export default function ExperiencePage() {
             "As a Full Stack Intern at Salesforce and part of the FTL program, I developed Codifica, an innovative, AI-powered in-browser code editor. This application was designed to enhance learning accessibility by leveraging AI to explain complex coding concepts to users in their native language, significantly improving technical understanding and reducing language barriers in programming education."
           }
           experienceInfo={salesForceInfo}
+          divColor={colorMode}
         />
       </AnimateIn>
       <AnimateIn delay={0.3}>
@@ -33,6 +35,7 @@ export default function ExperiencePage() {
             "Collaborated on a 7-person team during the INIT Build program to construct CreatorsFIU, a full-stack student marketplace for trading used books and college supplies. My primary focus areas were establishing robust user security and authentication using Firebase and developing the responsive front-end homepage utilizing React and Tailwind CSS."
           }
           experienceInfo={initBuildInfo}
+          divColor={colorMode}
         />
       </AnimateIn>
       <AnimateIn delay={0.5}>
@@ -43,6 +46,7 @@ export default function ExperiencePage() {
           description={
             "Provided individualized and group tutoring for undergraduate students across core computer science curricula. Covered advanced topics including Data Structures and Algorithms, Systems Programming, and Computer Architecture. Specialized in deep-dive sessions for Programming 2 (Java), helping students grasp object-oriented principles and complex problem-solving techniques."
           }
+          divColor={colorMode}
         />
       </AnimateIn>
     </div>

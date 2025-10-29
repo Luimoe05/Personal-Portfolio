@@ -3,7 +3,7 @@ import Education from "./Education";
 import Personal from "./Personal";
 import TopNavbar from "../TopNavbar.jsx";
 import AnimateIn from "../AnimateIn.jsx";
-export default function HomePage() {
+export default function HomePage({ colorMode }) {
   return (
     <div>
       <AnimateIn delay={0.1}>
@@ -14,7 +14,7 @@ export default function HomePage() {
 
       <AnimateIn delay={0.3}>
         <div className="mt-10 relative z-10">
-          <Education />
+          <Education color={colorMode} />
         </div>
       </AnimateIn>
     </div>

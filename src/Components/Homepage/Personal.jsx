@@ -6,7 +6,7 @@ export default function Personal() {
   return (
     <>
       <div className="flex flex-row justify-center mt-20 gap-30 h-[50vh]">
-        <div className="text-white flex flex-col gap-10 justify-center w-[50vh]">
+        <div className="flex flex-col gap-10 justify-center w-[50vh]">
           <div className="gap-1">
             <h1 className="text-5xl font-bold">Hello, My name is</h1>
             <h1 className="text-5xl font-bold text-sky-600">

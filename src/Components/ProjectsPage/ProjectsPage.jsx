@@ -2,7 +2,7 @@ import React from "react";
 import ProjectContainer from "./ProjectContainer";
 import CodificaImg from "../../assets/Codifica.png";
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ colorMode }) {
   return (
     <div className=" mt-20">
       <ProjectContainer

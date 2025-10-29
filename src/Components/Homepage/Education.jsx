@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   SiReact,
   SiPrisma,
@@ -11,12 +11,28 @@ import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
 import codeyTheBearPicture from "../../assets/image.jpg";
 
-export default function Education() {
+export default function Education({ color }) {
+  const [iconColor, setIconColor] = useState("#ffffffff");
+
+  useEffect(() => {
+    if (color === "Moon") {
+      setIconColor("#ffffffff");
+    } else {
+      setIconColor("#3B3B3B");
+    }
+  }, [color]);
+
   return (
     <div className="flex justify-center">
-      <div className="text-white w-[100vh]">
+      <div className="w-[100vh]">
         <div className="grid grid-cols-3 grid-row-3 gap-5 m-10 grid-flow-row-dense">
-          <div className="bg-zinc-800 p-5 col-span-2 p-10 rounded-lg flex flex-col gap-2 transition ease hover:scale-102">
+          <div
+            className={`${
+              color === "Moon"
+                ? "bg-zinc-900 border-1 border-gray-600/10"
+                : "bg-zinc-100 border-1 border-gray-300"
+            } p-5 col-span-2 p-10 rounded-lg flex flex-col gap-2 transition ease hover:scale-102`}
+          >
             <h1 className="text-3xl font-bold">About me</h1>
             <p className="opacity-70 text-base">
               Hello everyone! My name is Luis-Angel Moreno, I am currently a
@@ -25,46 +41,70 @@ export default function Education() {
               intern at Salesforce in San Francisco through their FTL program.
             </p>
           </div>
-          <div className="bg-zinc-800 p-5 row-span-2 gap-3 rounded-lg transition ease hover:scale-102">
+          <div
+            className={`${
+              color === "Moon"
+                ? "bg-zinc-900 border-1 border-gray-600/10"
+                : "bg-zinc-100 border-1 border-gray-300"
+            } p-5 row-span-2 gap-3 rounded-lg transition ease hover:scale-102`}
+          >
             <h1 className="text-3xl font-bold">
               Technologies I have worked with
             </h1>
             <div className="flex flex-row flex-wrap justify-center gap-3 mt-10">
-              <SiReact size={52} color="#ffffffff" className="opacity-70" />
-              <SiPrisma size={52} color="#ffffffff" className="opacity-70" />
-              <SiVite size={52} color="#ffffffff" className="opacity-70" />
+              <SiReact size={52} color={iconColor} className="opacity-70" />
+              <SiPrisma size={52} color={iconColor} className="opacity-70" />
+              <SiVite size={52} color={iconColor} className="opacity-70" />
               <SiPostgresql
                 size={52}
-                color="#ffffffff"
+                color={iconColor}
                 className="opacity-70"
               />
-              <SiExpress size={52} color="#ffffffff" className="opacity-70" />
+              <SiExpress size={52} color={iconColor} className="opacity-70" />
               <IoLogoNodejs
                 size={52}
-                color="#ffffffff"
+                color={iconColor}
                 className="opacity-70"
               />
               <SiTailwindcss
                 size={52}
-                color="#ffffffff"
+                color={iconColor}
                 className="opacity-70"
               />
-              <FaJava size={52} color="#ffffffff" className="opacity-70" />
+              <FaJava size={52} color={iconColor} className="opacity-70" />
             </div>
           </div>
-          <div className="bg-zinc-800 p-5 row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center">
+          <div
+            className={`${
+              color === "Moon"
+                ? "bg-zinc-900 border-1 border-gray-600/10"
+                : "bg-zinc-100 border-1 border-gray-300"
+            } p-5 row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center`}
+          >
             <img
               src={codeyTheBearPicture}
               alt="codeyTheBearPic"
               className="rounded-lg cursor-pointer hover:opacity-50 transition ease-in-out"
             />
           </div>
-          <div className="bg-zinc-800 p-5 rounded-lg transition ease hover:scale-102 flex flex-row justify-center items-center">
+          <div
+            className={`${
+              color === "Moon"
+                ? "bg-zinc-900 border-1 border-gray-600/10"
+                : "bg-zinc-100 border-1 border-gray-300"
+            } p-5 rounded-lg transition ease hover:scale-102 flex flex-row justify-center items-center`}
+          >
             <h1 className="text-2xl font-bold text-sky-400">
               Software Developer
             </h1>
           </div>
-          <div className="bg-zinc-800 p-5 col-span-2 rounded-lg transition ease hover:scale-102">
+          <div
+            className={`${
+              color === "Moon"
+                ? "bg-zinc-900 border-1 border-gray-600/10"
+                : "bg-zinc-100 border-1 border-gray-300"
+            } p-5 col-span-2 rounded-lg transition ease hover:scale-102`}
+          >
             <h1 className="text-3xl font-bold">Education</h1>
             <div className="mt-4 flex flex-col gap-1">
               <h2 className="text-lg">

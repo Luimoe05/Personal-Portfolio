@@ -1,12 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import "tailwindcss";
 
+/* CSS Variables for theme */
+:root {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+}
+
 /* Add this block to your index.css */
 @layer base {
-  /* This applies the font to all text on your page */
   body {
     font-family: "Roboto";
-    background-color: #121212;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   html {
     scroll-behavior: smooth;
@@ -25,7 +32,3 @@
     scrollbar-width: none; /* Firefox */
   }
 }
-
-/* * {
-  scroll-behavior: smooth;
-} */
