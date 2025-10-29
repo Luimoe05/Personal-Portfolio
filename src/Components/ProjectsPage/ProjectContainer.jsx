@@ -3,14 +3,14 @@ import AnimateIn from "../AnimateIn.jsx";
 
 export default function ProjectContainer({ imgURL, ProjectName, Stack }) {
   return (
-    <div>
+    <div className="relative z-10">
       <AnimateIn delay={0.2}>
         <div className="m-10 flex flex-row gap-20 justify-center">
           <div className="rounded-lg">
             <img
               src={imgURL}
               alt="Codifica-IMG"
-              className="w-[70vh] rounded-lg drop-shadow-[0_0_10px_rgba(56,189,248,0.5)] border-solid border-4 border-sky-500 transition ease-in-out hover:scale-101"
+              className="w-[70vh] rounded-lg  border-solid border-2 border-gray-400/30 transition ease-in-out hover:scale-101"
             />
           </div>
           <div className="w-[70vh]">
