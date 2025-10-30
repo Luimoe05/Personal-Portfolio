@@ -11,6 +11,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function App() {
   const [mode, setMode] = useState("Moon");
+  const [isInSF, setIsInSF] = useState(false);
+
+  const setSFopt = () => {
+    if (location.pathname === "/summer") {
+      setIsInSF("True");
+    }
+  };
 
   const changeMode = (currMode) => {
     if (currMode == "Moon") {

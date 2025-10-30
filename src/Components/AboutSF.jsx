@@ -3,18 +3,20 @@ import AnimateIn from "./AnimateIn.jsx";
 
 export default function AboutSF({ sendCommand }) {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center px-4 sm:px-0">
       <AnimateIn delay={0.1}>
-        <div className="flex flex-col p-5 rounded-lg mt-5 w-[800px]">
-          <h1 className="text-2xl font-bold mb-3">Summer 2025 Recap</h1>
-          <h1>
+        <div className="flex flex-col p-4 sm:p-5 rounded-lg mt-5 w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px]">
+          <h1 className="text-xl sm:text-2xl font-bold mb-3">
+            Summer 2025 Recap
+          </h1>
+          <h1 className="text-sm sm:text-base">
             This past summer, I had the pleasure of interning at Salesforce in
             San Francisco. I participated in the Salesforce Future Force Tech
             Launchpad (FTL) program, an intensive collaboration with Codepath
             that provided a deep dive into full-stack development.
           </h1>
           <br />
-          <h1>
+          <h1 className="text-sm sm:text-base">
             The experience was transformative. Beyond the technical skills, I
             grew immensely on a personal level. Experiencing a new city across
             the country and immersing myself in SF's vibrant tech culture,
@@ -22,7 +24,7 @@ export default function AboutSF({ sendCommand }) {
             on the industry's pace and collaborative energy.
           </h1>
           <br />
-          <h1>
+          <h1 className="text-sm sm:text-base">
             The first couple weeks I was really nervous, not knowing what to
             expect or how to act. As a first-generation college student, the
             corporate world seemed foreign. However as time passed and I adapted
@@ -32,15 +34,15 @@ export default function AboutSF({ sendCommand }) {
           </h1>
           <br />
 
-          <h1 className="font-bold text-2xl mb-3">My Work</h1>
-          <h1>
+          <h1 className="font-bold text-xl sm:text-2xl mb-3">My Work</h1>
+          <h1 className="text-sm sm:text-base">
             I collaborated with two other interns to design, develop, and deploy
             a full-stack application from its initial concept. Our mission was
             to build a tool that aids non-English speakers in learning to code
             in a language they understand.
           </h1>
           <br />
-          <h1>
+          <h1 className="text-sm sm:text-base">
             Taking a project from ideation to deployment underscored a critical
             lesson: the importance of clear and efficient communication. I
             learned that the ability to ask insightful questions and articulate

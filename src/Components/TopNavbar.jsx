@@ -14,7 +14,6 @@ export default function TopNavbar({ color }) {
   const activeOpt = getCurrentOpt();
 
   const clickedOn = (currentState) => {
-    // setActiveOpt(currentState);
     if (currentState == "Home") {
       navigate("/");
     } else {
@@ -29,22 +28,18 @@ export default function TopNavbar({ color }) {
           color === "Moon"
             ? "bg-zinc-800/10 border border-gray-600/30"
             : "bg-zinc-100 border border-gray-600/20"
-        } flex flex-row gap-4 w-fit rounded-xl p-2`}
-        // style={{
-        //   boxShadow:
-        //     "0 0 15px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.1)",
-        // }}
+        } flex flex-row gap-2 mr-3 sm:mr-2 md:mr-0 sm:gap-4 w-fit rounded-xl p-1.5 sm:p-2`}
       >
         {activeOpt == "Home" ? (
           <motion.button
-            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-lg transition ease-in-out duration-300 text-white"
+            className="text-xs sm:text-sm font-semibold cursor-pointer bg-sky-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out duration-300 text-white"
             whileHover={{ scale: 1.05 }}
           >
             Home
           </motion.button>
         ) : (
           <motion.button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            className="text-xs sm:text-sm font-semibold cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300"
             onClick={() => clickedOn("Home")}
             whileHover={{ scale: 1.05 }}
           >
@@ -54,30 +49,31 @@ export default function TopNavbar({ color }) {
 
         {activeOpt == "Experience" ? (
           <motion.button
-            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-lg transition ease-in-out duration-300 text-white"
+            className="text-xs sm:text-sm font-semibold cursor-pointer bg-sky-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out duration-300 text-white"
             whileHover={{ scale: 1.05 }}
           >
             Experience
           </motion.button>
         ) : (
           <motion.button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            className="text-xs sm:text-sm font-semibold cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300"
             onClick={() => clickedOn("Experience")}
             whileHover={{ scale: 1.05 }}
           >
             Experience
           </motion.button>
         )}
+
         {activeOpt == "Projects" ? (
           <motion.button
-            className="text-sm font-semibold cursor-pointer bg-sky-600 px-4 py-2 rounded-lg transition ease-in-out duration-300 text-white"
+            className="text-xs sm:text-sm font-semibold cursor-pointer bg-sky-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out duration-300 text-white"
             whileHover={{ scale: 1.05 }}
           >
             Projects
           </motion.button>
         ) : (
           <motion.button
-            className="text-sm font-semibold cursor-pointer px-4 py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300 "
+            className="text-xs sm:text-sm font-semibold cursor-pointer px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition ease-in-out opacity-50 hover:opacity-100 duration-300"
             onClick={() => clickedOn("Projects")}
             whileHover={{ scale: 1.05 }}
           >

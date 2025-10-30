@@ -13,7 +13,7 @@ export default function HomePage({ colorMode }) {
       </AnimateIn>
 
       <AnimateIn delay={0.3}>
-        <div className="mt-10 relative z-10">
+        <div className="relative z-10">
           <Education color={colorMode} />
         </div>
       </AnimateIn>
