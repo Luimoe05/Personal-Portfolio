@@ -10,8 +10,10 @@ import {
 import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
 import codeyTheBearPicture from "../../assets/image.jpg";
+import { useNavigate } from "react-router-dom";
 
 export default function Education({ color }) {
+  const navigate = useNavigate();
   const [iconColor, setIconColor] = useState("#ffffffff");
 
   useEffect(() => {
@@ -22,6 +24,10 @@ export default function Education({ color }) {
     }
   }, [color]);
 
+  const handleSFNav = () => {
+    navigate("/summer");
+  };
+
   return (
     <div className="flex justify-center">
       <div className="w-[100vh]">
@@ -29,8 +35,8 @@ export default function Education({ color }) {
           <div
             className={`${
               color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10"
-                : "bg-zinc-100 border-1 border-gray-300"
+                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
+                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
             } p-5 col-span-2 p-10 rounded-lg flex flex-col gap-2 transition ease hover:scale-102`}
           >
             <h1 className="text-3xl font-bold">About me</h1>
@@ -44,8 +50,8 @@ export default function Education({ color }) {
           <div
             className={`${
               color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10"
-                : "bg-zinc-100 border-1 border-gray-300"
+                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
+                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
             } p-5 row-span-2 gap-3 rounded-lg transition ease hover:scale-102`}
           >
             <h1 className="text-3xl font-bold">
@@ -77,21 +83,29 @@ export default function Education({ color }) {
           <div
             className={`${
               color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10"
-                : "bg-zinc-100 border-1 border-gray-300"
-            } p-5 row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center`}
+                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
+                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
+            } p-5 row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center cursor-pointer`}
           >
-            <img
-              src={codeyTheBearPicture}
-              alt="codeyTheBearPic"
-              className="rounded-lg cursor-pointer hover:opacity-50 transition ease-in-out"
-            />
+            <div className="flex flex-col gap-3" onClick={handleSFNav}>
+              <img
+                src={codeyTheBearPicture}
+                alt="picture of me with cody the bear at the Salesforce SF tower"
+                className="h-[250px] object-cover rounded-md"
+              />
+              <div className="flex flex-col items-center">
+                <h1 className="text-xl font-bold">Summer 2025</h1>
+                <h1 className="text-lg opacity-60">
+                  A dive into my time in SF
+                </h1>
+              </div>
+            </div>
           </div>
           <div
             className={`${
               color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10"
-                : "bg-zinc-100 border-1 border-gray-300"
+                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
+                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
             } p-5 rounded-lg transition ease hover:scale-102 flex flex-row justify-center items-center`}
           >
             <h1 className="text-2xl font-bold text-sky-400">
@@ -101,8 +115,8 @@ export default function Education({ color }) {
           <div
             className={`${
               color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10"
-                : "bg-zinc-100 border-1 border-gray-300"
+                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
+                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
             } p-5 col-span-2 rounded-lg transition ease hover:scale-102`}
           >
             <h1 className="text-3xl font-bold">Education</h1>
@@ -113,7 +127,7 @@ export default function Education({ color }) {
               </h2>
               <p className="opacity-70">
                 Currently attending Florida International University, completing
-                a BA in Computer Science.
+                a BS in Computer Science.
               </p>
             </div>
             <div className="mt-4 w-full flex flex-col gap-1">

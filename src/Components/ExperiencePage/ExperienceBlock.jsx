@@ -13,9 +13,9 @@ export default function ExperienceBlock({
       <div
         className={`${
           divColor === "Moon"
-            ? "bg-zinc-800 border-1 border-gray-300/20"
-            : "bg-zinc-100 border-1 border-gray-600/30"
-        } p-5 w-[80vh] rounded-lg transition ease-in-out hover:scale-102 z-50`}
+            ? "bg-zinc-800 border-1 border-gray-300/20 hover:border-gray-300/40"
+            : "bg-zinc-100 border-1 border-gray-600/30 hover:border-gray-500"
+        } p-5 w-[80vh] rounded-lg transition ease-in-out hover:scale-101 z-50`}
       >
         <div>
           <h1

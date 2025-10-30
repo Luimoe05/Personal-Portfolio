@@ -5,6 +5,7 @@ import { useState } from "react";
 import ExperiencePage from "./Components/ExperiencePage/ExperiencePage.jsx";
 import ProjectsPage from "./Components/ProjectsPage/ProjectsPage.jsx";
 import TopNavbar from "./Components/TopNavbar.jsx";
+import AboutSF from "./Components/AboutSF.jsx";
 import { Moon, Sun } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,6 +23,7 @@ export default function App() {
       document.documentElement.style.setProperty("--text-color", "#ffffff");
     }
   };
+
   return (
     <>
       <style>{`
@@ -119,6 +121,7 @@ export default function App() {
               path="/Projects"
               element={<ProjectsPage colorMode={mode} />}
             />
+            <Route path="summer" element={<AboutSF />} />
           </Routes>
         </Router>
       </div>

@@ -35,13 +35,13 @@ export default function Personal() {
 
           <div></div>
         </div>
-        <div className=" flex flex-col justify-center">
-          <img
-            src={profile}
-            alt="profile picture"
-            className="w-[350px] rounded-4xl"
-          />
-        </div>
+        {/* <div className=" flex flex-col justify-center">
+            <img
+              src={profile}
+              alt="profile picture"
+              className="w-[250px] rounded-xl"
+            />
+          </div> */}
       </div>
     </>
   );
