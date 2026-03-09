@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ExperienceBlock from "./ExperienceBlock";
 import AnimateIn from "../AnimateIn.jsx";
+import DownloadResume from "./DownloadResume.jsx";
 import { color } from "framer-motion";
 
 export default function ExperiencePage({ colorMode }) {
@@ -26,6 +27,19 @@ export default function ExperiencePage({ colorMode }) {
           divColor={colorMode}
         />
       </AnimateIn>
+
+      <AnimateIn delay={0.5}>
+        <ExperienceBlock
+          position={"Director of Digital Media"}
+          company={"INIT"}
+          duration={"Dec 2025 - Present"}
+          description={
+            "In charge of photography and videography for the largest tech organization at Florida International University."
+          }
+          divColor={colorMode}
+        />
+      </AnimateIn>
+
       <AnimateIn delay={0.3}>
         <ExperienceBlock
           position={"INIT Build"}
@@ -49,6 +63,10 @@ export default function ExperiencePage({ colorMode }) {
           divColor={colorMode}
         />
       </AnimateIn>
+
+      {/* <AnimateIn>
+        <DownloadResume />
+      </AnimateIn> */}
     </div>
   );
 }

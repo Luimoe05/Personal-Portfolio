@@ -1,11 +1,20 @@
 import React from "react";
 import AnimateIn from "./AnimateIn.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function AboutSF({ sendCommand }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex justify-center px-4 sm:px-0">
+    <div className="flex justify-center px-4 sm:px-0 ">
       <AnimateIn delay={0.1}>
         <div className="flex flex-col p-4 sm:p-5 rounded-lg mt-5 w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px]">
+          <button
+            onClick={() => navigate(-1)}
+            className="self-start mb-4 flex items-center gap-1 text-sm opacity-70 hover:opacity-100 transition-opacity"
+          >
+            ← Back
+          </button>
           <h1 className="text-xl sm:text-2xl font-bold mb-3">
             Summer 2025 Recap
           </h1>

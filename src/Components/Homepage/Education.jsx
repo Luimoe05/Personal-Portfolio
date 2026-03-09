@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   SiReact,
   SiPrisma,
@@ -12,163 +12,103 @@ import { FaJava } from "react-icons/fa";
 import codeyTheBearPicture from "../../assets/image.jpg";
 import { useNavigate } from "react-router-dom";
 
+const techs = [
+  { Icon: SiReact, label: "React" },
+  { Icon: SiTailwindcss, label: "Tailwind" },
+  { Icon: SiVite, label: "Vite" },
+  { Icon: IoLogoNodejs, label: "Node.js" },
+  { Icon: SiExpress, label: "Express" },
+  { Icon: SiPostgresql, label: "PostgreSQL" },
+  { Icon: SiPrisma, label: "Prisma" },
+  { Icon: FaJava, label: "Java" },
+];
+
 export default function Education({ color }) {
   const navigate = useNavigate();
-  const [iconColor, setIconColor] = useState("#ffffffff");
-
-  useEffect(() => {
-    if (color === "Moon") {
-      setIconColor("#ffffffff");
-    } else {
-      setIconColor("#3B3B3B");
-    }
-  }, [color]);
-
-  const handleSFNav = () => {
-    navigate("/summer");
-  };
+  const isDark = color === "Moon";
+  const divider = isDark ? "border-zinc-800" : "border-zinc-200";
+  const subtle = isDark ? "text-zinc-400" : "text-zinc-500";
 
   return (
-    <div className="flex justify-center px-4 sm:px-0">
-      <div className="w-full max-w-[90vw] sm:w-[100vh]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 m-4 sm:m-10">
-          {/* About me - spans 2 columns on desktop */}
-          <div
-            className={`${
-              color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
-                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
-            } p-5 sm:p-10 sm:col-span-2 lg:col-span-2 rounded-lg flex flex-col gap-2 transition ease hover:scale-102`}
-          >
-            <h1 className="text-2xl sm:text-3xl font-bold">About me</h1>
-            <p className="opacity-70 text-sm sm:text-base">
-              Hello everyone! My name is Luis-Angel Moreno, I am currently a
-              junior at Florida International University pursuing a Bachelors in
-              Computer Science. I had the pleasure during the summer of 2025, to
-              intern at Salesforce in San Francisco through their FTL program.
-            </p>
-          </div>
+    <div className="flex justify-center px-6 pb-20">
+      <div className="w-full max-w-xl flex flex-col gap-12">
+        {/* About */}
+        <div className="flex flex-col gap-3">
+          <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            About
+          </h2>
+          <p className={`text-sm sm:text-base leading-relaxed ${subtle}`}>
+            Hello! I'm Luis-Angel Moreno, a junior at Florida International
+            University pursuing a BS in Computer Science. During the summer of
+            2025 I had the pleasure of interning at Salesforce in San Francisco
+            through their FTL program.
+          </p>
+        </div>
 
-          {/* Technologies - spans 1 column on mobile, 2 rows on desktop */}
-          <div
-            className={`${
-              color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
-                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
-            } p-5 sm:row-span-2 gap-3 rounded-lg transition ease hover:scale-102`}
-          >
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-              Technologies I have worked with
-            </h1>
-            <div className="flex flex-row flex-wrap justify-center gap-2 sm:gap-3 mt-5 sm:mt-10">
-              <SiReact
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <SiPrisma
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <SiVite
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <SiPostgresql
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <SiExpress
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <IoLogoNodejs
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <SiTailwindcss
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-              <FaJava
-                size={40}
-                color={iconColor}
-                className="opacity-70 sm:w-[52px] sm:h-[52px]"
-              />
-            </div>
-          </div>
+        <div className={`border-t ${divider}`} />
 
-          {/* Summer 2025 Card - spans 1 column, 2 rows on desktop */}
-          <div
-            className={`${
-              color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
-                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
-            } p-5 sm:row-span-2 rounded-lg transition ease hover:scale-102 flex justify-center items-center cursor-pointer`}
-          >
-            <div className="flex flex-col gap-3" onClick={handleSFNav}>
-              <img
-                src={codeyTheBearPicture}
-                alt="picture of me with cody the bear at the Salesforce SF tower"
-                className="h-[300px] sm:h-[250px] object-cover rounded-md"
-              />
-              <div className="flex flex-col items-center">
-                <h1 className="text-base sm:text-lg font-bold">Summer 2025</h1>
-                <h1 className="text-sm sm:text-md opacity-60">
-                  A dive into my time in SF
-                </h1>
+        {/* Technologies */}
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            Technologies
+          </h2>
+          <div className="flex flex-wrap gap-4">
+            {techs.map(({ Icon, label }) => (
+              <div key={label} className="flex flex-col items-center gap-1">
+                <Icon size={24} className={`${subtle}`} />
+                <span className={`text-xs ${subtle}`}>{label}</span>
               </div>
-            </div>
+            ))}
           </div>
+        </div>
 
-          {/* Software Developer */}
-          <div
-            className={`${
-              color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
-                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
-            } p-5 rounded-lg transition ease hover:scale-102 flex flex-row justify-center items-center`}
-          >
-            <h1 className="text-lg sm:text-xl font-bold text-sky-400">
-              Software Developer
-            </h1>
-          </div>
+        <div className={`border-t ${divider}`} />
 
-          {/* Education - spans 2 columns on desktop */}
-          <div
-            className={`${
-              color === "Moon"
-                ? "bg-zinc-900 border-1 border-gray-600/10 hover:border-gray-600/40"
-                : "bg-zinc-100 border-1 border-gray-300 hover:border-gray-400"
-            } p-5 sm:col-span-2 lg:col-span-2 rounded-lg transition ease hover:scale-102`}
-          >
-            <h1 className="text-2xl sm:text-3xl font-bold">Education</h1>
-            <div className="mt-4 flex flex-col gap-1">
-              <h2 className="text-base sm:text-lg">
-                Florida International University{" "}
-                <span className="text-sm sm:text-base opacity-70">
-                  (2023-Today)
-                </span>
-              </h2>
-              <p className="opacity-70 text-sm sm:text-base">
-                Currently attending Florida International University, completing
-                a BS in Computer Science.
-              </p>
+        {/* Education */}
+        <div className="flex flex-col gap-3">
+          <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            Education
+          </h2>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm sm:text-base font-medium">
+                Florida International University
+              </span>
+              <span className={`text-xs ${subtle}`}>2023 – Present</span>
             </div>
-            <div className="mt-4 w-full flex flex-col gap-1">
-              <h2 className="text-base sm:text-lg">Coursework</h2>
-              <p className="text-sm sm:text-base opacity-70">
-                Data Structures & Algorithms, Systems Programming, Artificial
-                Intelligence Algorithms
-              </p>
-            </div>
+            <p className={`text-sm ${subtle}`}>BS in Computer Science</p>
           </div>
+          <p className={`text-xs ${subtle} leading-relaxed`}>
+            Data Structures &amp; Algorithms · Systems Programming · Artificial
+            Intelligence Algorithms
+          </p>
+        </div>
+
+        <div className={`border-t ${divider}`} />
+
+        {/* Summer 2025 */}
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            Highlight
+          </h2>
+          <button
+            onClick={() => navigate("/summer")}
+            className={`group flex items-center gap-4 text-left rounded-xl p-4 transition-all ${
+              isDark ? "hover:bg-zinc-900" : "hover:bg-zinc-100"
+            }`}
+          >
+            <img
+              src={codeyTheBearPicture}
+              alt="Me with Codey the bear at Salesforce SF"
+              className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+            />
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-semibold">Summer 2025</span>
+              <span className={`text-xs ${subtle}`}>
+                A dive into my time in San Francisco →
+              </span>
+            </div>
+          </button>
         </div>
       </div>
     </div>
