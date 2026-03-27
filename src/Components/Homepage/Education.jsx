@@ -93,7 +93,7 @@ export default function Education({ color }) {
           </h2>
           <button
             onClick={() => navigate("/summer")}
-            className={`group flex items-center gap-4 text-left rounded-xl p-4 transition-all ${
+            className={`group flex items-center gap-4 text-left rounded-xl p-4 transition-all cursor-pointer ${
               isDark ? "hover:bg-zinc-900" : "hover:bg-zinc-100"
             }`}
           >
