@@ -27,7 +27,7 @@ export default function ExperienceBlock({
           </h1>
         </div>
         <div>
-          <h1 className="text-sm sm:text-base text-sky-600">{company}</h1>
+          <h1 className="text-sm sm:text-base text-sky-400">{company}</h1>
         </div>
         <div>
           <h1

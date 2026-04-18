@@ -2,7 +2,7 @@ import React from "react";
 import AnimateIn from "./AnimateIn.jsx";
 import { useNavigate } from "react-router-dom";
 
-export default function AboutSF({ sendCommand }) {
+export default function AboutSF({ isDark }) {
   const navigate = useNavigate();
 
   return (
