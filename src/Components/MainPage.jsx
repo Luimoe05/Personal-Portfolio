@@ -160,9 +160,8 @@ export default function MainPage({ isDark }) {
             </h2>
             <p className={`text-sm sm:text-base leading-relaxed ${subtle}`}>
               Hello! I'm Luis-Angel Moreno, a junior at Florida International
-              University pursuing a BS in Computer Science. During the summer of
-              2025 I had the pleasure of interning at Salesforce in San
-              Francisco through their FTL program.
+              University pursuing a BS in Computer Science. I'm incoming this
+              summer as a Software Engineer Intern at Salesfore.
             </p>
           </div>
         </AnimateIn>
@@ -172,9 +171,49 @@ export default function MainPage({ isDark }) {
             <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
               Technologies
             </h2>
-            <div className="flex flex-wrap gap-5">
+            <style>{`
+              .tech-item {
+                position: relative;
+                overflow: hidden;
+                border-radius: 8px;
+                padding: 8px 10px;
+                cursor: default;
+                transition: transform 0.2s ease;
+              }
+              .tech-item::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -75%;
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(
+                  120deg,
+                  transparent 0%,
+                  rgba(255,255,255,0.55) 50%,
+                  transparent 100%
+                );
+                transform: skewX(-20deg);
+                transition: none;
+                opacity: 0;
+              }
+              .tech-item:hover {
+                transform: translateY(-2px);
+              }
+              .tech-item:hover::after {
+                opacity: 1;
+                left: 125%;
+                transition: left 0.50s ease, opacity 0.1s ease;
+              }
+            `}</style>
+            <div className="flex flex-wrap gap-2">
               {techs.map(({ Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-1">
+                <div
+                  key={label}
+                  className={`tech-item flex flex-col items-center gap-1 ${
+                    isDark ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
+                  }`}
+                >
                   <Icon size={22} className={subtle} />
                   <span className={`text-xs ${subtle}`}>{label}</span>
                 </div>
