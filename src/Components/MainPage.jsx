@@ -190,7 +190,9 @@ export default function MainPage({ isDark }) {
                 background: linear-gradient(
                   120deg,
                   transparent 0%,
-                  rgba(255,255,255,0.55) 50%,
+                  ${
+                    isDark ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.25)"
+                  } 50%,
                   transparent 100%
                 );
                 transform: skewX(-20deg);
@@ -211,7 +213,7 @@ export default function MainPage({ isDark }) {
                 <div
                   key={label}
                   className={`tech-item flex flex-col items-center gap-1 ${
-                    isDark ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
+                    isDark ? "hover:bg-zinc-800/40" : "hover:bg-zinc-100/60"
                   }`}
                 >
                   <Icon size={22} className={subtle} />
