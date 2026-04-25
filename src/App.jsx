@@ -5,7 +5,7 @@ import MainPage from "./Components/MainPage";
 import TopNavbar from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import { Moon, Sun } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function App() {
   const [isDark, setIsDark] = useState(false);
@@ -23,33 +23,24 @@ export default function App() {
         <div className="flex justify-center m-5 relative z-10 items-center">
           <TopNavbar isDark={isDark} />
           <div className="absolute right-5 flex items-center">
-            <AnimatePresence mode="wait">
-              {isDark ? (
-                <motion.div
-                  key="moon"
-                  initial={{ rotate: -90, opacity: 0, scale: 0.8 }}
-                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                  exit={{ rotate: 90, opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.1, opacity: 0.7 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Moon className="cursor-pointer" onClick={toggleMode} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="sun"
-                  initial={{ rotate: 90, opacity: 0, scale: 0.8 }}
-                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                  exit={{ rotate: -90, opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.1, opacity: 0.7 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Sun className="cursor-pointer" onClick={toggleMode} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <button
+              onClick={toggleMode}
+              aria-label="Toggle theme"
+              className={`relative flex items-center w-12 h-6 rounded-full cursor-pointer transition-colors duration-300 ${
+                isDark ? "bg-zinc-600" : "bg-zinc-300"
+              }`}
+            >
+              <motion.div
+                className="absolute w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center"
+                animate={{ x: isDark ? 26 : 2 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
+                {isDark
+                  ? <Moon size={11} className="text-zinc-600" />
+                  : <Sun size={11} className="text-zinc-400" />
+                }
+              </motion.div>
+            </button>
           </div>
         </div>
 
