@@ -1,16 +1,19 @@
-# React + Vite
+# Luis-Angel Moreno — Personal Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**[luismoreno.space](https://www.luismoreno.space/)**
 
-Currently, two official plugins are available:
+Hi, I'm Luis-Angel, a junior Computer Science student at Florida International University. I'm passionate about building impactful applications that serve communities, and I'm always looking to grow as a developer.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+During the summer of 2025, I had the opportunity to intern at Salesforce in San Francisco through their Future Force Tech Launchpad (FTL) program, where I helped design, develop, and deploy a full-stack app aimed at helping non-English speakers learn to code.
 
-## React Compiler
+## Built With
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + Vite
+- Tailwind CSS
+- Node.js / Express
+- PostgreSQL + Prisma
 
-## Expanding the ESLint configuration
+## Links
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- GitHub: [Luimoe05](https://github.com/Luimoe05)
+- LinkedIn: [luisanm](https://www.linkedin.com/in/luisanm/)
