@@ -1,13 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/* CSS Variables for theme */
 :root {
-  --bg-color: #ffffff;
-  --text-color: #111111;
+  --bg-color: oklch(98.5% 0.008 80);
+  --text-color: oklch(14% 0.012 80);
+  --accent: oklch(58% 0.16 270);
 }
 
-/* Add this block to your index.css */
 @layer base {
   body {
     font-family: "Inter", sans-serif;
@@ -21,14 +20,22 @@
 }
 
 @layer utilities {
-  /* For WebKit (Chrome, Safari, Edge) */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* For IE, Edge and Firefox */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .font-display {
+    font-family: "Epilogue", sans-serif;
+  }
+  .icon-link {
+    opacity: 0.55;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .icon-link:hover {
+    opacity: 1;
+    color: var(--accent);
   }
 }

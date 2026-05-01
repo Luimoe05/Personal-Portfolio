@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import codeyTheBearPicture from "../assets/image.jpg";
 import CodificaImg from "../assets/Codifica.png";
 import CreatorsFIUImg from "../assets/creatorsFIU.png";
+import RepoAI from "../assets/RepoAI.png";
 
 const techs = [
   { Icon: SiReact, label: "React" },
@@ -64,6 +65,19 @@ const experiences = [
 
 const projects = [
   {
+    name: "RepoAI",
+    stack: "React · TypeScript · Vite · FastAPI · OpenAI · Pinecone · Tree-sitter",
+    description:
+      "Built a RAG pipeline that retrieves context-aware information from any GitHub repository. Paste a URL and RepoAI clones, parses, and indexes the codebase so you can query it in plain English — no grepping, no reading walls of code.",
+    keypoints: [
+      "Clones and parses repos with Tree-sitter for language-aware, chunk-level code analysis.",
+      "Embeds codebase chunks via OpenAI and stores vectors in Pinecone for semantic retrieval.",
+      "FastAPI backend with /ingest and /query endpoints; React 19 + TypeScript frontend.",
+    ],
+    img: RepoAI,
+    github: "https://github.com/Luimoe05/repo-ai",
+  },
+  {
     name: "Codifica",
     stack: "React · Express · Node · Prisma · PostgreSQL · Tailwind",
     description:
@@ -107,10 +121,10 @@ export default function MainPage({ isDark }) {
         className="flex flex-col items-center justify-center min-h-[60vh] py-16 text-center gap-4"
       >
         <AnimateIn delay={0.1}>
-          <p className="text-xs uppercase tracking-widest opacity-40 font-medium">
+          <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--accent)' }}>
             Software Developer
           </p>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight mt-2">
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mt-2">
             Luis-Angel <br className="hidden sm:block" />
             Moreno
           </h1>
@@ -126,24 +140,27 @@ export default function MainPage({ isDark }) {
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub"
+              className="icon-link"
             >
-              <Github className="w-5 h-5 hover:opacity-40 transition-opacity" />
+              <Github className="w-5 h-5" />
             </a>
             <a
               href="https://www.linkedin.com/in/luisanm/"
               target="_blank"
               rel="noreferrer"
               aria-label="LinkedIn"
+              className="icon-link"
             >
-              <Linkedin className="w-5 h-5 hover:opacity-40 transition-opacity" />
+              <Linkedin className="w-5 h-5" />
             </a>
             <a
               href="mailto:lmoreno00528@gmail.com"
               target="_blank"
               rel="noreferrer"
               aria-label="Email"
+              className="icon-link"
             >
-              <Mail className="w-5 h-5 hover:opacity-40 transition-opacity" />
+              <Mail className="w-5 h-5" />
             </a>
           </div>
         </AnimateIn>
@@ -283,7 +300,7 @@ export default function MainPage({ isDark }) {
               <div className="flex flex-wrap items-baseline justify-between gap-1">
                 <div className="flex items-baseline gap-2">
                   <span className="text-sm font-semibold">{exp.position}</span>
-                  <span className={`text-sm ${subtle}`}>{exp.company}</span>
+                  <span className="text-sm font-medium" style={{ color: 'var(--accent)' }}>{exp.company}</span>
                 </div>
                 <span className={`text-xs ${subtle} whitespace-nowrap`}>
                   {exp.duration}
@@ -297,11 +314,12 @@ export default function MainPage({ isDark }) {
                   {exp.tags.map((tag) => (
                     <span
                       key={tag}
-                      className={`text-xs px-2 py-0.5 rounded-full ${
-                        isDark
-                          ? "bg-zinc-800 text-zinc-300"
-                          : "bg-zinc-100 text-zinc-600 border border-zinc-200"
-                      }`}
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: 'color-mix(in oklch, var(--accent) 10%, transparent)',
+                        color: 'var(--accent)',
+                        border: '1px solid color-mix(in oklch, var(--accent) 25%, transparent)',
+                      }}
                     >
                       {tag}
                     </span>
@@ -326,7 +344,7 @@ export default function MainPage({ isDark }) {
             <div className={`rounded-xl p-5 flex flex-col gap-3 ${cardBg}`}>
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="font-semibold text-lg">{proj.name}</h3>
+                  <h3 className="font-display font-bold text-xl">{proj.name}</h3>
                   <p className={`text-xs mt-0.5 ${subtle}`}>{proj.stack}</p>
                 </div>
                 <a
@@ -338,13 +356,15 @@ export default function MainPage({ isDark }) {
                   GitHub <ExternalLink size={12} />
                 </a>
               </div>
-              <a href={proj.github} target="_blank" rel="noreferrer">
-                <img
-                  src={proj.img}
-                  alt={proj.name}
-                  className="w-full rounded-lg border border-zinc-200/30 hover:opacity-90 transition-opacity"
-                />
-              </a>
+              {proj.img && (
+                <a href={proj.github} target="_blank" rel="noreferrer">
+                  <img
+                    src={proj.img}
+                    alt={proj.name}
+                    className="w-full rounded-lg border border-zinc-200/30 hover:opacity-90 transition-opacity"
+                  />
+                </a>
+              )}
               <p className={`text-sm leading-relaxed ${subtle}`}>
                 {proj.description}
               </p>

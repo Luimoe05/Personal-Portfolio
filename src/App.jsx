@@ -13,8 +13,8 @@ export default function App() {
   const toggleMode = () => {
     const next = !isDark;
     setIsDark(next);
-    document.documentElement.style.setProperty("--bg-color", next ? "#111111" : "#ffffff");
-    document.documentElement.style.setProperty("--text-color", next ? "#ffffff" : "#111111");
+    document.documentElement.style.setProperty("--bg-color", next ? "oklch(10% 0.01 80)" : "oklch(98.5% 0.008 80)");
+    document.documentElement.style.setProperty("--text-color", next ? "oklch(97% 0.006 80)" : "oklch(14% 0.012 80)");
   };
 
   return (
