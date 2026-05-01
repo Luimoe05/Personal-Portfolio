@@ -37,7 +37,7 @@ export default function Education({ color }) {
           <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
             About
           </h2>
-          <p className={`text-sm sm:text-base leading-relaxed ${subtle}`}>
+          <p className={`text-base leading-relaxed ${subtle}`}>
             Hello! I'm Luis-Angel Moreno, a junior at Florida International
             University pursuing a BS in Computer Science. During the summer of
             2025 I had the pleasure of interning at Salesforce in San Francisco

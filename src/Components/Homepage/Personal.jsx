@@ -7,7 +7,7 @@ export default function Personal() {
       <p className="text-xs uppercase tracking-widest opacity-40 font-medium">
         Software Developer
       </p>
-      <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold leading-tight">
+      <h1 className="text-hero">
         Luis-Angel <br className="hidden sm:block" />
         Moreno
       </h1>

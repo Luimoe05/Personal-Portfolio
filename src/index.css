@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -9,13 +9,21 @@
 
 @layer base {
   body {
-    font-family: "Inter", sans-serif;
+    font-family: "Epilogue", sans-serif;
+    font-optical-sizing: auto;
+    font-kerning: normal;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   html {
     scroll-behavior: smooth;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 
@@ -27,8 +35,26 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  /* Display heading treatment — heavy weight, tight tracking */
   .font-display {
     font-family: "Epilogue", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  /* Fluid hero heading */
+  .text-hero {
+    font-size: clamp(2.75rem, 5vw + 1.5rem, 5rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+  /* Fluid project / section title */
+  .text-project-title {
+    font-size: clamp(1.75rem, 3vw + 0.75rem, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
   }
   .icon-link {
     opacity: 0.55;

@@ -23,22 +23,22 @@ export default function ProjectContainer({
             </a>
           </div>
           <div className="w-full sm:w-[60vh] lg:w-[70vh]">
-            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">
+            <h2 className="text-project-title">
               {ProjectName}
-            </h1>
-            <h1 className="mt-2 text-base sm:text-lg">
+            </h2>
+            <p className="mt-2 text-base">
               Made with: <span className="text-sky-600">{Stack}</span>
-            </h1>
+            </p>
             <div className="mt-3 w-full flex flex-col gap-3">
-              <h1 className="text-sm sm:text-base">{description}</h1>
-              <h1 className="font-bold text-lg sm:text-xl">
+              <p className="text-base">{description}</p>
+              <h3 className="font-semibold text-lg">
                 Key Features & Impact:
-              </h1>
-              <ul className="list-disc list-inside flex flex-col gap-2 text-sm sm:text-base">
+              </h3>
+              <ul className="list-disc list-inside flex flex-col gap-2 text-base">
                 {keypoints &&
-                  keypoints.map((info, index) => {
-                    return <li key={index}>{info}</li>;
-                  })}
+                  keypoints.map((info, index) => (
+                    <li key={index}>{info}</li>
+                  ))}
               </ul>
             </div>
           </div>
