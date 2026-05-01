@@ -5,7 +5,6 @@ import MainPage from "./Components/MainPage";
 import TopNavbar from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import { Moon, Sun } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function App() {
   const [isDark, setIsDark] = useState(false);
@@ -20,26 +19,20 @@ export default function App() {
   return (
     <Router>
       <div className="min-h-screen">
-        <div className="flex justify-center m-5 relative z-10 items-center">
+        <div className="flex items-center m-5 z-10">
+          <div className="flex-1" />
           <TopNavbar isDark={isDark} />
-          <div className="absolute right-5 flex items-center">
+          <div className="flex-1 flex justify-end">
             <button
               onClick={toggleMode}
               aria-label="Toggle theme"
-              className={`relative flex items-center w-12 h-6 rounded-full cursor-pointer transition-colors duration-300 ${
-                isDark ? "bg-zinc-600" : "bg-zinc-300"
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 ${
+                isDark
+                  ? "bg-zinc-800/60 border border-zinc-700/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                  : "bg-zinc-100 border border-zinc-200 text-zinc-500 hover:bg-white hover:text-zinc-900"
               }`}
             >
-              <motion.div
-                className="absolute w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center"
-                animate={{ x: isDark ? 26 : 2 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              >
-                {isDark
-                  ? <Moon size={11} className="text-zinc-600" />
-                  : <Sun size={11} className="text-zinc-400" />
-                }
-              </motion.div>
+              {isDark ? <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
           </div>
         </div>
