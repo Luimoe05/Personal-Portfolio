@@ -76,6 +76,7 @@ const projects = [
     ],
     img: RepoAI,
     github: "https://github.com/Luimoe05/repo-ai",
+    deployed: "https://repo-ai-six.vercel.app/",
   },
   {
     name: "Codifica",
@@ -357,7 +358,7 @@ export default function MainPage({ isDark }) {
                 </a>
               </div>
               {proj.img && (
-                <a href={proj.github} target="_blank" rel="noreferrer">
+                <a href={proj.deployed ?? proj.github} target="_blank" rel="noreferrer">
                   <img
                     src={proj.img}
                     alt={proj.name}
