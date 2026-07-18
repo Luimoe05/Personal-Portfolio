@@ -7,6 +7,12 @@ import {
   SiPostgresql,
   SiExpress,
   SiTailwindcss,
+  SiKubernetes,
+  SiDocker,
+  SiAmazon,
+  SiApachespark,
+  SiPython,
+  SiTypescript,
 } from "react-icons/si";
 import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
@@ -26,9 +32,23 @@ const techs = [
   { Icon: SiPostgresql, label: "PostgreSQL" },
   { Icon: SiPrisma, label: "Prisma" },
   { Icon: FaJava, label: "Java" },
+  { Icon: SiPython, label: "Python" },
+  { Icon: SiTypescript, label: "TypeScript" },
+  { Icon: SiKubernetes, label: "Kubernetes" },
+  { Icon: SiDocker, label: "Docker" },
+  { Icon: SiAmazon, label: "AWS" },
+  { Icon: SiApachespark, label: "Spark" },
 ];
 
 const experiences = [
+  {
+    position: "Software Engineer Intern",
+    company: "Salesforce",
+    duration: "May 2026 – Aug 2026",
+    description:
+      "Returning to Salesforce in San Francisco on the Spark platform team. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
+    tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
+  },
   {
     position: "Software Engineering Intern",
     company: "Salesforce",
@@ -178,8 +198,9 @@ export default function MainPage({ isDark }) {
             </h2>
             <p className={`text-sm sm:text-base leading-relaxed ${subtle}`}>
               Hello! I'm Luis-Angel Moreno, a junior at Florida International
-              University pursuing a BS in Computer Science. I'm incoming this
-              summer as a Software Engineer Intern at Salesfore.
+              University pursuing a BS in Computer Science (GPA: 3.61). I'm
+              returning to Salesforce in Summer 2026 as a Software Engineer
+              Intern on the Spark platform team.
             </p>
           </div>
         </AnimateIn>
