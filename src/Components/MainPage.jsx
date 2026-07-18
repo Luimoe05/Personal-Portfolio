@@ -513,7 +513,7 @@ export default function MainPage({ isDark }) {
               }`}
             >
               <span className="live-dot text-emerald-500" />
-              Returning to Salesforce · Summer 2026
+              SWE Intern at Salesforce
             </span>
           </div>
           <p
@@ -818,12 +818,6 @@ export default function MainPage({ isDark }) {
       </section>
 
       <footer className="pt-6 pb-2 flex flex-col items-center gap-2 text-center">
-        <p
-          className="font-script text-3xl sm:text-4xl leading-none"
-          style={{ color: "var(--text-color)" }}
-        >
-          Luis-Angel Moreno
-        </p>
         <LocalClock subtle={subtle} />
         <p className={`text-[11px] ${subtle} opacity-60`}>
           © {new Date().getFullYear()} · Built with React &amp; Tailwind
