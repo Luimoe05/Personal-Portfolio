@@ -5,6 +5,15 @@ import DownloadResume from "./DownloadResume.jsx";
 import { color } from "framer-motion";
 
 export default function ExperiencePage({ colorMode }) {
+  const salesForce2026Info = [
+    "Kubernetes",
+    "Helm",
+    "Docker",
+    "AWS (S3)",
+    "Apache Spark",
+    "MCP",
+    "Envoy / mTLS",
+  ];
   const salesForceInfo = [
     "React",
     "Node.js",
@@ -15,6 +24,19 @@ export default function ExperiencePage({ colorMode }) {
   const initBuildInfo = ["React", "Firebase", "Tailwindcss"];
   return (
     <div>
+      <AnimateIn delay={0.1}>
+        <ExperienceBlock
+          position={"Software Engineer Intern"}
+          company={"Salesforce"}
+          duration={"May 2026 - Aug 2026"}
+          description={
+            "Returning to Salesforce in San Francisco to work on the Spark platform team. Cut Spark logging costs by ~$300K/month by designing and shipping a log-search REST API that streams, decompresses, and greps gzipped application logs from AWS S3, replacing the team's Splunk pipeline. Exposed the API as a Model Context Protocol (MCP) tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures. Root-caused a Kubernetes ambiguous-selector bug to restore 2-10 replica autoscaling on the Spark History Server extension service, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills to collapse Spark debugging into a single install."
+          }
+          experienceInfo={salesForce2026Info}
+          divColor={colorMode}
+        />
+      </AnimateIn>
+
       <AnimateIn delay={0.1}>
         <ExperienceBlock
           position={"Software Engineering Intern"}

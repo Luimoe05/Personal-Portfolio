@@ -6,6 +6,12 @@ import {
   SiPostgresql,
   SiExpress,
   SiTailwindcss,
+  SiKubernetes,
+  SiDocker,
+  SiAmazon,
+  SiApachespark,
+  SiPython,
+  SiTypescript,
 } from "react-icons/si";
 import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
@@ -21,6 +27,12 @@ const techs = [
   { Icon: SiPostgresql, label: "PostgreSQL" },
   { Icon: SiPrisma, label: "Prisma" },
   { Icon: FaJava, label: "Java" },
+  { Icon: SiPython, label: "Python" },
+  { Icon: SiTypescript, label: "TypeScript" },
+  { Icon: SiKubernetes, label: "Kubernetes" },
+  { Icon: SiDocker, label: "Docker" },
+  { Icon: SiAmazon, label: "AWS" },
+  { Icon: SiApachespark, label: "Spark" },
 ];
 
 export default function Education({ color }) {
@@ -39,9 +51,11 @@ export default function Education({ color }) {
           </h2>
           <p className={`text-base leading-relaxed ${subtle}`}>
             Hello! I'm Luis-Angel Moreno, a junior at Florida International
-            University pursuing a BS in Computer Science. During the summer of
-            2025 I had the pleasure of interning at Salesforce in San Francisco
-            through their FTL program.
+            University pursuing a BS in Computer Science (GPA: 3.61). During
+            the summer of 2025 I had the pleasure of interning at Salesforce
+            in San Francisco through their FTL program, and I'll be returning
+            in Summer 2026 as a Software Engineer Intern on the Spark
+            platform team.
           </p>
         </div>
 
