@@ -444,8 +444,9 @@ export default function MainPage({ isDark }) {
         id="about"
         className="relative flex flex-col items-center justify-center min-h-[60vh] py-16 text-center gap-4"
       >
-        {/* Animated backdrop */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        {/* Animated backdrop — extended past the section's px-6 so the glow
+            reaches the screen edges on mobile instead of clipping 24px in */}
+        <div className="pointer-events-none absolute inset-y-0 -inset-x-6 -z-10 overflow-hidden">
           <div className="absolute inset-0 hero-grid opacity-70" />
           <motion.div
             className="absolute left-1/2 top-[38%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
