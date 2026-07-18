@@ -1,5 +1,6 @@
-import React from "react";
-import { Mail, Github, Linkedin, ExternalLink } from "lucide-react";
+import React, { useState } from "react";
+import { Mail, Github, Linkedin, ExternalLink, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   SiReact,
   SiPrisma,
@@ -22,6 +23,7 @@ import codeyTheBearPicture from "../assets/image.jpg";
 import CodificaImg from "../assets/Codifica.png";
 import CreatorsFIUImg from "../assets/creatorsFIU.png";
 import RepoAI from "../assets/RepoAI.png";
+import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const techs = [
   { Icon: SiReact, label: "React" },
@@ -128,6 +130,7 @@ const projects = [
 
 export default function MainPage({ isDark }) {
   const navigate = useNavigate();
+  const [resumeOpen, setResumeOpen] = useState(false);
   const divider = isDark ? "border-zinc-800" : "border-zinc-200";
   const subtle = isDark ? "text-zinc-400" : "text-zinc-500";
   const cardBg = isDark
@@ -402,6 +405,74 @@ export default function MainPage({ isDark }) {
           </AnimateIn>
         ))}
       </section>
+
+      <hr className={divider} />
+
+      <section className="py-12 flex justify-center">
+        <AnimateIn delay={0.1}>
+          <button
+            onClick={() => setResumeOpen(true)}
+            className={`text-sm font-medium px-6 py-3 rounded-full border cursor-pointer transition-colors ${
+              isDark
+                ? "border-zinc-700 hover:bg-zinc-800"
+                : "border-zinc-300 hover:bg-zinc-100"
+            }`}
+          >
+            View Resume
+          </button>
+        </AnimateIn>
+      </section>
+
+      <AnimatePresence>
+        {resumeOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setResumeOpen(false)}
+          >
+            <motion.div
+              className={`relative w-full max-w-3xl h-[85vh] rounded-xl overflow-hidden flex flex-col ${
+                isDark
+                  ? "bg-zinc-900 border border-zinc-800"
+                  : "bg-white border border-zinc-200"
+              }`}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className={`flex items-center justify-between px-4 py-3 border-b shrink-0 ${divider}`}
+              >
+                <span className="text-sm font-semibold">Resume</span>
+                <div className="flex items-center gap-4">
+                  <a
+                    href={ResumePDF}
+                    download="Luis_Resume_2026.pdf"
+                    className={`text-xs ${subtle} hover:opacity-70 transition-opacity`}
+                  >
+                    Download
+                  </a>
+                  <button
+                    onClick={() => setResumeOpen(false)}
+                    aria-label="Close"
+                    className="icon-link cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <iframe
+                src={ResumePDF}
+                title="Luis-Angel Moreno's Resume"
+                className="w-full grow"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
