@@ -342,8 +342,8 @@ function ContactForm({ isDark, subtle, divider }) {
 
   const inputCls = `w-full rounded-lg border px-3 py-2 text-sm bg-transparent outline-none transition-colors ${
     isDark
-      ? "border-zinc-700 focus:border-zinc-500"
-      : "border-zinc-300 focus:border-zinc-500"
+      ? "border-zinc-700 focus:border-zinc-500 text-white placeholder:text-zinc-500"
+      : "border-zinc-300 focus:border-zinc-500 text-zinc-900 placeholder:text-zinc-400"
   }`;
 
   const onSubmit = async (e) => {
