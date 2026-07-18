@@ -1,6 +1,16 @@
-import React, { useState } from "react";
-import { Mail, Github, Linkedin, ExternalLink, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Mail,
+  Github,
+  Linkedin,
+  ExternalLink,
+  X,
+  ArrowUpRight,
+  Send,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
+import { motion, AnimatePresence, animate, useInView } from "framer-motion";
 import {
   SiReact,
   SiPrisma,
@@ -18,12 +28,22 @@ import {
 import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
 import AnimateIn from "./AnimateIn";
+import LocalClock from "./LocalClock";
 import { useNavigate } from "react-router-dom";
-import codeyTheBearPicture from "../assets/image.jpg";
-import CodificaImg from "../assets/Codifica.png";
-import CreatorsFIUImg from "../assets/creatorsFIU.png";
-import RepoAI from "../assets/RepoAI.png";
+import codeyTheBearPicture from "../assets/image.webp";
+import CodificaImg from "../assets/Codifica.webp";
+import CreatorsFIUImg from "../assets/creatorsFIU.webp";
+import RepoAI from "../assets/RepoAI.webp";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
+
+const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
+
+const ROLES = [
+  "Software Developer",
+  "SWE Intern @ Salesforce",
+  "CS Student @ FIU",
+  "CS Tutor",
+];
 
 const techs = [
   { Icon: SiReact, label: "React" },
@@ -128,6 +148,286 @@ const projects = [
   },
 ];
 
+const posts = [
+  {
+    title: "Summer 2025 in San Francisco",
+    blurb:
+      "My time interning at Salesforce through the FTL program — the highs, the nerves, and what I learned building from zero.",
+    date: "Aug 2025",
+    to: "/summer",
+  },
+];
+
+/* Rotating role text in the hero */
+function RotatingRole() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((n) => (n + 1) % ROLES.length), 2600);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span className="inline-flex justify-center overflow-hidden h-5">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3 }}
+        >
+          {ROLES[i]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+/* Animated count-up that fires when scrolled into view */
+function CountUp({ value, suffix = "" }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    const controls = animate(0, value, {
+      duration: 1.2,
+      ease: "easeOut",
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, value]);
+
+  return (
+    <span ref={ref}>
+      {display}
+      {suffix}
+    </span>
+  );
+}
+
+/* Live GitHub stats pulled from public APIs */
+function GitHubStats({ subtle, divider }) {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        // GitHub REST API for repos + languages; jogruber API for contributions
+        const [user, repos, contrib] = await Promise.all([
+          fetch("https://api.github.com/users/Luimoe05").then((r) => r.json()),
+          fetch("https://api.github.com/users/Luimoe05/repos?per_page=100")
+            .then((r) => r.json())
+            .catch(() => []),
+          fetch(
+            "https://github-contributions-api.jogruber.de/v4/Luimoe05?y=last"
+          )
+            .then((r) => r.json())
+            .catch(() => null),
+        ]);
+        if (!active) return;
+        const stars = Array.isArray(repos)
+          ? repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0)
+          : 0;
+        setStats({
+          repos: user.public_repos ?? 0,
+          stars,
+          contributions: contrib?.total?.lastYear ?? 0,
+        });
+      } catch {
+        /* silently ignore — section just won't render */
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!stats) return null;
+
+  const items = [
+    { label: "Repositories", value: stats.repos },
+    { label: "Contributions", sub: "past year", value: stats.contributions },
+    { label: "Stars", value: stats.stars },
+  ];
+
+  return (
+    <div className={`grid grid-cols-3 gap-4 rounded-xl border p-4 ${divider}`}>
+      {items.map((it) => (
+        <div key={it.label} className="flex flex-col items-center gap-0.5">
+          <span
+            className="text-xl sm:text-2xl font-display font-bold"
+            style={{ color: "var(--accent)" }}
+          >
+            <CountUp value={it.value} />
+          </span>
+          <span className={`text-[11px] text-center ${subtle}`}>
+            {it.label}
+          </span>
+          {it.sub && (
+            <span className={`text-[9px] uppercase tracking-wide opacity-50`}>
+              {it.sub}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Project card with subtle mouse-tracking 3D tilt */
+function ProjectCard({ proj, cardBg, subtle }) {
+  const ref = useRef(null);
+  const [transform, setTransform] = useState("");
+
+  const onMove = (e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTransform(
+      `perspective(1000px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) scale(1.01)`
+    );
+  };
+  const onLeave = () => setTransform("");
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={{ transform, transition: "transform 0.2s ease" }}
+      className={`project-card rounded-xl p-5 flex flex-col gap-3 ${cardBg}`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="font-display font-bold text-xl">{proj.name}</h3>
+          <p className={`text-xs mt-0.5 ${subtle}`}>{proj.stack}</p>
+        </div>
+        <a
+          href={proj.github}
+          target="_blank"
+          rel="noreferrer"
+          className={`flex items-center gap-1 text-xs shrink-0 transition-opacity hover:opacity-60 ${subtle}`}
+        >
+          GitHub <ExternalLink size={12} />
+        </a>
+      </div>
+      {proj.img && (
+        <a href={proj.deployed ?? proj.github} target="_blank" rel="noreferrer">
+          <img
+            src={proj.img}
+            alt={proj.name}
+            className="w-full rounded-lg border border-zinc-200/30 hover:opacity-90 transition-opacity"
+          />
+        </a>
+      )}
+      <p className={`text-sm leading-relaxed ${subtle}`}>{proj.description}</p>
+      <ul
+        className={`text-xs leading-relaxed flex flex-col gap-1.5 list-disc list-inside ${subtle}`}
+      >
+        {proj.keypoints.map((pt, j) => (
+          <li key={j}>{pt}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* Contact form wired to Formspree */
+function ContactForm({ isDark, subtle, divider }) {
+  const [status, setStatus] = useState("idle"); // idle | sending | success | error
+
+  const inputCls = `w-full rounded-lg border px-3 py-2 text-sm bg-transparent outline-none transition-colors ${
+    isDark
+      ? "border-zinc-700 focus:border-zinc-500"
+      : "border-zinc-300 focus:border-zinc-500"
+  }`;
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("sending");
+    const form = e.target;
+    try {
+      const res = await fetch(CONTACT_ENDPOINT, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        setStatus("success");
+        form.reset();
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div
+        className={`flex flex-col items-center gap-2 rounded-xl border p-8 text-center ${divider}`}
+      >
+        <CheckCircle2 className="w-7 h-7" style={{ color: "var(--accent)" }} />
+        <p className="text-sm font-medium">Thanks for reaching out!</p>
+        <p className={`text-xs ${subtle}`}>I'll get back to you soon.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <input name="name" required placeholder="Name" className={inputCls} />
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="Email"
+          className={inputCls}
+        />
+      </div>
+      <textarea
+        name="message"
+        required
+        rows={4}
+        placeholder="What's on your mind?"
+        className={`${inputCls} resize-none`}
+      />
+      <div className="flex items-center gap-3">
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className={`inline-flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full border cursor-pointer transition-colors disabled:opacity-60 ${
+            isDark
+              ? "border-zinc-700 hover:bg-zinc-800"
+              : "border-zinc-300 hover:bg-zinc-100"
+          }`}
+        >
+          {status === "sending" ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" /> Sending…
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4" /> Send message
+            </>
+          )}
+        </button>
+        {status === "error" && (
+          <span className="text-xs text-red-500">
+            Something went wrong — email me directly instead.
+          </span>
+        )}
+      </div>
+    </form>
+  );
+}
+
 export default function MainPage({ isDark }) {
   const navigate = useNavigate();
   const [resumeOpen, setResumeOpen] = useState(false);
@@ -142,13 +442,33 @@ export default function MainPage({ isDark }) {
       {/* Hero */}
       <section
         id="about"
-        className="flex flex-col items-center justify-center min-h-[60vh] py-16 text-center gap-4"
+        className="relative flex flex-col items-center justify-center min-h-[60vh] py-16 text-center gap-4"
       >
+        {/* Animated backdrop */}
+        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-0 hero-grid opacity-70" />
+          <motion.div
+            className="absolute left-1/2 top-[38%] h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+            style={{ background: "var(--accent)" }}
+            animate={{ scale: [1, 1.25, 1], opacity: [0.16, 0.26, 0.16] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute left-[30%] top-[55%] h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+            style={{ background: "var(--accent)" }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.16, 0.08], x: [0, 20, 0] }}
+            transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </div>
+
         <AnimateIn delay={0.1}>
-          <p className="text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--accent)' }}>
-            Software Developer
+          <p
+            className="text-xs uppercase tracking-widest font-semibold"
+            style={{ color: "var(--accent)" }}
+          >
+            <RotatingRole />
           </p>
-          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mt-2">
+          <h1 className="name-shimmer font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mt-2">
             Luis-Angel <br className="hidden sm:block" />
             Moreno
           </h1>
@@ -206,6 +526,10 @@ export default function MainPage({ isDark }) {
               Intern on the Spark platform team.
             </p>
           </div>
+        </AnimateIn>
+
+        <AnimateIn delay={0.12}>
+          <GitHubStats subtle={subtle} divider={divider} />
         </AnimateIn>
 
         <AnimateIn delay={0.15}>
@@ -325,7 +649,9 @@ export default function MainPage({ isDark }) {
               <div className="flex flex-wrap items-baseline justify-between gap-1">
                 <div className="flex items-baseline gap-2">
                   <span className="text-sm font-semibold">{exp.position}</span>
-                  <span className="text-sm font-medium" style={{ color: 'var(--accent)' }}>{exp.company}</span>
+                  <span className="text-sm font-medium" style={{ color: "var(--accent)" }}>
+                    {exp.company}
+                  </span>
                 </div>
                 <span className={`text-xs ${subtle} whitespace-nowrap`}>
                   {exp.duration}
@@ -341,9 +667,11 @@ export default function MainPage({ isDark }) {
                       key={tag}
                       className="text-xs px-2 py-0.5 rounded-full"
                       style={{
-                        backgroundColor: 'color-mix(in oklch, var(--accent) 10%, transparent)',
-                        color: 'var(--accent)',
-                        border: '1px solid color-mix(in oklch, var(--accent) 25%, transparent)',
+                        backgroundColor:
+                          "color-mix(in oklch, var(--accent) 10%, transparent)",
+                        color: "var(--accent)",
+                        border:
+                          "1px solid color-mix(in oklch, var(--accent) 25%, transparent)",
                       }}
                     >
                       {tag}
@@ -366,49 +694,70 @@ export default function MainPage({ isDark }) {
         </h2>
         {projects.map((proj, i) => (
           <AnimateIn key={i} delay={0.1 + i * 0.05}>
-            <div className={`rounded-xl p-5 flex flex-col gap-3 ${cardBg}`}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="font-display font-bold text-xl">{proj.name}</h3>
-                  <p className={`text-xs mt-0.5 ${subtle}`}>{proj.stack}</p>
-                </div>
-                <a
-                  href={proj.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`flex items-center gap-1 text-xs shrink-0 transition-opacity hover:opacity-60 ${subtle}`}
-                >
-                  GitHub <ExternalLink size={12} />
-                </a>
-              </div>
-              {proj.img && (
-                <a href={proj.deployed ?? proj.github} target="_blank" rel="noreferrer">
-                  <img
-                    src={proj.img}
-                    alt={proj.name}
-                    className="w-full rounded-lg border border-zinc-200/30 hover:opacity-90 transition-opacity"
-                  />
-                </a>
-              )}
-              <p className={`text-sm leading-relaxed ${subtle}`}>
-                {proj.description}
-              </p>
-              <ul
-                className={`text-xs leading-relaxed flex flex-col gap-1.5 list-disc list-inside ${subtle}`}
-              >
-                {proj.keypoints.map((pt, j) => (
-                  <li key={j}>{pt}</li>
-                ))}
-              </ul>
-            </div>
-            {i < projects.length - 1 && <div />}
+            <ProjectCard proj={proj} cardBg={cardBg} subtle={subtle} />
           </AnimateIn>
         ))}
       </section>
 
       <hr className={divider} />
 
-      <section className="py-12 flex justify-center">
+      {/* Writing */}
+      <section id="writing" className="py-12 flex flex-col gap-6">
+        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+          Writing
+        </h2>
+        {posts.map((post) => (
+          <AnimateIn key={post.title} delay={0.1}>
+            <button
+              onClick={() => navigate(post.to)}
+              className={`group w-full text-left rounded-xl p-5 border transition-colors cursor-pointer ${
+                isDark
+                  ? "border-zinc-800 hover:bg-zinc-900"
+                  : "border-zinc-200 hover:bg-zinc-100"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-semibold transition-transform duration-200 group-hover:translate-x-1.5">
+                  {post.title}
+                </span>
+                <span className={`text-xs ${subtle} whitespace-nowrap`}>
+                  {post.date}
+                </span>
+              </div>
+              <p className={`text-sm mt-1.5 leading-relaxed ${subtle}`}>
+                {post.blurb}
+              </p>
+              <span
+                className="mt-3 inline-flex items-center gap-1 text-xs font-medium"
+                style={{ color: "var(--accent)" }}
+              >
+                Read more
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </span>
+            </button>
+          </AnimateIn>
+        ))}
+        <p className={`text-xs ${subtle}`}>More posts coming soon.</p>
+      </section>
+
+      <hr className={divider} />
+
+      {/* Contact */}
+      <section id="contact" className="py-12 flex flex-col gap-6">
+        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+          Get in touch
+        </h2>
+        <p className={`text-sm leading-relaxed ${subtle}`}>
+          Have a question, an opportunity, or just want to say hi? Drop me a
+          message and I'll get back to you.
+        </p>
+        <ContactForm isDark={isDark} subtle={subtle} divider={divider} />
+      </section>
+
+      <hr className={divider} />
+
+      {/* Resume */}
+      <section className="py-12 flex flex-col items-center gap-6">
         <AnimateIn delay={0.1}>
           <button
             onClick={() => setResumeOpen(true)}
@@ -422,6 +771,13 @@ export default function MainPage({ isDark }) {
           </button>
         </AnimateIn>
       </section>
+
+      <footer className="pt-4 pb-2 flex flex-col items-center gap-1.5 text-center">
+        <LocalClock subtle={subtle} />
+        <p className={`text-[11px] ${subtle} opacity-60`}>
+          © {new Date().getFullYear()} Luis-Angel Moreno
+        </p>
+      </footer>
 
       <AnimatePresence>
         {resumeOpen && (

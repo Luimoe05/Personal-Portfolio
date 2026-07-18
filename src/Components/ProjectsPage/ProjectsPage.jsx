@@ -1,7 +1,7 @@
 import React from "react";
 import ProjectContainer from "./ProjectContainer";
-import CodificaImg from "../../assets/Codifica.png";
-import CreatorsFIU from "../../assets/creatorsFIU.png";
+import CodificaImg from "../../assets/Codifica.webp";
+import CreatorsFIU from "../../assets/creatorsFIU.webp";
 
 export default function ProjectsPage({ colorMode }) {
   const codifica = [

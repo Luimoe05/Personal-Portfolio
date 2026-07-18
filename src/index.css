@@ -19,6 +19,10 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Offset anchored scrolls so headings clear the sticky top bar */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
   h1, h2, h3 {
     text-wrap: balance;
   }
@@ -64,4 +68,85 @@
     opacity: 1;
     color: var(--accent);
   }
+  /* Subtle diagonal glint that sweeps across a project card on hover */
+  .project-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 35%,
+      rgba(255, 255, 255, 0.13) 50%,
+      transparent 65%
+    );
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .project-card:hover::after {
+    opacity: 1;
+    transform: translateX(120%);
+    transition: transform 0.85s ease, opacity 0.25s ease;
+  }
+
+  /* Soft silver sheen sweeping gently across the hero name */
+  .name-shimmer {
+    background: linear-gradient(
+      100deg,
+      var(--text-color) 0%,
+      var(--text-color) 36%,
+      color-mix(in oklch, var(--glint, #a7abb5) 55%, var(--text-color)) 50%,
+      var(--text-color) 64%,
+      var(--text-color) 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: name-sheen 9s ease-in-out infinite;
+  }
+  @keyframes name-sheen {
+    0% {
+      background-position: 165% 0;
+    }
+    100% {
+      background-position: -65% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .name-shimmer {
+      animation: none;
+      background: none;
+      -webkit-text-fill-color: var(--text-color);
+      color: var(--text-color);
+    }
+    .project-card:hover::after {
+      transition: none;
+    }
+  }
+  /* Faded dot grid for the hero backdrop */
+  .hero-grid {
+    background-image: radial-gradient(
+      circle,
+      color-mix(in oklch, var(--text-color) 22%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+    -webkit-mask-image: radial-gradient(
+      ellipse 55% 55% at 50% 42%,
+      #000 0%,
+      transparent 72%
+    );
+    mask-image: radial-gradient(
+      ellipse 55% 55% at 50% 42%,
+      #000 0%,
+      transparent 72%
+    );
+  }
+
 }
