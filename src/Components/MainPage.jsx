@@ -152,7 +152,7 @@ const posts = [
   {
     title: "Summer 2026 at Salesforce",
     blurb:
-      "Placeholder for my Summer 2026 internship writeup — coming soon.",
+      "Returning to San Francisco a second time — and finding that AI agents had quietly rewritten the craft.",
     date: "Jul 2026",
     to: "/summer-2026",
   },
@@ -173,7 +173,7 @@ function RotatingRole() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span className="inline-flex justify-center overflow-hidden h-5">
+    <span className="inline-flex items-center justify-center overflow-hidden h-5">
       <AnimatePresence mode="wait">
         <motion.span
           key={i}
@@ -185,6 +185,7 @@ function RotatingRole() {
           {ROLES[i]}
         </motion.span>
       </AnimatePresence>
+      <span className="type-caret h-3.5" aria-hidden="true" />
     </span>
   );
 }
@@ -219,9 +220,21 @@ function GitHubStats({ subtle, divider }) {
 
   useEffect(() => {
     let active = true;
+    const CACHE_KEY = "gh-stats";
+
+    // Show last-good values immediately so the section never flashes zeros
+    // (the unauthenticated GitHub API is rate-limited to 60 req/hr per IP).
+    let cached = null;
+    try {
+      cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+    } catch {
+      cached = null;
+    }
+    if (cached) setStats(cached);
+
     (async () => {
       try {
-        // GitHub REST API for repos + languages; jogruber API for contributions
+        // GitHub REST API for repos + stars; jogruber API for contributions
         const [user, repos, contrib] = await Promise.all([
           fetch("https://api.github.com/users/Luimoe05").then((r) => r.json()),
           fetch("https://api.github.com/users/Luimoe05/repos?per_page=100")
@@ -234,16 +247,27 @@ function GitHubStats({ subtle, divider }) {
             .catch(() => null),
         ]);
         if (!active) return;
+
+        // A rate-limited response has no `public_repos`; when that happens keep
+        // the cached numbers rather than overwriting them with zeros.
+        if (user.public_repos == null) return;
+
         const stars = Array.isArray(repos)
           ? repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0)
-          : 0;
-        setStats({
-          repos: user.public_repos ?? 0,
+          : cached?.stars ?? 0;
+        const fresh = {
+          repos: user.public_repos,
           stars,
-          contributions: contrib?.total?.lastYear ?? 0,
-        });
+          contributions: contrib?.total?.lastYear ?? cached?.contributions ?? 0,
+        };
+        setStats(fresh);
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(fresh));
+        } catch {
+          /* storage full / unavailable — non-fatal */
+        }
       } catch {
-        /* silently ignore — section just won't render */
+        /* network error — keep whatever cached values we already showed */
       }
     })();
     return () => {
@@ -260,7 +284,7 @@ function GitHubStats({ subtle, divider }) {
   ];
 
   return (
-    <div className={`grid grid-cols-3 gap-4 rounded-xl border p-4 ${divider}`}>
+    <div className="stat-card grid grid-cols-3 gap-4 rounded-xl p-4">
       {items.map((it) => (
         <div key={it.label} className="flex flex-col items-center gap-0.5">
           <span
@@ -269,13 +293,11 @@ function GitHubStats({ subtle, divider }) {
           >
             <CountUp value={it.value} />
           </span>
-          <span className={`text-[11px] text-center ${subtle}`}>
+          <span className={`eyebrow text-[10px] text-center ${subtle}`}>
             {it.label}
           </span>
           {it.sub && (
-            <span className={`text-[9px] uppercase tracking-wide opacity-50`}>
-              {it.sub}
-            </span>
+            <span className="eyebrow text-[9px] opacity-50">{it.sub}</span>
           )}
         </div>
       ))}
@@ -409,11 +431,7 @@ function ContactForm({ isDark, subtle, divider }) {
         <button
           type="submit"
           disabled={status === "sending"}
-          className={`inline-flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full border cursor-pointer transition-colors disabled:opacity-60 ${
-            isDark
-              ? "border-zinc-700 hover:bg-zinc-800"
-              : "border-zinc-300 hover:bg-zinc-100"
-          }`}
+          className="btn-accent inline-flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full cursor-pointer disabled:opacity-60"
         >
           {status === "sending" ? (
             <>
@@ -471,22 +489,40 @@ export default function MainPage({ isDark }) {
 
         <AnimateIn delay={0.1}>
           <p
-            className="text-xs uppercase tracking-widest font-semibold"
+            className="font-script text-3xl sm:text-4xl leading-none"
             style={{ color: "var(--accent)" }}
           >
-            <RotatingRole />
+            hey, I'm
           </p>
-          <h1 className="name-shimmer font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mt-2">
+          <h1 className="name-shimmer font-display text-5xl sm:text-6xl md:text-7xl font-black leading-tight tracking-tight mt-1">
             Luis-Angel <br className="hidden sm:block" />
             Moreno
           </h1>
           <p
-            className={`max-w-sm mx-auto mt-3 text-sm sm:text-base leading-relaxed ${subtle}`}
+            className="eyebrow text-xs mt-3"
+            style={{ color: "var(--accent)" }}
+          >
+            <RotatingRole />
+          </p>
+          <div className="mt-4 flex justify-center">
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 mono-ui text-[11px] tracking-wide backdrop-blur-sm ${
+                isDark
+                  ? "border-zinc-800 bg-zinc-900/50 text-zinc-300"
+                  : "border-zinc-200 bg-white/60 text-zinc-600"
+              }`}
+            >
+              <span className="live-dot text-emerald-500" />
+              Returning to Salesforce · Summer 2026
+            </span>
+          </div>
+          <p
+            className={`max-w-sm mx-auto mt-4 text-sm sm:text-base leading-relaxed ${subtle}`}
           >
             Junior CS student at FIU, passionate about building impactful
             applications that serve communities.
           </p>
-          <div className="flex gap-6 mt-4 justify-center">
+          <div className="flex gap-6 mt-5 justify-center">
             <a
               href="https://github.com/Luimoe05"
               target="_blank"
@@ -524,7 +560,7 @@ export default function MainPage({ isDark }) {
       <section className="py-12 flex flex-col gap-10">
         <AnimateIn delay={0.1}>
           <div className="flex flex-col gap-3">
-            <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            <h2 className="eyebrow text-xs opacity-40">
               About
             </h2>
             <p className={`text-sm sm:text-base leading-relaxed ${subtle}`}>
@@ -542,7 +578,7 @@ export default function MainPage({ isDark }) {
 
         <AnimateIn delay={0.15}>
           <div className="flex flex-col gap-4">
-            <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            <h2 className="eyebrow text-xs opacity-40">
               Technologies
             </h2>
             <style>{`
@@ -600,7 +636,7 @@ export default function MainPage({ isDark }) {
 
         <AnimateIn delay={0.2}>
           <div className="flex flex-col gap-3">
-            <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            <h2 className="eyebrow text-xs opacity-40">
               Education
             </h2>
             <div className="flex items-baseline justify-between">
@@ -619,7 +655,7 @@ export default function MainPage({ isDark }) {
 
         <AnimateIn delay={0.25}>
           <div className="flex flex-col gap-3">
-            <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+            <h2 className="eyebrow text-xs opacity-40">
               Highlight
             </h2>
             <a
@@ -653,7 +689,7 @@ export default function MainPage({ isDark }) {
 
       {/* Experience */}
       <section id="experience" className="py-12 flex flex-col gap-8">
-        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+        <h2 className="eyebrow text-xs opacity-40">
           Experience
         </h2>
         {experiences.map((exp, i) => (
@@ -702,7 +738,7 @@ export default function MainPage({ isDark }) {
 
       {/* Projects */}
       <section id="projects" className="py-12 flex flex-col gap-8">
-        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+        <h2 className="eyebrow text-xs opacity-40">
           Projects
         </h2>
         {projects.map((proj, i) => (
@@ -716,7 +752,7 @@ export default function MainPage({ isDark }) {
 
       {/* Writing */}
       <section id="writing" className="py-12 flex flex-col gap-6">
-        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+        <h2 className="eyebrow text-xs opacity-40">
           Writing
         </h2>
         {posts.map((post) => (
@@ -757,7 +793,7 @@ export default function MainPage({ isDark }) {
 
       {/* Contact */}
       <section id="contact" className="py-12 flex flex-col gap-6">
-        <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
+        <h2 className="eyebrow text-xs opacity-40">
           Get in touch
         </h2>
         <p className={`text-sm leading-relaxed ${subtle}`}>
@@ -774,21 +810,23 @@ export default function MainPage({ isDark }) {
         <AnimateIn delay={0.1}>
           <button
             onClick={() => setResumeOpen(true)}
-            className={`text-sm font-medium px-6 py-3 rounded-full border cursor-pointer transition-colors ${
-              isDark
-                ? "border-zinc-700 hover:bg-zinc-800"
-                : "border-zinc-300 hover:bg-zinc-100"
-            }`}
+            className="btn-accent text-sm font-medium px-6 py-3 rounded-full cursor-pointer"
           >
             View Resume
           </button>
         </AnimateIn>
       </section>
 
-      <footer className="pt-4 pb-2 flex flex-col items-center gap-1.5 text-center">
+      <footer className="pt-6 pb-2 flex flex-col items-center gap-2 text-center">
+        <p
+          className="font-script text-3xl sm:text-4xl leading-none"
+          style={{ color: "var(--text-color)" }}
+        >
+          Luis-Angel Moreno
+        </p>
         <LocalClock subtle={subtle} />
         <p className={`text-[11px] ${subtle} opacity-60`}>
-          © {new Date().getFullYear()} Luis-Angel Moreno
+          © {new Date().getFullYear()} · Built with React &amp; Tailwind
         </p>
       </footer>
 

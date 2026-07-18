@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Epilogue:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -129,6 +129,185 @@
       transition: none;
     }
   }
+  /* ── Blog post ("dispatch") treatment ─────────────────────────────── */
+  /* Monospace dateline — the signature nod to the terminal/agent world */
+  .post-meta {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  /* Long-form body: roomier size + leading than the UI copy elsewhere */
+  .post-body p {
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: color-mix(in oklch, var(--text-color) 86%, var(--bg-color));
+  }
+  /* Lead paragraph gets a touch more presence */
+  .post-body > p:first-of-type {
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--text-color);
+  }
+  .post-body h2 {
+    font-family: "Epilogue", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    font-size: 1.3rem;
+    margin-top: 0.75rem;
+  }
+  /* Entrance that ALWAYS ends visible (fill-mode both) — unlike an
+     inView opacity gate, it can never leave the post permanently hidden */
+  @keyframes post-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .post-rise {
+    animation: post-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-rise {
+      animation: none;
+    }
+  }
+
+  /* Shared monospace utility labels (eyebrows, stat captions, clock) — gives
+     the whole page the same "utility" voice as the blog dateline. Size stays
+     with the caller's text-* class so this composes anywhere. */
+  .eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .mono-ui {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+
+  /* ── Handwritten signature accent ──────────────────────────────────── */
+  /* A single script face, used sparingly (hero greeting + footer sign-off)
+     so the human voice reads as a deliberate accent, never as decoration. */
+  .font-script {
+    font-family: "Caveat", "Segoe Script", cursive;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Live status dot (pulsing ring) ────────────────────────────────── */
+  .live-dot {
+    position: relative;
+    display: inline-flex;
+    height: 0.5rem;
+    width: 0.5rem;
+    flex: none;
+  }
+  .live-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: currentColor;
+    animation: live-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .live-dot::after {
+    content: "";
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border-radius: 9999px;
+    background: currentColor;
+  }
+  @keyframes live-ping {
+    0% { transform: scale(1); opacity: 0.55; }
+    75%, 100% { transform: scale(2.4); opacity: 0; }
+  }
+
+  /* ── Blinking terminal caret (trails the rotating role) ────────────── */
+  .type-caret {
+    display: inline-block;
+    width: 0.55ch;
+    margin-left: 0.15ch;
+    background: var(--accent);
+    animation: caret-blink 1.05s steps(1) infinite;
+    transform: translateY(0.08em);
+  }
+  @keyframes caret-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* ── Primary CTA: accent-filled, gentle lift ──────────────────────── */
+  .btn-accent {
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--accent) 40%, transparent);
+    transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  }
+  .btn-accent:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow: 0 6px 20px color-mix(in oklch, var(--accent) 32%, transparent);
+  }
+  .btn-accent:active {
+    transform: translateY(0);
+  }
+
+  /* ── Stat card: faint accent-tinted gradient hairline ─────────────── */
+  .stat-card {
+    position: relative;
+    background:
+      linear-gradient(var(--bg-color), var(--bg-color)) padding-box,
+      linear-gradient(
+        135deg,
+        color-mix(in oklch, var(--accent) 45%, transparent),
+        transparent 55%
+      ) border-box;
+    border: 1px solid transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .live-dot::before,
+    .type-caret {
+      animation: none;
+    }
+    .btn-accent:hover {
+      transform: none;
+    }
+  }
+
+  /* Robust mount entrance: a CSS animation advances on the document timeline
+     and always resolves to its end state, so (unlike a throttled rAF/JS reveal)
+     it can never leave content stuck invisible in a hidden/backgrounded tab. */
+  @keyframes anim-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .anim-rise {
+    animation-name: anim-rise;
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    animation-fill-mode: both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .anim-rise {
+      animation: none;
+    }
+  }
+
   /* Faded dot grid for the hero backdrop */
   .hero-grid {
     background-image: radial-gradient(

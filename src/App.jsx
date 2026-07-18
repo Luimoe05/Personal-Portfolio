@@ -27,6 +27,19 @@ const getInitialTheme = () => {
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 };
 
+// React Router preserves scroll position across navigations; reset to the top
+// on every path change so pages (e.g. blog posts) open at their start.
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    // Instant, not smooth: `html { scroll-behavior: smooth }` would otherwise
+    // animate the reset, so a new page appears to slide up from the old
+    // scroll position instead of simply starting at the top.
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
+  return null;
+}
+
 // Floating, shrink-on-scroll top bar. The section-nav pills and ⌘K hint only
 // make sense on the homepage, so they're hidden on inner pages (e.g. blog posts)
 // while the theme toggle stays available everywhere.
@@ -140,6 +153,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <motion.div
         className="fixed top-0 left-0 right-0 h-0.5 z-[80] origin-left"
         style={{ scaleX, background: "var(--accent)" }}
