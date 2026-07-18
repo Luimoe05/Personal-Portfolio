@@ -5,6 +5,7 @@ import MainPage from "./Components/MainPage";
 import TopNavbar from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import { Moon, Sun } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function App() {
   const [isDark, setIsDark] = useState(false);
@@ -25,14 +26,28 @@ export default function App() {
           <div className="flex-1 flex justify-end">
             <button
               onClick={toggleMode}
+              role="switch"
+              aria-checked={isDark}
               aria-label="Toggle theme"
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 ${
+              className={`relative flex items-center w-14 h-8 rounded-full p-1 cursor-pointer border transition-colors duration-300 ${
                 isDark
-                  ? "bg-zinc-800/60 border border-zinc-700/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
-                  : "bg-zinc-100 border border-zinc-200 text-zinc-500 hover:bg-white hover:text-zinc-900"
+                  ? "bg-zinc-800/60 border-zinc-700/50 justify-end"
+                  : "bg-zinc-100 border-zinc-200 justify-start"
               }`}
             >
-              {isDark ? <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+              <motion.span
+                layout
+                transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                className={`flex items-center justify-center w-6 h-6 rounded-full shadow-sm ${
+                  isDark ? "bg-zinc-900 text-zinc-300" : "bg-white text-zinc-500"
+                }`}
+              >
+                {isDark ? (
+                  <Moon className="w-3.5 h-3.5" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5" />
+                )}
+              </motion.span>
             </button>
           </div>
         </div>
