@@ -1,6 +1,7 @@
 import React from "react";
 import AnimateIn from "./AnimateIn.jsx";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 export default function AboutSF({ isDark }) {
   const navigate = useNavigate();
@@ -10,10 +11,13 @@ export default function AboutSF({ isDark }) {
       <AnimateIn delay={0.1}>
         <div className="flex flex-col p-4 sm:p-5 rounded-lg mt-5 w-full max-w-[90vw] sm:max-w-[600px] md:max-w-[700px] lg:max-w-[800px]">
           <button
-            onClick={() => navigate(-1)}
-            className="self-start mb-4 flex items-center gap-1 text-sm opacity-70 hover:opacity-100 transition-opacity"
+            onClick={() => navigate("/")}
+            className={`group self-start mb-6 inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 -ml-3 rounded-full cursor-pointer transition-colors ${
+              isDark ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
+            }`}
           >
-            ← Back
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            Back to home
           </button>
           <h1 className="text-2xl font-extrabold tracking-tight mb-3">
             Summer 2025 Recap

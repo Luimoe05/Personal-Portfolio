@@ -1,9 +1,15 @@
 import * as React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import MainPage from "./Components/MainPage";
 import TopNavbar from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
+import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
 import NotFound from "./Components/NotFound";
 import { Moon, Sun, Command } from "lucide-react";
@@ -20,6 +26,78 @@ const getInitialTheme = () => {
   if (stored) return stored === "dark";
   return window.matchMedia("(prefers-color-scheme: dark)").matches;
 };
+
+// Floating, shrink-on-scroll top bar. The section-nav pills and ⌘K hint only
+// make sense on the homepage, so they're hidden on inner pages (e.g. blog posts)
+// while the theme toggle stays available everywhere.
+function TopBar({ isDark, toggleMode, scrolled, setPaletteOpen }) {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
+  return (
+    <div
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled ? "py-2" : "py-4"
+      }`}
+    >
+      <motion.div
+        className="flex items-center gap-2 px-4 sm:px-6"
+        animate={{ scale: scrolled ? 0.94 : 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        style={{ transformOrigin: "center" }}
+      >
+        <div className="hidden sm:block flex-1" />
+        {isHome && (
+          <div className="hidden sm:flex sm:flex-none min-w-0 sm:justify-center">
+            <TopNavbar isDark={isDark} />
+          </div>
+        )}
+        <div className="flex items-center gap-2 shrink-0 ml-auto sm:ml-0 sm:flex-1 sm:justify-end">
+          {/* ⌘K quick-view hint */}
+          {isHome && (
+            <button
+              onClick={() => setPaletteOpen(true)}
+              aria-label="Open quick view (Command K)"
+              className={`hidden sm:inline-flex items-center gap-1 text-xs cursor-pointer transition-opacity hover:opacity-100 ${
+                isDark ? "text-zinc-400" : "text-zinc-500"
+              } opacity-70`}
+            >
+              <Command className="w-3 h-3" />K
+              <span className="opacity-70">quick view</span>
+            </button>
+          )}
+
+          {/* Theme toggle */}
+          <button
+            onClick={toggleMode}
+            role="switch"
+            aria-checked={isDark}
+            aria-label="Toggle theme"
+            className={`relative flex items-center w-14 h-8 rounded-full p-1 cursor-pointer border backdrop-blur-md transition-colors duration-300 ${
+              isDark
+                ? "bg-zinc-800/60 border-zinc-700/50 justify-end"
+                : "bg-zinc-100/80 border-zinc-200 justify-start"
+            }`}
+          >
+            <motion.span
+              layout
+              transition={{ type: "spring", stiffness: 500, damping: 32 }}
+              className={`flex items-center justify-center w-6 h-6 rounded-full shadow-sm ${
+                isDark ? "bg-zinc-900 text-zinc-300" : "bg-white text-zinc-500"
+              }`}
+            >
+              {isDark ? (
+                <Moon className="w-3.5 h-3.5" />
+              ) : (
+                <Sun className="w-3.5 h-3.5" />
+              )}
+            </motion.span>
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function App() {
   const [isDark, setIsDark] = useState(getInitialTheme);
@@ -75,70 +153,17 @@ export default function App() {
       />
 
       <div className="min-h-screen">
-        {/* Floating, shrink-on-scroll top bar */}
-        <div
-          className={`sticky top-0 z-40 transition-all duration-300 ${
-            scrolled ? "py-2" : "py-4"
-          }`}
-        >
-          <motion.div
-            className="flex items-center gap-2 px-4 sm:px-6"
-            animate={{ scale: scrolled ? 0.94 : 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            style={{ transformOrigin: "center" }}
-          >
-            <div className="hidden sm:block flex-1" />
-            <div className="hidden sm:flex sm:flex-none min-w-0 sm:justify-center">
-              <TopNavbar isDark={isDark} />
-            </div>
-            <div className="flex items-center gap-2 shrink-0 ml-auto sm:ml-0 sm:flex-1 sm:justify-end">
-              {/* ⌘K quick-view hint */}
-              <button
-                onClick={() => setPaletteOpen(true)}
-                aria-label="Open quick view (Command K)"
-                className={`hidden sm:inline-flex items-center gap-1 text-xs cursor-pointer transition-opacity hover:opacity-100 ${
-                  isDark ? "text-zinc-400" : "text-zinc-500"
-                } opacity-70`}
-              >
-                <Command className="w-3 h-3" />K
-                <span className="opacity-70">quick view</span>
-              </button>
-
-              {/* Theme toggle */}
-              <button
-                onClick={toggleMode}
-                role="switch"
-                aria-checked={isDark}
-                aria-label="Toggle theme"
-                className={`relative flex items-center w-14 h-8 rounded-full p-1 cursor-pointer border backdrop-blur-md transition-colors duration-300 ${
-                  isDark
-                    ? "bg-zinc-800/60 border-zinc-700/50 justify-end"
-                    : "bg-zinc-100/80 border-zinc-200 justify-start"
-                }`}
-              >
-                <motion.span
-                  layout
-                  transition={{ type: "spring", stiffness: 500, damping: 32 }}
-                  className={`flex items-center justify-center w-6 h-6 rounded-full shadow-sm ${
-                    isDark
-                      ? "bg-zinc-900 text-zinc-300"
-                      : "bg-white text-zinc-500"
-                  }`}
-                >
-                  {isDark ? (
-                    <Moon className="w-3.5 h-3.5" />
-                  ) : (
-                    <Sun className="w-3.5 h-3.5" />
-                  )}
-                </motion.span>
-              </button>
-            </div>
-          </motion.div>
-        </div>
+        <TopBar
+          isDark={isDark}
+          toggleMode={toggleMode}
+          scrolled={scrolled}
+          setPaletteOpen={setPaletteOpen}
+        />
 
         <Routes>
           <Route path="/" element={<MainPage isDark={isDark} />} />
           <Route path="/summer" element={<AboutSF isDark={isDark} />} />
+          <Route path="/summer-2026" element={<Summer2026 isDark={isDark} />} />
           <Route path="*" element={<NotFound isDark={isDark} />} />
         </Routes>
       </div>

@@ -30,10 +30,10 @@ import { FaJava } from "react-icons/fa";
 import AnimateIn from "./AnimateIn";
 import LocalClock from "./LocalClock";
 import { useNavigate } from "react-router-dom";
-import codeyTheBearPicture from "../assets/image.webp";
 import CodificaImg from "../assets/Codifica.webp";
 import CreatorsFIUImg from "../assets/creatorsFIU.webp";
 import RepoAI from "../assets/RepoAI.webp";
+import salesforceOfferImg from "../assets/salesforce-offer.webp";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
@@ -149,6 +149,13 @@ const projects = [
 ];
 
 const posts = [
+  {
+    title: "Summer 2026 at Salesforce",
+    blurb:
+      "Placeholder for my Summer 2026 internship writeup — coming soon.",
+    date: "Jul 2026",
+    to: "/summer-2026",
+  },
   {
     title: "Summer 2025 in San Francisco",
     blurb:
@@ -615,24 +622,29 @@ export default function MainPage({ isDark }) {
             <h2 className="text-xs uppercase tracking-widest opacity-40 font-medium">
               Highlight
             </h2>
-            <button
-              onClick={() => navigate("/summer")}
+            <a
+              href="https://www.linkedin.com/posts/luisanm_im-excited-to-share-that-i-will-be-returning-share-7431863069686792192--L4m/"
+              target="_blank"
+              rel="noopener noreferrer"
               className={`group flex items-center gap-4 text-left rounded-xl p-4 transition-all cursor-pointer ${
                 isDark ? "hover:bg-zinc-900" : "hover:bg-zinc-100"
               }`}
             >
               <img
-                src={codeyTheBearPicture}
-                alt="Me with Codey the bear at Salesforce SF"
+                src={salesforceOfferImg}
+                alt="I've accepted my offer at Salesforce — Futureforce"
                 className="w-14 h-14 object-cover rounded-lg flex-shrink-0"
               />
               <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-semibold">Summer 2025</span>
+                <span className="flex items-center gap-1.5 text-sm font-semibold">
+                  Returning to Salesforce
+                  <ArrowUpRight className="w-3.5 h-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
                 <span className={`text-xs ${subtle}`}>
-                  A dive into my time in San Francisco →
+                  Read my internship announcement on LinkedIn
                 </span>
               </div>
-            </button>
+            </a>
           </div>
         </AnimateIn>
       </section>
