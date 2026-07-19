@@ -585,10 +585,19 @@ export default function MainPage({ isDark }) {
               .tech-item {
                 position: relative;
                 overflow: hidden;
-                border-radius: 8px;
-                padding: 8px 10px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                border-radius: 9999px;
+                padding: 7px 14px 7px 12px;
                 cursor: default;
-                transition: transform 0.2s ease;
+                background: color-mix(in oklch, var(--accent) 4%, var(--bg-color));
+                border: 1px solid color-mix(in oklch, var(--accent) 16%, transparent);
+                transition: transform 0.2s ease, border-color 0.2s ease,
+                  background 0.2s ease;
+              }
+              .tech-item .tech-icon {
+                transition: color 0.2s ease, transform 0.2s ease;
               }
               .tech-item::after {
                 content: '';
@@ -600,34 +609,34 @@ export default function MainPage({ isDark }) {
                 background: linear-gradient(
                   120deg,
                   transparent 0%,
-                  ${
-                    isDark ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.25)"
-                  } 50%,
+                  rgba(255, 255, 255, 0.22) 50%,
                   transparent 100%
                 );
                 transform: skewX(-20deg);
                 transition: none;
                 opacity: 0;
+                pointer-events: none;
               }
               .tech-item:hover {
                 transform: translateY(-2px);
+                border-color: color-mix(in oklch, var(--accent) 45%, transparent);
+                background: color-mix(in oklch, var(--accent) 9%, var(--bg-color));
+              }
+              .tech-item:hover .tech-icon {
+                color: var(--accent);
+                transform: scale(1.08);
               }
               .tech-item:hover::after {
                 opacity: 1;
                 left: 125%;
-                transition: left 0.50s ease, opacity 0.1s ease;
+                transition: left 0.5s ease, opacity 0.1s ease;
               }
             `}</style>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {techs.map(({ Icon, label }) => (
-                <div
-                  key={label}
-                  className={`tech-item flex flex-col items-center gap-1 ${
-                    isDark ? "hover:bg-zinc-800/40" : "hover:bg-zinc-100/60"
-                  }`}
-                >
-                  <Icon size={22} className={subtle} />
-                  <span className={`text-xs ${subtle}`}>{label}</span>
+                <div key={label} className="tech-item">
+                  <Icon size={18} className={`tech-icon ${subtle}`} />
+                  <span className={`text-xs font-medium ${subtle}`}>{label}</span>
                 </div>
               ))}
             </div>

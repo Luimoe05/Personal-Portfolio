@@ -260,17 +260,11 @@
     transform: translateY(0);
   }
 
-  /* ── Stat card: faint accent-tinted gradient hairline ─────────────── */
+  /* ── Stat card: full accent-tinted box ────────────────────────────── */
   .stat-card {
     position: relative;
-    background:
-      linear-gradient(var(--bg-color), var(--bg-color)) padding-box,
-      linear-gradient(
-        135deg,
-        color-mix(in oklch, var(--accent) 45%, transparent),
-        transparent 55%
-      ) border-box;
-    border: 1px solid transparent;
+    background: color-mix(in oklch, var(--accent) 5%, var(--bg-color));
+    border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
