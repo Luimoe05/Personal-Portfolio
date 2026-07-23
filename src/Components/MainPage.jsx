@@ -584,12 +584,16 @@ export default function MainPage() {
                 to={post.to}
                 className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-7 first:pt-0"
               >
-                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2">
+                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2 transition-colors duration-300 group-hover:txt-accent">
                   {post.date}
                 </p>
-                <div>
-                  <h3 className="font-display text-xl sm:text-2xl group-hover:txt-accent transition-colors">
+                <div className="transition-transform duration-300 ease-out motion-safe:group-hover:translate-x-1.5">
+                  <h3 className="font-display text-xl sm:text-2xl inline-flex items-center gap-2 transition-colors duration-300 group-hover:txt-accent">
                     {post.title}
+                    <ArrowUpRight
+                      className="w-5 h-5 shrink-0 opacity-0 transition-all duration-300 ease-out group-hover:opacity-100 motion-safe:-translate-x-2 motion-safe:group-hover:translate-x-0"
+                      aria-hidden="true"
+                    />
                   </h3>
                   <p className="txt-muted text-sm mt-2.5 leading-relaxed max-w-md">
                     {post.blurb}
