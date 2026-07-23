@@ -578,7 +578,7 @@ export default function MainPage() {
             <AnimateIn key={post.title} delay={0.03 * i}>
               <Link
                 to={post.to}
-                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-9 sm:py-11 border-b rule-c first:pt-0"
+                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 pt-12 sm:pt-14 pb-9 sm:pb-11 border-b rule-c first:pt-0"
               >
                 <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2">
                   {post.date}
