@@ -190,7 +190,12 @@ function Scramble({ text, className = "", duration = 900, delay = 150 }) {
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [text, duration, delay]);
-  return <span className={className}>{display}</span>;
+  return (
+    <span className={className}>
+      <span aria-hidden="true">{display}</span>
+      <span className="sr-only">{text}</span>
+    </span>
+  );
 }
 
 /* Corner registration marks around a bordered box (the "lab" framing) */
@@ -207,7 +212,7 @@ function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
         <span
           key={m}
           aria-hidden
-          className={`absolute ${m} txt-faint text-[11px] leading-none select-none`}
+          className={`absolute ${m} txt-faint text-[11px] leading-none select-none opacity-60`}
         >
           +
         </span>
@@ -221,9 +226,11 @@ function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
 function SectionHead({ label, index }) {
   return (
     <div className="flex items-center gap-4 mb-10">
-      <span className="eyebrow whitespace-nowrap">{label}</span>
-      <span className="h-px flex-1" style={{ background: "var(--line)" }} />
-      <span className="eyebrow txt-faint opacity-60">{index}</span>
+      <h2 className="eyebrow whitespace-nowrap">{label}</h2>
+      <span className="h-px flex-1" style={{ background: "var(--line)" }} aria-hidden="true" />
+      <span className="eyebrow txt-faint opacity-70" aria-hidden="true">
+        {index}
+      </span>
     </div>
   );
 }
@@ -349,13 +356,14 @@ function ContactForm() {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-3 max-w-lg">
       <div className="flex flex-col sm:flex-row gap-3">
-        <input name="name" required placeholder="Name" className={inputCls} />
-        <input name="email" type="email" required placeholder="Email" className={inputCls} />
+        <input name="name" required aria-label="Your name" placeholder="Name" className={inputCls} />
+        <input name="email" type="email" required aria-label="Your email" placeholder="Email" className={inputCls} />
       </div>
       <textarea
         name="message"
         required
         rows={4}
+        aria-label="Your message"
         placeholder="What's on your mind?"
         className={`${inputCls} resize-none`}
       />
@@ -387,7 +395,7 @@ function ContactForm() {
 
 export default function MainPage() {
   return (
-    <main className="max-w-5xl mx-auto px-5 sm:px-8 pb-24">
+    <main id="content" tabIndex={-1} className="max-w-5xl mx-auto px-5 sm:px-8 pb-24 outline-none">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section id="top" className="pt-10 sm:pt-16 pb-16 sm:pb-24">
         <AnimateIn>
@@ -446,11 +454,7 @@ export default function MainPage() {
         <div className="flex flex-col">
           {experiences.map((exp, i) => (
             <AnimateIn key={i} delay={0.03 * i}>
-              <div
-                className={`grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-8 sm:py-10 first:pt-0 ${
-                  i < experiences.length - 1 ? "border-b rule-c" : ""
-                }`}
-              >
+              <div className="grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-8 first:pt-0">
                 <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
                   {exp.duration}
                 </p>

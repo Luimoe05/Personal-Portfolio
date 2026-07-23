@@ -36,6 +36,7 @@ export default function TopNavbar() {
             document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
           }
           data-on={active === id}
+          aria-current={active === id ? "true" : undefined}
           className="mono-link"
         >
           {label}

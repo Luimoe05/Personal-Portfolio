@@ -28,7 +28,7 @@ const DARK_TOKENS = {
   "--surface-2": "oklch(20% 0.005 250)",
   "--text": "oklch(93% 0.004 250)",
   "--muted": "oklch(66% 0.006 250)",
-  "--faint": "oklch(48% 0.006 250)",
+  "--faint": "oklch(60% 0.008 250)",
   "--line": "oklch(26% 0.005 250)",
   "--line-bright": "oklch(33% 0.005 250)",
   "--accent": "oklch(74% 0.14 165)",
@@ -41,7 +41,7 @@ const LIGHT_TOKENS = {
   "--surface-2": "oklch(91% 0.006 92)",
   "--text": "oklch(20% 0.008 250)",
   "--muted": "oklch(43% 0.008 250)",
-  "--faint": "oklch(57% 0.008 250)",
+  "--faint": "oklch(45% 0.008 250)",
   "--line": "oklch(85% 0.006 92)",
   "--line-bright": "oklch(99% 0.003 95)",
   "--accent": "oklch(42% 0.09 160)",
@@ -117,6 +117,12 @@ export default function App() {
   return (
     <Router>
       <ScrollToTop />
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 focus:rounded-[3px] btn-accent"
+      >
+        Skip to content
+      </a>
       <div className="grain" aria-hidden="true" />
 
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
