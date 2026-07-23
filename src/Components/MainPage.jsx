@@ -154,6 +154,45 @@ const posts = [
   },
 ];
 
+/* Monospace text-scramble reveal — small terminal-flavored hero motion */
+const SCRAMBLE_CHARS = "!<>-_\\/[]{}=+*^?#0123456789";
+function Scramble({ text, className = "", duration = 900, delay = 150 }) {
+  const [display, setDisplay] = useState(text);
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setDisplay(text);
+      return;
+    }
+    let raf;
+    let start = null;
+    const step = (now) => {
+      if (start === null) start = now;
+      const elapsed = now - start - delay;
+      if (elapsed < 0) {
+        raf = requestAnimationFrame(step);
+        return;
+      }
+      const p = Math.min(1, elapsed / duration);
+      const revealed = Math.floor(p * text.length);
+      let out = "";
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === " " || i < revealed) out += ch;
+        else out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+      }
+      setDisplay(out);
+      if (p < 1) raf = requestAnimationFrame(step);
+      else setDisplay(text);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [text, duration, delay]);
+  return <span className={className}>{display}</span>;
+}
+
 /* Corner registration marks around a bordered box (the "lab" framing) */
 function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
   const marks = [
@@ -355,7 +394,7 @@ export default function MainPage() {
           <Framed pad="p-7 sm:p-12">
             <p className="eyebrow flex items-center gap-2.5">
               <span className="dot-live" />
-              Returning to Salesforce / Summer 2026
+              <Scramble text="Returning to Salesforce / Summer 2026" />
             </p>
             <h1 className="text-hero mt-6">
               Luis-Angel
@@ -402,13 +441,13 @@ export default function MainPage() {
       </section>
 
       {/* ── Experience ───────────────────────────────────────────────── */}
-      <section id="experience" className="py-14 sm:py-16">
+      <section id="experience" className="py-16 sm:py-24">
         <SectionHead label="Experience" index="01 / 05" />
         <div className="flex flex-col">
           {experiences.map((exp, i) => (
             <AnimateIn key={i} delay={0.03 * i}>
               <div
-                className={`grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-7 first:pt-0 ${
+                className={`grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-8 sm:py-10 first:pt-0 ${
                   i < experiences.length - 1 ? "border-b rule-c" : ""
                 }`}
               >
@@ -440,9 +479,9 @@ export default function MainPage() {
       </section>
 
       {/* ── Selected Work ────────────────────────────────────────────── */}
-      <section id="work" className="py-14 sm:py-16">
+      <section id="work" className="py-16 sm:py-24">
         <SectionHead label="Selected Work" index="02 / 05" />
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
           {projects.map((proj, i) => (
             <AnimateIn key={i} delay={0.03 * i}>
               <Framed pad="p-5 sm:p-7">
@@ -497,7 +536,7 @@ export default function MainPage() {
       </section>
 
       {/* ── Toolkit ──────────────────────────────────────────────────── */}
-      <section id="toolkit" className="py-14 sm:py-16">
+      <section id="toolkit" className="py-16 sm:py-24">
         <SectionHead label="Toolkit" index="03 / 05" />
         <AnimateIn>
           <div className="flex flex-wrap gap-2">
@@ -532,37 +571,37 @@ export default function MainPage() {
       </section>
 
       {/* ── Writing ──────────────────────────────────────────────────── */}
-      <section id="writing" className="py-14 sm:py-16">
+      <section id="writing" className="py-16 sm:py-24">
         <SectionHead label="Writing" index="04 / 05" />
         <div className="flex flex-col">
           {posts.map((post, i) => (
             <AnimateIn key={post.title} delay={0.03 * i}>
               <Link
                 to={post.to}
-                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-1 py-6 border-b rule-c first:pt-0"
+                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-9 sm:py-11 border-b rule-c first:pt-0"
               >
-                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
+                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2">
                   {post.date}
                 </p>
                 <div>
-                  <h3 className="font-display text-xl group-hover:txt-accent transition-colors">
+                  <h3 className="font-display text-xl sm:text-2xl group-hover:txt-accent transition-colors">
                     {post.title}
                   </h3>
-                  <p className="txt-muted text-sm mt-1.5 leading-relaxed max-w-md">
+                  <p className="txt-muted text-sm mt-2.5 leading-relaxed max-w-md">
                     {post.blurb}
                   </p>
                 </div>
               </Link>
             </AnimateIn>
           ))}
-          <p className="mono text-[11px] txt-faint mt-5 tracking-wide">
+          <p className="mono text-[11px] txt-faint mt-8 tracking-wide">
             MORE ENTRIES SOON
           </p>
         </div>
       </section>
 
       {/* ── Contact ──────────────────────────────────────────────────── */}
-      <section id="contact" className="py-14 sm:py-16">
+      <section id="contact" className="py-16 sm:py-24">
         <SectionHead label="Get in Touch" index="05 / 05" />
         <AnimateIn>
           <p className="txt-muted leading-relaxed max-w-prose mb-6">
