@@ -37,6 +37,14 @@ import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
 
+const NAV = [
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Selected Work" },
+  { id: "toolkit", label: "Toolkit" },
+  { id: "writing", label: "Writing" },
+  { id: "contact", label: "Contact" },
+];
+
 const techs = [
   { Icon: SiReact, label: "React" },
   { Icon: SiTypescript, label: "TypeScript" },
@@ -157,7 +165,60 @@ const posts = [
   },
 ];
 
-/* Animated count-up that fires when scrolled into view */
+/* Vertical section nav with an animated leading rule (desktop identity panel) */
+function SideNav() {
+  const [active, setActive] = useState("experience");
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-30% 0px -60% 0px", threshold: [0, 0.5, 1] }
+    );
+    NAV.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <nav className="flex flex-col gap-3.5">
+      {NAV.map(({ id, label }) => {
+        const on = active === id;
+        return (
+          <button
+            key={id}
+            onClick={() =>
+              document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
+            }
+            className="group flex items-center gap-4 cursor-pointer"
+          >
+            <span
+              className="h-px bg-current transition-all duration-300 ease-out"
+              style={{
+                width: on ? "2.75rem" : "1.25rem",
+                color: on ? "var(--accent)" : "var(--faint)",
+                opacity: on ? 1 : 0.6,
+              }}
+            />
+            <span
+              className={`text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors ${
+                on ? "txt-accent" : "txt-faint group-hover:txt-muted"
+              }`}
+            >
+              {label}
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function CountUp({ value }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
@@ -178,7 +239,6 @@ function CountUp({ value }) {
   );
 }
 
-/* Live GitHub stats */
 function GitHubStats() {
   const [stats, setStats] = useState(null);
   useEffect(() => {
@@ -234,75 +294,19 @@ function GitHubStats() {
     { label: "Stars", value: stats.stars },
   ];
   return (
-    <div className="elevated rounded-xl grid grid-cols-3">
+    <div className="grid grid-cols-3 border-y rule-c">
       {items.map((it, i) => (
         <div
           key={it.label}
-          className={`flex flex-col items-center gap-1 py-5 ${
-            i > 0 ? "border-l rule-c" : ""
-          }`}
+          className={`flex flex-col gap-1 py-5 ${i > 0 ? "border-l rule-c pl-5" : ""}`}
         >
-          <span className="font-display text-2xl sm:text-3xl">
+          <span className="font-display text-3xl">
             <CountUp value={it.value} />
           </span>
           <span className="eyebrow text-[10px]">{it.label}</span>
         </div>
       ))}
     </div>
-  );
-}
-
-function ProjectBlock({ proj }) {
-  return (
-    <article className="elevated rounded-2xl p-6 sm:p-8">
-      <div className="flex items-start justify-between gap-4">
-        <h3 className="font-display text-2xl sm:text-3xl">{proj.name}</h3>
-        <div className="flex items-center gap-4 shrink-0 pt-1.5 text-sm">
-          <a
-            href={proj.github}
-            target="_blank"
-            rel="noreferrer"
-            className="icon-link inline-flex items-center gap-1"
-          >
-            Code <ExternalLink size={13} />
-          </a>
-          {proj.deployed && (
-            <a
-              href={proj.deployed}
-              target="_blank"
-              rel="noreferrer"
-              className="icon-link inline-flex items-center gap-1"
-            >
-              Live <ArrowUpRight size={13} />
-            </a>
-          )}
-        </div>
-      </div>
-      <p className="text-xs txt-faint mt-2 tracking-wide">{proj.stack}</p>
-      <p className="txt-muted leading-relaxed mt-4">{proj.description}</p>
-      <ul className="mt-4 flex flex-col gap-2">
-        {proj.keypoints.map((pt, j) => (
-          <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
-            <span className="txt-accent mt-2 h-px w-3 shrink-0 bg-current" />
-            <span>{pt}</span>
-          </li>
-        ))}
-      </ul>
-      {proj.img && (
-        <a
-          href={proj.deployed ?? proj.github}
-          target="_blank"
-          rel="noreferrer"
-          className="block mt-6 overflow-hidden rounded-xl border rule-c"
-        >
-          <img
-            src={proj.img}
-            alt={`${proj.name} interface`}
-            className="w-full transition-opacity hover:opacity-90"
-          />
-        </a>
-      )}
-    </article>
   );
 }
 
@@ -344,13 +348,7 @@ function ContactForm() {
     <form onSubmit={onSubmit} className="flex flex-col gap-3 max-w-lg">
       <div className="flex flex-col sm:flex-row gap-3">
         <input name="name" required placeholder="Name" className={inputCls} />
-        <input
-          name="email"
-          type="email"
-          required
-          placeholder="Email"
-          className={inputCls}
-        />
+        <input name="email" type="email" required placeholder="Email" className={inputCls} />
       </div>
       <textarea
         name="message"
@@ -385,236 +383,255 @@ function ContactForm() {
   );
 }
 
-function Section({ id, label, children }) {
-  return (
-    <section id={id} className="py-14 sm:py-20 border-t rule-c">
-      <p className="eyebrow mb-8">{label}</p>
-      {children}
-    </section>
-  );
+/* Quiet label that sits above each content section */
+function Label({ children }) {
+  return <p className="eyebrow mb-7">{children}</p>;
 }
 
 export default function MainPage() {
   const [resumeOpen, setResumeOpen] = useState(false);
 
+  const socials = (
+    <div className="flex items-center gap-5">
+      <a href="https://github.com/Luimoe05" target="_blank" rel="noreferrer" aria-label="GitHub" className="icon-link">
+        <Github className="w-5 h-5" />
+      </a>
+      <a href="https://www.linkedin.com/in/luisanm/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="icon-link">
+        <Linkedin className="w-5 h-5" />
+      </a>
+      <a href="mailto:lmoreno00528@gmail.com" aria-label="Email" className="icon-link">
+        <Mail className="w-5 h-5" />
+      </a>
+    </div>
+  );
+
   return (
-    <main className="max-w-3xl mx-auto px-6 pb-24">
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section id="about" className="pt-16 pb-14 sm:pt-24 sm:pb-20">
+    <div className="mx-auto max-w-6xl px-6 lg:px-10 lg:grid lg:grid-cols-[18rem_1fr] lg:gap-16 xl:gap-24">
+      {/* ── Identity panel (sticky on desktop) ───────────────────────── */}
+      <header className="pt-20 pb-10 lg:pt-0 lg:pb-0 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col lg:justify-between lg:py-24">
         <AnimateIn>
-          <p className="eyebrow flex items-center gap-2.5">
-            <span className="dot-live" />
-            Returning to Salesforce · Summer 2026
-          </p>
+          <div>
+            <p className="eyebrow flex items-center gap-2.5">
+              <span className="dot-live" />
+              Salesforce · Summer 2026
+            </p>
+            <h1
+              className="font-display mt-6 leading-[0.95]"
+              style={{ fontSize: "clamp(2.5rem, 4vw + 1rem, 3.25rem)", letterSpacing: "-0.015em" }}
+            >
+              Luis-Angel
+              <br />
+              Moreno
+            </h1>
+            <p className="mt-4 text-lg txt-muted">Software Engineer</p>
+            <p className="mt-4 txt-muted leading-relaxed max-w-[17rem]">
+              I build tools that make hard systems legible, and applications
+              that serve communities.
+            </p>
+
+            <div className="hidden lg:block mt-12">
+              <SideNav />
+            </div>
+          </div>
         </AnimateIn>
-        <AnimateIn delay={0.08}>
-          <h1 className="text-hero mt-6">Luis-Angel Moreno</h1>
-        </AnimateIn>
-        <AnimateIn delay={0.14}>
-          <p className="mt-6 text-xl sm:text-2xl txt-muted leading-relaxed max-w-xl">
-            Computer Science at FIU, platform engineering at Salesforce. I build
-            tools that make hard systems legible, and applications that serve
-            communities.
-          </p>
-        </AnimateIn>
-        <AnimateIn delay={0.2}>
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+
+        <AnimateIn delay={0.15}>
+          <div className="mt-10 lg:mt-0 flex items-center gap-6">
+            {socials}
             <button
               onClick={() => setResumeOpen(true)}
-              className="btn-accent text-sm px-5 py-2.5 rounded-full cursor-pointer"
+              className="text-sm txt-muted hover:txt-accent transition-colors inline-flex items-center gap-1 cursor-pointer"
             >
-              View résumé
+              Résumé <ArrowUpRight className="w-3.5 h-3.5" />
             </button>
-            <a
-              href="https://github.com/Luimoe05"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-ghost inline-flex items-center gap-2 text-sm px-4 py-2.5 rounded-full"
-            >
-              <Github className="w-4 h-4" /> GitHub
-            </a>
-            <a
-              href="https://www.linkedin.com/in/luisanm/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="btn-ghost inline-flex items-center justify-center w-10 h-10 rounded-full"
-            >
-              <Linkedin className="w-4 h-4" />
-            </a>
-            <a
-              href="mailto:lmoreno00528@gmail.com"
-              aria-label="Email"
-              className="btn-ghost inline-flex items-center justify-center w-10 h-10 rounded-full"
-            >
-              <Mail className="w-4 h-4" />
-            </a>
           </div>
         </AnimateIn>
-      </section>
+      </header>
 
-      {/* ── Experience ───────────────────────────────────────────────── */}
-      <Section id="experience" label="Experience">
-        <div className="flex flex-col">
-          {experiences.map((exp, i) => (
-            <AnimateIn key={i} delay={0.04 * i}>
-              <div
-                className={`grid sm:grid-cols-[1fr_auto] gap-x-8 gap-y-1 py-7 first:pt-0 ${
-                  i < experiences.length - 1 ? "border-b rule-c" : ""
-                }`}
-              >
-                <div className="order-2 sm:order-1">
-                  <h3 className="font-display text-xl sm:text-2xl">
-                    {exp.position}
-                  </h3>
-                  <p className="text-sm txt-faint mt-1">{exp.company}</p>
-                  <p className="txt-muted leading-relaxed mt-3 max-w-prose">
-                    {exp.description}
+      {/* ── Content column ───────────────────────────────────────────── */}
+      <main className="pb-24 lg:py-24">
+        {/* Experience */}
+        <section id="experience" className="scroll-mt-24">
+          <Label>Experience</Label>
+          <div className="flex flex-col">
+            {experiences.map((exp, i) => (
+              <AnimateIn key={i} delay={0.03 * i}>
+                <div
+                  className={`grid sm:grid-cols-[1fr_auto] gap-x-8 gap-y-1 py-7 first:pt-0 ${
+                    i < experiences.length - 1 ? "border-b rule-c" : ""
+                  }`}
+                >
+                  <div className="order-2 sm:order-1">
+                    <h3 className="font-display text-xl sm:text-2xl">
+                      {exp.position}
+                    </h3>
+                    <p className="text-sm txt-faint mt-1">{exp.company}</p>
+                    <p className="txt-muted leading-relaxed mt-3">
+                      {exp.description}
+                    </p>
+                    {exp.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-4">
+                        {exp.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="chip text-[11px] px-2 py-0.5 rounded-md"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p className="order-1 sm:order-2 text-xs txt-faint tabular-nums sm:text-right sm:pt-2">
+                    {exp.duration}
                   </p>
-                  {exp.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-4">
-                      {exp.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="chip text-[11px] px-2 py-0.5 rounded-md"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
-                <p className="order-1 sm:order-2 text-xs txt-faint tabular-nums sm:text-right sm:pt-2">
-                  {exp.duration}
-                </p>
-              </div>
-            </AnimateIn>
-          ))}
-        </div>
-      </Section>
-
-      {/* ── Projects ─────────────────────────────────────────────────── */}
-      <Section id="projects" label="Selected Work">
-        <div className="flex flex-col gap-6">
-          {projects.map((proj, i) => (
-            <AnimateIn key={i} delay={0.04 * i}>
-              <ProjectBlock proj={proj} />
-            </AnimateIn>
-          ))}
-        </div>
-      </Section>
-
-      {/* ── Toolkit ──────────────────────────────────────────────────── */}
-      <Section id="toolkit" label="Toolkit">
-        <AnimateIn>
-          <div className="flex flex-wrap gap-2">
-            {techs.map(({ Icon, label }) => (
-              <span
-                key={label}
-                className="chip inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg"
-              >
-                <Icon size={15} className="txt-faint" />
-                {label}
-              </span>
+              </AnimateIn>
             ))}
           </div>
-        </AnimateIn>
-        <AnimateIn delay={0.1}>
-          <div className="mt-8">
-            <GitHubStats />
-          </div>
-        </AnimateIn>
-      </Section>
+        </section>
 
-      {/* ── Education ────────────────────────────────────────────────── */}
-      <Section id="education" label="Education">
-        <AnimateIn>
-          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h3 className="font-display text-xl sm:text-2xl">
-              Florida International University
-            </h3>
-            <span className="text-xs txt-faint tabular-nums">2023 – Present</span>
-          </div>
-          <p className="txt-muted mt-2">B.S. Computer Science · GPA 3.61</p>
-          <p className="text-sm txt-faint mt-3 leading-relaxed">
-            Data Structures & Algorithms · Systems Programming · Artificial
-            Intelligence Algorithms
-          </p>
-        </AnimateIn>
-        <AnimateIn delay={0.1}>
-          <a
-            href="https://www.linkedin.com/posts/luisanm_im-excited-to-share-that-i-will-be-returning-share-7431863069686792192--L4m/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group elevated mt-6 flex items-center gap-4 rounded-xl p-4 transition-transform hover:-translate-y-0.5"
-          >
-            <img
-              src={salesforceOfferImg}
-              alt="Accepted Salesforce Futureforce offer"
-              className="w-12 h-12 object-cover rounded-lg shrink-0"
-            />
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="flex items-center gap-1.5 text-sm font-semibold">
-                Returning to Salesforce
-                <ArrowUpRight className="w-3.5 h-3.5 txt-accent transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </span>
-              <span className="text-xs txt-faint">
-                Internship announcement on LinkedIn
-              </span>
-            </div>
-          </a>
-        </AnimateIn>
-      </Section>
-
-      {/* ── Writing ──────────────────────────────────────────────────── */}
-      <Section id="writing" label="Writing">
-        <div className="flex flex-col">
-          {posts.map((post, i) => (
-            <AnimateIn key={post.title} delay={0.04 * i}>
-              <Link
-                to={post.to}
-                className="group flex items-baseline justify-between gap-4 py-5 border-b rule-c first:pt-0"
-              >
-                <div>
-                  <h3 className="font-display text-xl group-hover:txt-accent transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="txt-muted text-sm mt-1.5 leading-relaxed max-w-md">
-                    {post.blurb}
+        {/* Selected Work */}
+        <section id="projects" className="scroll-mt-24 mt-20 lg:mt-28">
+          <Label>Selected Work</Label>
+          <div className="flex flex-col">
+            {projects.map((proj, i) => (
+              <AnimateIn key={i} delay={0.03 * i}>
+                <article
+                  className={`py-10 first:pt-0 ${
+                    i < projects.length - 1 ? "border-b rule-c" : ""
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="font-display text-2xl sm:text-3xl">
+                      {proj.name}
+                    </h3>
+                    <div className="flex items-center gap-4 shrink-0 pt-1.5 text-sm">
+                      <a href={proj.github} target="_blank" rel="noreferrer" className="icon-link inline-flex items-center gap-1">
+                        Code <ExternalLink size={13} />
+                      </a>
+                      {proj.deployed && (
+                        <a href={proj.deployed} target="_blank" rel="noreferrer" className="icon-link inline-flex items-center gap-1">
+                          Live <ArrowUpRight size={13} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs txt-faint mt-2 tracking-wide">{proj.stack}</p>
+                  <a
+                    href={proj.deployed ?? proj.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block mt-5 overflow-hidden rounded-xl border rule-c"
+                  >
+                    <img
+                      src={proj.img}
+                      alt={`${proj.name} interface`}
+                      className="w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
+                    />
+                  </a>
+                  <p className="txt-muted leading-relaxed mt-5 max-w-prose">
+                    {proj.description}
                   </p>
-                </div>
-                <span className="text-xs txt-faint tabular-nums whitespace-nowrap shrink-0">
-                  {post.date}
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {proj.keypoints.map((pt, j) => (
+                      <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
+                        <span className="txt-accent mt-2.5 h-px w-3 shrink-0 bg-current" />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </AnimateIn>
+            ))}
+          </div>
+        </section>
+
+        {/* Toolkit */}
+        <section id="toolkit" className="scroll-mt-24 mt-20 lg:mt-28">
+          <Label>Toolkit</Label>
+          <AnimateIn>
+            <div className="flex flex-wrap gap-2">
+              {techs.map(({ Icon, label }) => (
+                <span key={label} className="chip inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg">
+                  <Icon size={15} className="txt-faint" />
+                  {label}
                 </span>
-              </Link>
-            </AnimateIn>
-          ))}
-          <p className="text-sm txt-faint mt-5">More writing to come.</p>
-        </div>
-      </Section>
+              ))}
+            </div>
+          </AnimateIn>
+          <AnimateIn delay={0.1}>
+            <div className="mt-9">
+              <GitHubStats />
+            </div>
+          </AnimateIn>
+          <AnimateIn delay={0.15}>
+            <div className="mt-10">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 className="font-display text-xl">Florida International University</h3>
+                <span className="text-xs txt-faint tabular-nums">2023 – Present</span>
+              </div>
+              <p className="txt-muted mt-2">B.S. Computer Science · GPA 3.61</p>
+              <p className="text-sm txt-faint mt-2 leading-relaxed">
+                Data Structures & Algorithms · Systems Programming · Artificial
+                Intelligence Algorithms
+              </p>
+            </div>
+          </AnimateIn>
+        </section>
 
-      {/* ── Contact ──────────────────────────────────────────────────── */}
-      <Section id="contact" label="Get in Touch">
-        <AnimateIn>
-          <p className="txt-muted leading-relaxed max-w-prose mb-6">
-            Have a question, an opportunity, or just want to say hello? Send a
-            note, or email me at{" "}
-            <a href="mailto:lmoreno00528@gmail.com" className="link">
-              lmoreno00528@gmail.com
-            </a>
-            .
+        {/* Writing */}
+        <section id="writing" className="scroll-mt-24 mt-20 lg:mt-28">
+          <Label>Writing</Label>
+          <div className="flex flex-col">
+            {posts.map((post, i) => (
+              <AnimateIn key={post.title} delay={0.03 * i}>
+                <Link
+                  to={post.to}
+                  className="group flex items-baseline justify-between gap-4 py-5 border-b rule-c first:pt-0"
+                >
+                  <div>
+                    <h3 className="font-display text-xl group-hover:txt-accent transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="txt-muted text-sm mt-1.5 leading-relaxed max-w-md">
+                      {post.blurb}
+                    </p>
+                  </div>
+                  <span className="text-xs txt-faint tabular-nums whitespace-nowrap shrink-0">
+                    {post.date}
+                  </span>
+                </Link>
+              </AnimateIn>
+            ))}
+            <p className="text-sm txt-faint mt-5">More writing to come.</p>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section id="contact" className="scroll-mt-24 mt-20 lg:mt-28">
+          <Label>Get in Touch</Label>
+          <AnimateIn>
+            <p className="txt-muted leading-relaxed max-w-prose mb-6">
+              Have a question, an opportunity, or just want to say hello? Send a
+              note, or email me at{" "}
+              <a href="mailto:lmoreno00528@gmail.com" className="link">
+                lmoreno00528@gmail.com
+              </a>
+              .
+            </p>
+            <ContactForm />
+          </AnimateIn>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t rule-c pt-8 mt-20 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <LocalClock subtle="txt-faint" />
+          <p className="text-xs txt-faint">
+            © {new Date().getFullYear()} Luis-Angel Moreno
           </p>
-          <ContactForm />
-        </AnimateIn>
-      </Section>
-
-      {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="border-t rule-c pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <LocalClock subtle="txt-faint" />
-        <p className="text-xs txt-faint">
-          © {new Date().getFullYear()} Luis-Angel Moreno
-        </p>
-      </footer>
+        </footer>
+      </main>
 
       {/* ── Résumé modal ─────────────────────────────────────────────── */}
       <AnimatePresence>
@@ -644,11 +661,7 @@ export default function MainPage() {
                   >
                     Download
                   </a>
-                  <button
-                    onClick={() => setResumeOpen(false)}
-                    aria-label="Close"
-                    className="icon-link cursor-pointer"
-                  >
+                  <button onClick={() => setResumeOpen(false)} aria-label="Close" className="icon-link cursor-pointer">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -662,6 +675,6 @@ export default function MainPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </main>
+    </div>
   );
 }

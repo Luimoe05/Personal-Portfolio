@@ -2,22 +2,22 @@
 @import "tailwindcss";
 
 /* ── Design tokens ──────────────────────────────────────────────────────
-   Premium dark: warm near-black charcoal, warm off-white ink, near-monochrome
-   with a single restrained emerald. Depth comes from elevation + hairline
-   top-edge highlights + fine grain, never from glow. */
+   Near-monochrome with a single restrained emerald. Depth comes from elevation
+   + hairline top-edge highlights + fine grain, never glow. Light (warm ivory)
+   values live here; the dark charcoal set is swapped in from App.jsx. */
 :root {
-  --bg: oklch(16% 0.004 70);
-  --surface: oklch(19.5% 0.005 70);
-  --surface-2: oklch(23% 0.006 70);
-  --text: oklch(93% 0.006 85);
-  --muted: oklch(68% 0.008 80);
-  --faint: oklch(50% 0.008 75);
-  --line: oklch(28% 0.006 75);
-  --line-bright: oklch(38% 0.006 75);
-  --accent: oklch(74% 0.12 168);
-  --accent-dim: oklch(60% 0.09 168);
-  --accent-ink: oklch(17% 0.03 168);
-  --accent-line: oklch(74% 0.12 168 / 0.3);
+  --bg: oklch(96.5% 0.008 85);
+  --surface: oklch(99.3% 0.005 85);
+  --surface-2: oklch(93.5% 0.008 82);
+  --text: oklch(23% 0.012 60);
+  --muted: oklch(44% 0.012 60);
+  --faint: oklch(58% 0.012 60);
+  --line: oklch(86% 0.01 75);
+  --line-bright: oklch(99.5% 0.004 85);
+  --accent: oklch(50% 0.13 165);
+  --accent-dim: oklch(58% 0.1 165);
+  --accent-ink: oklch(98% 0.02 165);
+  --accent-line: oklch(50% 0.13 165 / 0.32);
 
   /* legacy aliases for shared post/sub-page styles */
   --bg-color: var(--bg);
