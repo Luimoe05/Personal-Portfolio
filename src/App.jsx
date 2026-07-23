@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   useLocation,
+  Link,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MainPage from "./Components/MainPage";
@@ -12,173 +13,82 @@ import AboutSF from "./Components/AboutSF";
 import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
 import NotFound from "./Components/NotFound";
-import { Moon, Sun, Command } from "lucide-react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useMotionValueEvent,
-} from "framer-motion";
-
-const getInitialTheme = () => {
-  if (typeof window === "undefined") return false;
-  const stored = localStorage.getItem("theme");
-  if (stored) return stored === "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-};
+import { Command } from "lucide-react";
 
 // React Router preserves scroll position across navigations; reset to the top
 // on every path change so pages (e.g. blog posts) open at their start.
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
-    // Instant, not smooth: `html { scroll-behavior: smooth }` would otherwise
-    // animate the reset, so a new page appears to slide up from the old
-    // scroll position instead of simply starting at the top.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [pathname]);
   return null;
 }
 
-// Floating, shrink-on-scroll top bar. The section-nav pills and ⌘K hint only
-// make sense on the homepage, so they're hidden on inner pages (e.g. blog posts)
-// while the theme toggle stays available everywhere.
-function TopBar({ isDark, toggleMode, scrolled, setPaletteOpen }) {
+// Slim, refined top bar. Wordmark left (way home), section nav + ⌘K on the
+// homepage only.
+function TopBar({ setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
 
   return (
     <div
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        scrolled ? "py-2" : "py-4"
-      }`}
+      className="sticky top-0 z-40 border-b rule-c backdrop-blur-md"
+      style={{ background: "color-mix(in oklch, var(--bg) 82%, transparent)" }}
     >
-      <motion.div
-        className="flex items-center gap-2 px-4 sm:px-6"
-        animate={{ scale: scrolled ? 0.94 : 1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        style={{ transformOrigin: "center" }}
-      >
-        <div className="hidden sm:block flex-1" />
+      <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
+        <Link
+          to="/"
+          className="font-display text-[15px] tracking-tight hover:txt-accent transition-colors"
+        >
+          Luis-Angel Moreno
+        </Link>
+
         {isHome && (
-          <div className="hidden sm:flex sm:flex-none min-w-0 sm:justify-center">
-            <TopNavbar isDark={isDark} />
-          </div>
-        )}
-        <div className="flex items-center gap-2 shrink-0 ml-auto sm:ml-0 sm:flex-1 sm:justify-end">
-          {/* ⌘K quick-view hint */}
-          {isHome && (
+          <div className="hidden sm:flex items-center gap-4">
+            <TopNavbar />
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="Open quick view (Command K)"
-              className={`hidden sm:inline-flex items-center gap-1 text-xs cursor-pointer transition-opacity hover:opacity-100 ${
-                isDark ? "text-zinc-400" : "text-zinc-500"
-              } opacity-70`}
+              className="inline-flex items-center gap-1 text-[11px] txt-faint hover:txt-accent transition-colors cursor-pointer"
             >
               <Command className="w-3 h-3" />K
-              <span className="opacity-70">quick view</span>
             </button>
-          )}
-
-          {/* Theme toggle */}
-          <button
-            onClick={toggleMode}
-            role="switch"
-            aria-checked={isDark}
-            aria-label="Toggle theme"
-            className={`relative flex items-center w-14 h-8 rounded-full p-1 cursor-pointer border backdrop-blur-md transition-colors duration-300 ${
-              isDark
-                ? "bg-zinc-800/60 border-zinc-700/50 justify-end"
-                : "bg-zinc-100/80 border-zinc-200 justify-start"
-            }`}
-          >
-            <motion.span
-              layout
-              transition={{ type: "spring", stiffness: 500, damping: 32 }}
-              className={`flex items-center justify-center w-6 h-6 rounded-full shadow-sm ${
-                isDark ? "bg-zinc-900 text-zinc-300" : "bg-white text-zinc-500"
-              }`}
-            >
-              {isDark ? (
-                <Moon className="w-3.5 h-3.5" />
-              ) : (
-                <Sun className="w-3.5 h-3.5" />
-              )}
-            </motion.span>
-          </button>
-        </div>
-      </motion.div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 export default function App() {
-  const [isDark, setIsDark] = useState(getInitialTheme);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
-  // Apply + persist theme whenever it changes
+  // Dark-only: set the mobile browser chrome to match the charcoal once.
   useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty(
-      "--bg-color",
-      isDark ? "oklch(10% 0.01 80)" : "oklch(98.5% 0.008 80)"
-    );
-    root.style.setProperty(
-      "--text-color",
-      isDark ? "oklch(97% 0.006 80)" : "oklch(14% 0.012 80)"
-    );
-    // Name-glint sheen: darker-than-white in dark mode, silver shine in light mode
-    root.style.setProperty("--glint", isDark ? "#9297a3" : "#c2c5cd");
-    // Keep the mobile browser chrome (status/address bar) in sync with the page
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) {
-      themeMeta.setAttribute("content", isDark ? "#0c0b09" : "#fbfaf7");
-    }
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark]);
-
-  const toggleMode = () => setIsDark((d) => !d);
-
-  // Scroll progress bar + shrink-on-scroll navbar
-  const { scrollYProgress, scrollY } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.3,
-  });
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 24);
-  });
+    if (themeMeta) themeMeta.setAttribute("content", "#1a1917");
+    localStorage.setItem("theme", "dark");
+  }, []);
 
   return (
     <Router>
       <ScrollToTop />
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-0.5 z-[80] origin-left"
-        style={{ scaleX, background: "var(--accent)" }}
-      />
+      <div className="grain" aria-hidden="true" />
 
       <CommandPalette
-        isDark={isDark}
-        toggleMode={toggleMode}
         open={paletteOpen}
         setOpen={setPaletteOpen}
       />
 
       <div className="min-h-screen">
-        <TopBar
-          isDark={isDark}
-          toggleMode={toggleMode}
-          scrolled={scrolled}
-          setPaletteOpen={setPaletteOpen}
-        />
+        <TopBar setPaletteOpen={setPaletteOpen} />
 
         <Routes>
-          <Route path="/" element={<MainPage isDark={isDark} />} />
-          <Route path="/summer" element={<AboutSF isDark={isDark} />} />
-          <Route path="/summer-2026" element={<Summer2026 isDark={isDark} />} />
-          <Route path="*" element={<NotFound isDark={isDark} />} />
+          <Route path="/" element={<MainPage />} />
+          <Route path="/summer" element={<AboutSF isDark />} />
+          <Route path="/summer-2026" element={<Summer2026 isDark />} />
+          <Route path="*" element={<NotFound isDark />} />
         </Routes>
       </div>
     </Router>

@@ -1,27 +1,43 @@
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Epilogue:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spectral:ital,wght@0,400;0,500;0,600;1,500&display=swap");
 @import "tailwindcss";
 
+/* ── Design tokens ──────────────────────────────────────────────────────
+   Premium dark: warm near-black charcoal, warm off-white ink, near-monochrome
+   with a single restrained emerald. Depth comes from elevation + hairline
+   top-edge highlights + fine grain, never from glow. */
 :root {
-  --bg-color: oklch(98.5% 0.008 80);
-  --text-color: oklch(14% 0.012 80);
-  --accent: oklch(58% 0.16 270);
+  --bg: oklch(16% 0.004 70);
+  --surface: oklch(19.5% 0.005 70);
+  --surface-2: oklch(23% 0.006 70);
+  --text: oklch(93% 0.006 85);
+  --muted: oklch(68% 0.008 80);
+  --faint: oklch(50% 0.008 75);
+  --line: oklch(28% 0.006 75);
+  --line-bright: oklch(38% 0.006 75);
+  --accent: oklch(74% 0.12 168);
+  --accent-dim: oklch(60% 0.09 168);
+  --accent-ink: oklch(17% 0.03 168);
+  --accent-line: oklch(74% 0.12 168 / 0.3);
+
+  /* legacy aliases for shared post/sub-page styles */
+  --bg-color: var(--bg);
+  --text-color: var(--text);
 }
 
 @layer base {
-  body {
-    font-family: "Epilogue", sans-serif;
-    font-optical-sizing: auto;
-    font-kerning: normal;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
   html {
     scroll-behavior: smooth;
   }
-  /* Offset anchored scrolls so headings clear the sticky top bar */
+  body {
+    font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   section[id] {
-    scroll-margin-top: 5rem;
+    scroll-margin-top: 5.5rem;
   }
   h1, h2, h3 {
     text-wrap: balance;
@@ -29,297 +45,180 @@
   p {
     text-wrap: pretty;
   }
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 26%, transparent);
+    color: var(--text);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
 }
 
 @layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  /* Display heading treatment — heavy weight, tight tracking */
+
+  /* ── Token color helpers ────────────────────────────────────────────── */
+  .txt-muted { color: var(--muted); }
+  .txt-faint { color: var(--faint); }
+  .txt-accent { color: var(--accent); }
+  .rule-c { border-color: var(--line); }
+
+  /* ── Type ───────────────────────────────────────────────────────────── */
   .font-display {
-    font-family: "Epilogue", sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    font-family: "Spectral", Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.005em;
     line-height: 1.05;
   }
-  /* Fluid hero heading */
   .text-hero {
-    font-size: clamp(2.75rem, 5vw + 1.5rem, 5rem);
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    line-height: 1.05;
+    font-family: "Spectral", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(3rem, 7vw + 1rem, 5.25rem);
+    letter-spacing: -0.015em;
+    line-height: 0.98;
   }
-  /* Fluid project / section title */
-  .text-project-title {
-    font-size: clamp(1.75rem, 3vw + 0.75rem, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
+  /* Uppercase tracked label — sans, not mono (mono reads as AI-dev costume) */
+  .eyebrow {
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* ── Elevated surface: raised charcoal + top-edge highlight (no glow) ── */
+  .elevated {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow:
+      inset 0 1px 0 0 var(--line-bright),
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* ── Links ──────────────────────────────────────────────────────────── */
+  .link {
+    color: var(--text);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.2s ease;
+  }
+  .link:hover {
+    color: var(--accent);
+    background-size: 100% 1px;
   }
   .icon-link {
-    opacity: 0.55;
-    transition: opacity 0.2s ease, color 0.2s ease;
+    color: var(--muted);
+    transition: color 0.2s ease;
   }
-  .icon-link:hover {
-    opacity: 1;
-    color: var(--accent);
-  }
-  /* Subtle diagonal glint that sweeps across a project card on hover */
-  .project-card {
-    position: relative;
-    overflow: hidden;
-  }
-  .project-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      120deg,
-      transparent 35%,
-      rgba(255, 255, 255, 0.13) 50%,
-      transparent 65%
-    );
-    transform: translateX(-120%);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .project-card:hover::after {
-    opacity: 1;
-    transform: translateX(120%);
-    transition: transform 0.85s ease, opacity 0.25s ease;
-  }
+  .icon-link:hover { color: var(--accent); }
 
-  /* Soft silver sheen sweeping gently across the hero name */
-  .name-shimmer {
-    background: linear-gradient(
-      100deg,
-      var(--text-color) 0%,
-      var(--text-color) 36%,
-      color-mix(in oklch, var(--glint, #a7abb5) 55%, var(--text-color)) 50%,
-      var(--text-color) 64%,
-      var(--text-color) 100%
-    );
-    background-size: 260% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    animation: name-sheen 9s ease-in-out infinite;
-  }
-  @keyframes name-sheen {
-    0% {
-      background-position: 165% 0;
-    }
-    100% {
-      background-position: -65% 0;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .name-shimmer {
-      animation: none;
-      background: none;
-      -webkit-text-fill-color: var(--text-color);
-      color: var(--text-color);
-    }
-    .project-card:hover::after {
-      transition: none;
-    }
-  }
-  /* ── Blog post ("dispatch") treatment ─────────────────────────────── */
-  /* Monospace dateline — the signature nod to the terminal/agent world */
-  .post-meta {
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  /* Long-form body: roomier size + leading than the UI copy elsewhere */
-  .post-body p {
-    font-size: 1.0625rem;
-    line-height: 1.85;
-    color: color-mix(in oklch, var(--text-color) 86%, var(--bg-color));
-  }
-  /* Lead paragraph gets a touch more presence */
-  .post-body > p:first-of-type {
-    font-size: 1.15rem;
-    line-height: 1.75;
-    color: var(--text-color);
-  }
-  .post-body h2 {
-    font-family: "Epilogue", sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.015em;
-    font-size: 1.3rem;
-    margin-top: 0.75rem;
-  }
-  /* Entrance that ALWAYS ends visible (fill-mode both) — unlike an
-     inView opacity gate, it can never leave the post permanently hidden */
-  @keyframes post-rise {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-  .post-rise {
-    animation: post-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .post-rise {
-      animation: none;
-    }
-  }
-
-  /* Shared monospace utility labels (eyebrows, stat captions, clock) — gives
-     the whole page the same "utility" voice as the blog dateline. Size stays
-     with the caller's text-* class so this composes anywhere. */
-  .eyebrow {
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  .mono-ui {
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  }
-
-  /* ── Handwritten signature accent ──────────────────────────────────── */
-  /* A single script face, used sparingly (hero greeting + footer sign-off)
-     so the human voice reads as a deliberate accent, never as decoration. */
-  .font-script {
-    font-family: "Caveat", "Segoe Script", cursive;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
-
-  /* ── Live status dot (pulsing ring) ────────────────────────────────── */
-  .live-dot {
-    position: relative;
-    display: inline-flex;
-    height: 0.5rem;
-    width: 0.5rem;
-    flex: none;
-  }
-  .live-dot::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: currentColor;
-    animation: live-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-  .live-dot::after {
-    content: "";
-    position: relative;
-    height: 100%;
-    width: 100%;
-    border-radius: 9999px;
-    background: currentColor;
-  }
-  @keyframes live-ping {
-    0% { transform: scale(1); opacity: 0.55; }
-    75%, 100% { transform: scale(2.4); opacity: 0; }
-  }
-
-  /* ── Blinking terminal caret (trails the rotating role) ────────────── */
-  .type-caret {
-    display: inline-block;
-    width: 0.55ch;
-    margin-left: 0.15ch;
-    background: var(--accent);
-    animation: caret-blink 1.05s steps(1) infinite;
-    transform: translateY(0.08em);
-  }
-  @keyframes caret-blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
-  }
-
-  /* ── Primary CTA: accent-filled, gentle lift ──────────────────────── */
+  /* ── Buttons ────────────────────────────────────────────────────────── */
   .btn-accent {
     background: var(--accent);
-    color: #fff;
+    color: var(--accent-ink);
+    font-weight: 600;
     border: 1px solid transparent;
-    box-shadow: 0 1px 2px color-mix(in oklch, var(--accent) 40%, transparent);
-    transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    transition: filter 0.2s ease, transform 0.18s ease;
   }
-  .btn-accent:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.06);
-    box-shadow: 0 6px 20px color-mix(in oklch, var(--accent) 32%, transparent);
+  .btn-accent:hover { filter: brightness(1.07); transform: translateY(-1px); }
+  .btn-accent:active { transform: translateY(0); }
+
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: var(--text);
+    background: transparent;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
   }
-  .btn-accent:active {
-    transform: translateY(0);
+  .btn-ghost:hover {
+    border-color: var(--accent-line);
+    color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 7%, transparent);
   }
 
-  /* ── Stat card: full accent-tinted box ────────────────────────────── */
-  .stat-card {
+  /* ── Hairline chip ──────────────────────────────────────────────────── */
+  .chip {
+    border: 1px solid var(--line);
+    color: var(--muted);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* ── Available indicator (steady, subtle) ───────────────────────────── */
+  .dot-live {
     position: relative;
-    background: color-mix(in oklch, var(--accent) 5%, var(--bg-color));
-    border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
+    display: inline-flex;
+    height: 0.45rem;
+    width: 0.45rem;
+    border-radius: 9999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .live-dot::before,
-    .type-caret {
-      animation: none;
-    }
-    .btn-accent:hover {
-      transform: none;
-    }
+  /* ── Fine film grain over the whole surface ─────────────────────────── */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* Robust mount entrance: a CSS animation advances on the document timeline
-     and always resolves to its end state, so (unlike a throttled rAF/JS reveal)
-     it can never leave content stuck invisible in a hidden/backgrounded tab. */
+  /* ── Blog post ("dispatch") long-form styles (shared with sub-pages) ── */
+  .post-meta {
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .post-body p {
+    font-size: 1.075rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+  .post-body > p:first-of-type {
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+  .post-body h2 {
+    font-family: "Spectral", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    color: var(--text);
+  }
+  @keyframes post-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+  .post-rise { animation: post-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  /* ── Refined mount entrance ─────────────────────────────────────────── */
   @keyframes anim-rise {
-    from {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
   }
   .anim-rise {
     animation-name: anim-rise;
-    animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    animation-duration: 0.7s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     animation-fill-mode: both;
   }
+
   @media (prefers-reduced-motion: reduce) {
-    .anim-rise {
-      animation: none;
-    }
+    .anim-rise, .post-rise { animation: none; }
+    .btn-accent:hover { transform: none; }
   }
-
-  /* Faded dot grid for the hero backdrop */
-  .hero-grid {
-    background-image: radial-gradient(
-      circle,
-      color-mix(in oklch, var(--text-color) 22%, transparent) 1px,
-      transparent 1px
-    );
-    background-size: 22px 22px;
-    -webkit-mask-image: radial-gradient(
-      ellipse 55% 55% at 50% 42%,
-      #000 0%,
-      transparent 72%
-    );
-    mask-image: radial-gradient(
-      ellipse 55% 55% at 50% 42%,
-      #000 0%,
-      transparent 72%
-    );
-  }
-
 }

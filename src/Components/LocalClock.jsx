@@ -21,7 +21,7 @@ export default function LocalClock({ subtle }) {
   }, []);
 
   return (
-    <p className={`mono-ui text-xs tracking-wide ${subtle}`}>
+    <p className={`text-xs tracking-wide ${subtle}`}>
       Miami, FL
       <span className="mx-1.5 opacity-50">·</span>
       <span className="tabular-nums">{time}</span>
