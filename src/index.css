@@ -1,105 +1,80 @@
-@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Spectral:ital,wght@0,400;0,500;0,600;1,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..600&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 /* ── Design tokens ──────────────────────────────────────────────────────
-   Near-monochrome with a single restrained emerald. Depth comes from elevation
-   + hairline top-edge highlights + fine grain, never glow. Light (warm ivory)
-   values live here; the dark charcoal set is swapped in from App.jsx. */
+   AI-lab / technical: near-black default (Conifer / Experiential), a warm
+   greige light theme (Edviro) on the toggle, monospace chrome, one committed
+   green accent. Light values live here; the dark set is swapped in by App.jsx. */
 :root {
-  --bg: oklch(96.5% 0.008 85);
-  --surface: oklch(99.3% 0.005 85);
-  --surface-2: oklch(93.5% 0.008 82);
-  --text: oklch(23% 0.012 60);
-  --muted: oklch(44% 0.012 60);
-  --faint: oklch(58% 0.012 60);
-  --line: oklch(86% 0.01 75);
-  --line-bright: oklch(99.5% 0.004 85);
-  --accent: oklch(50% 0.13 165);
-  --accent-dim: oklch(58% 0.1 165);
-  --accent-ink: oklch(98% 0.02 165);
-  --accent-line: oklch(50% 0.13 165 / 0.32);
+  --bg: oklch(94.5% 0.006 95);
+  --surface: oklch(98.5% 0.004 95);
+  --surface-2: oklch(91% 0.006 92);
+  --text: oklch(20% 0.008 250);
+  --muted: oklch(43% 0.008 250);
+  --faint: oklch(57% 0.008 250);
+  --line: oklch(85% 0.006 92);
+  --line-bright: oklch(99% 0.003 95);
+  --accent: oklch(42% 0.09 160);
+  --accent-ink: oklch(97% 0.02 160);
+  --accent-line: oklch(42% 0.09 160 / 0.32);
 
-  /* legacy aliases for shared post/sub-page styles */
   --bg-color: var(--bg);
   --text-color: var(--text);
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
   body {
-    font-family: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
     background-color: var(--bg);
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
   }
-  section[id] {
-    scroll-margin-top: 5.5rem;
-  }
-  h1, h2, h3 {
-    text-wrap: balance;
-  }
-  p {
-    text-wrap: pretty;
-  }
-  ::selection {
-    background: color-mix(in oklch, var(--accent) 26%, transparent);
-    color: var(--text);
-  }
+  section[id] { scroll-margin-top: 6rem; }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  ::selection { background: color-mix(in oklch, var(--accent) 26%, transparent); }
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 1.5px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 2px;
   }
 }
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
   /* ── Token color helpers ────────────────────────────────────────────── */
   .txt-muted { color: var(--muted); }
   .txt-faint { color: var(--faint); }
   .txt-accent { color: var(--accent); }
   .rule-c { border-color: var(--line); }
+  .surface { background: var(--surface); }
+  .surface-2 { background: var(--surface-2); }
 
   /* ── Type ───────────────────────────────────────────────────────────── */
   .font-display {
-    font-family: "Spectral", Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    line-height: 1.05;
+    font-family: "Schibsted Grotesk", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
   }
   .text-hero {
-    font-family: "Spectral", Georgia, serif;
-    font-weight: 500;
-    font-size: clamp(3rem, 7vw + 1rem, 5.25rem);
-    letter-spacing: -0.015em;
-    line-height: 0.98;
+    font-family: "Schibsted Grotesk", sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.75rem, 7vw + 0.5rem, 5.5rem);
+    letter-spacing: -0.035em;
+    line-height: 0.96;
   }
-  /* Uppercase tracked label — sans, not mono (mono reads as AI-dev costume) */
+  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; }
   .eyebrow {
-    font-weight: 600;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: 500;
     font-size: 0.72rem;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--faint);
-  }
-
-  /* ── Elevated surface: raised charcoal + top-edge highlight (no glow) ── */
-  .elevated {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-shadow:
-      inset 0 1px 0 0 var(--line-bright),
-      0 1px 2px rgba(0, 0, 0, 0.4),
-      0 8px 24px -12px rgba(0, 0, 0, 0.6);
   }
 
   /* ── Links ──────────────────────────────────────────────────────────── */
@@ -110,115 +85,103 @@
     background-size: 0% 1px;
     background-repeat: no-repeat;
     background-position: 0 100%;
-    transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-      color 0.2s ease;
+    transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
   }
-  .link:hover {
-    color: var(--accent);
-    background-size: 100% 1px;
-  }
-  .icon-link {
-    color: var(--muted);
-    transition: color 0.2s ease;
-  }
+  .link:hover { color: var(--accent); background-size: 100% 1px; }
+  .icon-link { color: var(--muted); transition: color 0.2s ease; }
   .icon-link:hover { color: var(--accent); }
 
-  /* ── Buttons ────────────────────────────────────────────────────────── */
+  /* ── Mono nav / labels ──────────────────────────────────────────────── */
+  .mono-link {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    transition: color 0.2s ease;
+    cursor: pointer;
+  }
+  .mono-link:hover { color: var(--text); }
+  .mono-link[data-on="true"] { color: var(--accent); }
+
+  /* ── Bracketed / technical button ───────────────────────────────────── */
   .btn-accent {
     background: var(--accent);
     color: var(--accent-ink);
-    font-weight: 600;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     border: 1px solid transparent;
-    transition: filter 0.2s ease, transform 0.18s ease;
+    transition: filter 0.2s ease;
   }
-  .btn-accent:hover { filter: brightness(1.07); transform: translateY(-1px); }
-  .btn-accent:active { transform: translateY(0); }
-
+  .btn-accent:hover { filter: brightness(1.08); }
   .btn-ghost {
     border: 1px solid var(--line);
     color: var(--text);
-    background: transparent;
-    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .btn-ghost:hover {
-    border-color: var(--accent-line);
-    color: var(--accent);
-    background: color-mix(in oklch, var(--accent) 7%, transparent);
-  }
+  .btn-ghost:hover { border-color: var(--accent-line); color: var(--accent); }
 
-  /* ── Hairline chip ──────────────────────────────────────────────────── */
+  /* ── Hairline chip (mono) ───────────────────────────────────────────── */
   .chip {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
     border: 1px solid var(--line);
     color: var(--muted);
     transition: border-color 0.2s ease, color 0.2s ease;
   }
 
-  /* ── Available indicator (steady, subtle) ───────────────────────────── */
+  /* ── Live dot ───────────────────────────────────────────────────────── */
   .dot-live {
     position: relative;
     display: inline-flex;
-    height: 0.45rem;
-    width: 0.45rem;
+    height: 0.4rem; width: 0.4rem;
     border-radius: 9999px;
     background: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
   }
+  .dot-live::after {
+    content: ""; position: absolute; inset: 0;
+    border-radius: 9999px; background: var(--accent);
+    animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes ping { 0% { transform: scale(1); opacity: 0.6; } 75%,100% { transform: scale(2.6); opacity: 0; } }
 
-  /* ── Fine film grain over the whole surface ─────────────────────────── */
+  /* ── Film grain ─────────────────────────────────────────────────────── */
   .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    pointer-events: none;
-    opacity: 0.04;
-    mix-blend-mode: overlay;
+    position: fixed; inset: 0; z-index: 100;
+    pointer-events: none; opacity: 0.035; mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* ── Blog post ("dispatch") long-form styles (shared with sub-pages) ── */
+  /* ── Long-form (shared sub-pages) ───────────────────────────────────── */
   .post-meta {
-    font-weight: 600;
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--faint);
   }
-  .post-body p {
-    font-size: 1.075rem;
-    line-height: 1.8;
-    color: var(--muted);
-  }
-  .post-body > p:first-of-type {
-    font-size: 1.2rem;
-    color: var(--text);
-  }
+  .post-body p { font-size: 1.075rem; line-height: 1.8; color: var(--muted); }
+  .post-body > p:first-of-type { font-size: 1.2rem; color: var(--text); }
   .post-body h2 {
-    font-family: "Spectral", Georgia, serif;
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-    color: var(--text);
+    font-family: "Schibsted Grotesk", sans-serif; font-weight: 800;
+    font-size: 1.5rem; margin-top: 1rem; letter-spacing: -0.01em; color: var(--text);
   }
-  @keyframes post-rise {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: none; }
-  }
+  @keyframes post-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   .post-rise { animation: post-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-  /* ── Refined mount entrance ─────────────────────────────────────────── */
-  @keyframes anim-rise {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: none; }
-  }
+  /* ── Mount entrance ─────────────────────────────────────────────────── */
+  @keyframes anim-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   .anim-rise {
-    animation-name: anim-rise;
-    animation-duration: 0.7s;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    animation-fill-mode: both;
+    animation-name: anim-rise; animation-duration: 0.65s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); animation-fill-mode: both;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .anim-rise, .post-rise { animation: none; }
-    .btn-accent:hover { transform: none; }
+    .anim-rise, .post-rise, .dot-live::after { animation: none; }
   }
 }

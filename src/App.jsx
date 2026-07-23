@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import MainPage from "./Components/MainPage";
+import TopNavbar from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
@@ -18,36 +19,34 @@ const getInitialTheme = () => {
   if (typeof window === "undefined") return true;
   const stored = localStorage.getItem("theme");
   if (stored) return stored === "dark";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return true; // default to the near-black lab theme
 };
 
 const DARK_TOKENS = {
-  "--bg": "oklch(16% 0.004 70)",
-  "--surface": "oklch(19.5% 0.005 70)",
-  "--surface-2": "oklch(23% 0.006 70)",
-  "--text": "oklch(93% 0.006 85)",
-  "--muted": "oklch(68% 0.008 80)",
-  "--faint": "oklch(50% 0.008 75)",
-  "--line": "oklch(28% 0.006 75)",
-  "--line-bright": "oklch(38% 0.006 75)",
-  "--accent": "oklch(74% 0.12 168)",
-  "--accent-dim": "oklch(60% 0.09 168)",
-  "--accent-ink": "oklch(17% 0.03 168)",
-  "--accent-line": "oklch(74% 0.12 168 / 0.3)",
+  "--bg": "oklch(14% 0.003 250)",
+  "--surface": "oklch(17% 0.004 250)",
+  "--surface-2": "oklch(20% 0.005 250)",
+  "--text": "oklch(93% 0.004 250)",
+  "--muted": "oklch(66% 0.006 250)",
+  "--faint": "oklch(48% 0.006 250)",
+  "--line": "oklch(26% 0.005 250)",
+  "--line-bright": "oklch(33% 0.005 250)",
+  "--accent": "oklch(74% 0.14 165)",
+  "--accent-ink": "oklch(16% 0.03 165)",
+  "--accent-line": "oklch(74% 0.14 165 / 0.3)",
 };
 const LIGHT_TOKENS = {
-  "--bg": "oklch(96.5% 0.008 85)",
-  "--surface": "oklch(99.3% 0.005 85)",
-  "--surface-2": "oklch(93.5% 0.008 82)",
-  "--text": "oklch(23% 0.012 60)",
-  "--muted": "oklch(44% 0.012 60)",
-  "--faint": "oklch(58% 0.012 60)",
-  "--line": "oklch(86% 0.01 75)",
-  "--line-bright": "oklch(99.5% 0.004 85)",
-  "--accent": "oklch(50% 0.13 165)",
-  "--accent-dim": "oklch(58% 0.1 165)",
-  "--accent-ink": "oklch(98% 0.02 165)",
-  "--accent-line": "oklch(50% 0.13 165 / 0.32)",
+  "--bg": "oklch(94.5% 0.006 95)",
+  "--surface": "oklch(98.5% 0.004 95)",
+  "--surface-2": "oklch(91% 0.006 92)",
+  "--text": "oklch(20% 0.008 250)",
+  "--muted": "oklch(43% 0.008 250)",
+  "--faint": "oklch(57% 0.008 250)",
+  "--line": "oklch(85% 0.006 92)",
+  "--line-bright": "oklch(99% 0.003 95)",
+  "--accent": "oklch(42% 0.09 160)",
+  "--accent-ink": "oklch(97% 0.02 160)",
+  "--accent-line": "oklch(42% 0.09 160 / 0.32)",
 };
 
 function ScrollToTop() {
@@ -58,32 +57,31 @@ function ScrollToTop() {
   return null;
 }
 
-// Floating theme toggle + ⌘K, top-right. The homepage carries its identity and
-// nav in the page's own sidebar, so the bar stays out of the way; inner pages
-// get a wordmark as a way home.
 function TopBar({ isDark, toggleMode, setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
 
   return (
-    <div className="sticky top-0 z-40 pointer-events-none">
-      <div className="max-w-6xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
-        {isHome ? (
-          <span />
-        ) : (
-          <Link
-            to="/"
-            className="pointer-events-auto font-display text-[15px] tracking-tight hover:txt-accent transition-colors"
-          >
-            Luis-Angel Moreno
-          </Link>
-        )}
-        <div className="pointer-events-auto flex items-center gap-3">
+    <div
+      className="sticky top-0 z-40 border-b rule-c backdrop-blur-md"
+      style={{ background: "color-mix(in oklch, var(--bg) 85%, transparent)" }}
+    >
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 h-12 flex items-center justify-between gap-4">
+        <Link to="/" className="mono text-[13px] tracking-[0.14em] uppercase hover:txt-accent transition-colors flex items-center gap-2">
+          <span className="txt-accent">✳</span> Luis-Angel Moreno
+        </Link>
+
+        <div className="flex items-center gap-5">
+          {isHome && (
+            <div className="hidden sm:block">
+              <TopNavbar />
+            </div>
+          )}
           {isHome && (
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="Open quick view (Command K)"
-              className="hidden sm:inline-flex items-center gap-1 text-[11px] txt-faint hover:txt-accent transition-colors cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1 mono-link"
             >
               <Command className="w-3 h-3" />K
             </button>
@@ -91,8 +89,7 @@ function TopBar({ isDark, toggleMode, setPaletteOpen }) {
           <button
             onClick={toggleMode}
             aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-full border rule-c icon-link cursor-pointer"
-            style={{ background: "color-mix(in oklch, var(--bg) 70%, transparent)" }}
+            className="icon-link cursor-pointer inline-flex"
           >
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -111,7 +108,7 @@ export default function App() {
     const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
     for (const [k, v] of Object.entries(tokens)) root.style.setProperty(k, v);
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#1a1917" : "#f4efe4");
+    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#131315" : "#eeece4");
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
@@ -130,7 +127,6 @@ export default function App() {
           toggleMode={toggleMode}
           setPaletteOpen={setPaletteOpen}
         />
-
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/summer" element={<AboutSF isDark={isDark} />} />

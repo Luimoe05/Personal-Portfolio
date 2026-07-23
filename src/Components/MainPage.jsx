@@ -3,13 +3,11 @@ import {
   Mail,
   Github,
   Linkedin,
-  ExternalLink,
-  X,
   ArrowUpRight,
   Send,
   Loader2,
 } from "lucide-react";
-import { motion, AnimatePresence, animate, useInView } from "framer-motion";
+import { animate, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   SiReact,
@@ -32,18 +30,9 @@ import LocalClock from "./LocalClock";
 import CodificaImg from "../assets/Codifica.webp";
 import CreatorsFIUImg from "../assets/creatorsFIU.webp";
 import RepoAI from "../assets/RepoAI.webp";
-import salesforceOfferImg from "../assets/salesforce-offer.webp";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
-
-const NAV = [
-  { id: "experience", label: "Experience" },
-  { id: "projects", label: "Selected Work" },
-  { id: "toolkit", label: "Toolkit" },
-  { id: "writing", label: "Writing" },
-  { id: "contact", label: "Contact" },
-];
 
 const techs = [
   { Icon: SiReact, label: "React" },
@@ -66,7 +55,7 @@ const experiences = [
   {
     position: "Software Engineer Intern",
     company: "Salesforce — Spark Platform",
-    duration: "May 2026 – Aug 2026",
+    duration: "MAY 2026 — AUG 2026",
     description:
       "Returning to Salesforce in San Francisco on the Spark platform team. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
     tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
@@ -74,7 +63,7 @@ const experiences = [
   {
     position: "Software Engineering Intern",
     company: "Salesforce — FTL Program",
-    duration: "Jun 2025 – Aug 2025",
+    duration: "JUN 2025 — AUG 2025",
     description:
       "As a Full Stack Intern at Salesforce and part of the FTL program, I developed Codifica, an AI-powered in-browser code editor designed to enhance learning accessibility by explaining coding concepts in users' native language.",
     tags: ["React", "Node.js", "Express", "Prisma", "PostgreSQL"],
@@ -82,7 +71,7 @@ const experiences = [
   {
     position: "Director of Digital Media",
     company: "INIT",
-    duration: "Dec 2025 – Present",
+    duration: "DEC 2025 — PRESENT",
     description:
       "In charge of photography and videography for the largest tech organization at Florida International University.",
     tags: [],
@@ -90,7 +79,7 @@ const experiences = [
   {
     position: "INIT Build",
     company: "INIT",
-    duration: "Feb 2025 – Apr 2025",
+    duration: "FEB 2025 — APR 2025",
     description:
       "Collaborated on a 7-person team to build CreatorsFIU, a full-stack student marketplace. Led user authentication with Firebase and developed the responsive front-end with React and Tailwind CSS.",
     tags: ["React", "Firebase", "Tailwind"],
@@ -98,7 +87,7 @@ const experiences = [
   {
     position: "STARS Tutor",
     company: "Florida International University",
-    duration: "Aug 2025 – Present",
+    duration: "AUG 2025 — PRESENT",
     description:
       "Provided tutoring for undergraduate CS students covering Data Structures & Algorithms, Systems Programming, Computer Architecture, and Programming 2 (Java).",
     tags: [],
@@ -153,69 +142,50 @@ const posts = [
     title: "Summer 2026 at Salesforce",
     blurb:
       "Returning to San Francisco a second time, and finding that AI agents had quietly rewritten the craft.",
-    date: "July 2026",
+    date: "2026.07",
     to: "/summer-2026",
   },
   {
     title: "Summer 2025 in San Francisco",
     blurb:
       "My time interning at Salesforce through the FTL program: the highs, the nerves, and building from zero.",
-    date: "August 2025",
+    date: "2025.08",
     to: "/summer",
   },
 ];
 
-/* Vertical section nav with an animated leading rule (desktop identity panel) */
-function SideNav() {
-  const [active, setActive] = useState("experience");
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) setActive(visible[0].target.id);
-      },
-      { rootMargin: "-30% 0px -60% 0px", threshold: [0, 0.5, 1] }
-    );
-    NAV.forEach(({ id }) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
+/* Corner registration marks around a bordered box (the "lab" framing) */
+function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
+  const marks = [
+    "top-0 left-0 -translate-x-1/2 -translate-y-1/2",
+    "top-0 right-0 translate-x-1/2 -translate-y-1/2",
+    "bottom-0 left-0 -translate-x-1/2 translate-y-1/2",
+    "bottom-0 right-0 translate-x-1/2 translate-y-1/2",
+  ];
   return (
-    <nav className="flex flex-col gap-3.5">
-      {NAV.map(({ id, label }) => {
-        const on = active === id;
-        return (
-          <button
-            key={id}
-            onClick={() =>
-              document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-            }
-            className="group flex items-center gap-4 cursor-pointer"
-          >
-            <span
-              className="h-px bg-current transition-all duration-300 ease-out"
-              style={{
-                width: on ? "2.75rem" : "1.25rem",
-                color: on ? "var(--accent)" : "var(--faint)",
-                opacity: on ? 1 : 0.6,
-              }}
-            />
-            <span
-              className={`text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors ${
-                on ? "txt-accent" : "txt-faint group-hover:txt-muted"
-              }`}
-            >
-              {label}
-            </span>
-          </button>
-        );
-      })}
-    </nav>
+    <div className={`relative border rule-c ${className}`}>
+      {marks.map((m) => (
+        <span
+          key={m}
+          aria-hidden
+          className={`absolute ${m} txt-faint text-[11px] leading-none select-none`}
+        >
+          +
+        </span>
+      ))}
+      <div className={pad}>{children}</div>
+    </div>
+  );
+}
+
+/* Mono section header: LABEL ———————— INDEX */
+function SectionHead({ label, index }) {
+  return (
+    <div className="flex items-center gap-4 mb-10">
+      <span className="eyebrow whitespace-nowrap">{label}</span>
+      <span className="h-px flex-1" style={{ background: "var(--line)" }} />
+      <span className="eyebrow txt-faint opacity-60">{index}</span>
+    </div>
   );
 }
 
@@ -289,21 +259,18 @@ function GitHubStats() {
 
   if (!stats) return null;
   const items = [
-    { label: "Repositories", value: stats.repos },
-    { label: "Contributions", value: stats.contributions },
-    { label: "Stars", value: stats.stars },
+    { label: "REPOSITORIES", value: stats.repos },
+    { label: "CONTRIBUTIONS · 1Y", value: stats.contributions },
+    { label: "STARS", value: stats.stars },
   ];
   return (
-    <div className="grid grid-cols-3 border-y rule-c">
+    <div className="grid grid-cols-3 border rule-c">
       {items.map((it, i) => (
-        <div
-          key={it.label}
-          className={`flex flex-col gap-1 py-5 ${i > 0 ? "border-l rule-c pl-5" : ""}`}
-        >
-          <span className="font-display text-3xl">
+        <div key={it.label} className={`px-4 py-5 ${i > 0 ? "border-l rule-c" : ""}`}>
+          <div className="font-display text-2xl sm:text-3xl">
             <CountUp value={it.value} />
-          </span>
-          <span className="eyebrow text-[10px]">{it.label}</span>
+          </div>
+          <div className="eyebrow text-[9px] mt-1.5">{it.label}</div>
         </div>
       ))}
     </div>
@@ -313,7 +280,7 @@ function GitHubStats() {
 function ContactForm() {
   const [status, setStatus] = useState("idle");
   const inputCls =
-    "w-full rounded-lg border rule-c px-3.5 py-2.5 text-sm bg-transparent outline-none transition-colors placeholder:txt-faint focus:border-[color:var(--accent-line)]";
+    "w-full rounded-[3px] border rule-c px-3.5 py-2.5 text-sm bg-transparent outline-none transition-colors placeholder:txt-faint focus:border-[color:var(--accent-line)]";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -337,11 +304,7 @@ function ContactForm() {
   };
 
   if (status === "success") {
-    return (
-      <p className="txt-muted">
-        Thank you for reaching out. I'll be in touch soon.
-      </p>
-    );
+    return <p className="txt-muted">Message received. I'll be in touch soon.</p>;
   }
 
   return (
@@ -361,21 +324,21 @@ function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-accent inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-full cursor-pointer disabled:opacity-60"
+          className="btn-accent inline-flex items-center gap-2 px-5 py-2.5 rounded-[3px] cursor-pointer disabled:opacity-60"
         >
           {status === "sending" ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" /> Sending…
+              <Loader2 className="w-4 h-4 animate-spin" /> Sending
             </>
           ) : (
             <>
-              <Send className="w-4 h-4" /> Send message
+              <Send className="w-3.5 h-3.5" /> Send message
             </>
           )}
         </button>
         {status === "error" && (
-          <span className="text-xs text-red-400">
-            Something went wrong, email me directly instead.
+          <span className="mono text-[11px] text-red-400">
+            ERROR — EMAIL ME DIRECTLY
           </span>
         )}
       </div>
@@ -383,298 +346,244 @@ function ContactForm() {
   );
 }
 
-/* Quiet label that sits above each content section */
-function Label({ children }) {
-  return <p className="eyebrow mb-7">{children}</p>;
-}
-
 export default function MainPage() {
-  const [resumeOpen, setResumeOpen] = useState(false);
-
-  const socials = (
-    <div className="flex items-center gap-5">
-      <a href="https://github.com/Luimoe05" target="_blank" rel="noreferrer" aria-label="GitHub" className="icon-link">
-        <Github className="w-5 h-5" />
-      </a>
-      <a href="https://www.linkedin.com/in/luisanm/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="icon-link">
-        <Linkedin className="w-5 h-5" />
-      </a>
-      <a href="mailto:lmoreno00528@gmail.com" aria-label="Email" className="icon-link">
-        <Mail className="w-5 h-5" />
-      </a>
-    </div>
-  );
-
   return (
-    <div className="mx-auto max-w-6xl px-6 lg:px-10 lg:grid lg:grid-cols-[18rem_1fr] lg:gap-16 xl:gap-24">
-      {/* ── Identity panel (sticky on desktop) ───────────────────────── */}
-      <header className="pt-20 pb-10 lg:pt-0 lg:pb-0 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col lg:justify-between lg:py-24">
+    <main className="max-w-5xl mx-auto px-5 sm:px-8 pb-24">
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <section id="top" className="pt-10 sm:pt-16 pb-16 sm:pb-24">
         <AnimateIn>
-          <div>
+          <Framed pad="p-7 sm:p-12">
             <p className="eyebrow flex items-center gap-2.5">
               <span className="dot-live" />
-              Salesforce · Summer 2026
+              Returning to Salesforce / Summer 2026
             </p>
-            <h1
-              className="font-display mt-6 leading-[0.95]"
-              style={{ fontSize: "clamp(2.5rem, 4vw + 1rem, 3.25rem)", letterSpacing: "-0.015em" }}
-            >
+            <h1 className="text-hero mt-6">
               Luis-Angel
               <br />
               Moreno
             </h1>
-            <p className="mt-4 text-lg txt-muted">Software Engineer</p>
-            <p className="mt-4 txt-muted leading-relaxed max-w-[17rem]">
-              I build tools that make hard systems legible, and applications
-              that serve communities.
+            <p className="mt-6 text-lg sm:text-xl txt-muted leading-relaxed max-w-2xl">
+              Software engineer. I build platform tooling at Salesforce and
+              applications that serve communities, the kind of work that makes
+              hard systems legible.
             </p>
-
-            <div className="hidden lg:block mt-12">
-              <SideNav />
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <a
+                href={ResumePDF}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-accent inline-flex items-center gap-2 px-5 py-3 rounded-[3px]"
+              >
+                View résumé
+              </a>
+              <a
+                href="https://github.com/Luimoe05"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-ghost inline-flex items-center gap-2 px-4 py-3 rounded-[3px]"
+              >
+                GitHub <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+              <div className="flex items-center gap-4 pl-2">
+                <a href="https://www.linkedin.com/in/luisanm/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="icon-link">
+                  <Linkedin className="w-[18px] h-[18px]" />
+                </a>
+                <a href="mailto:lmoreno00528@gmail.com" aria-label="Email" className="icon-link">
+                  <Mail className="w-[18px] h-[18px]" />
+                </a>
+              </div>
             </div>
-          </div>
+          </Framed>
         </AnimateIn>
+        <div className="flex items-center justify-between mt-5 px-1">
+          <p className="eyebrow">CS · Florida Int'l University</p>
+          <LocalClock subtle="txt-faint" />
+        </div>
+      </section>
 
-        <AnimateIn delay={0.15}>
-          <div className="mt-10 lg:mt-0 flex items-center gap-6">
-            {socials}
-            <button
-              onClick={() => setResumeOpen(true)}
-              className="text-sm txt-muted hover:txt-accent transition-colors inline-flex items-center gap-1 cursor-pointer"
-            >
-              Résumé <ArrowUpRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </AnimateIn>
-      </header>
+      {/* ── Experience ───────────────────────────────────────────────── */}
+      <section id="experience" className="py-14 sm:py-16">
+        <SectionHead label="Experience" index="01 / 05" />
+        <div className="flex flex-col">
+          {experiences.map((exp, i) => (
+            <AnimateIn key={i} delay={0.03 * i}>
+              <div
+                className={`grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-7 first:pt-0 ${
+                  i < experiences.length - 1 ? "border-b rule-c" : ""
+                }`}
+              >
+                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
+                  {exp.duration}
+                </p>
+                <div>
+                  <h3 className="font-display text-xl sm:text-2xl">
+                    {exp.position}
+                  </h3>
+                  <p className="mono text-[11px] txt-accent tracking-wide mt-1.5">
+                    {exp.company}
+                  </p>
+                  <p className="txt-muted leading-relaxed mt-3">{exp.description}</p>
+                  {exp.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-4">
+                      {exp.tags.map((tag) => (
+                        <span key={tag} className="chip px-2 py-0.5 rounded-[3px]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </AnimateIn>
+          ))}
+        </div>
+      </section>
 
-      {/* ── Content column ───────────────────────────────────────────── */}
-      <main className="pb-24 lg:py-24">
-        {/* Experience */}
-        <section id="experience" className="scroll-mt-24">
-          <Label>Experience</Label>
-          <div className="flex flex-col">
-            {experiences.map((exp, i) => (
-              <AnimateIn key={i} delay={0.03 * i}>
-                <div
-                  className={`grid sm:grid-cols-[1fr_auto] gap-x-8 gap-y-1 py-7 first:pt-0 ${
-                    i < experiences.length - 1 ? "border-b rule-c" : ""
-                  }`}
-                >
-                  <div className="order-2 sm:order-1">
-                    <h3 className="font-display text-xl sm:text-2xl">
-                      {exp.position}
-                    </h3>
-                    <p className="text-sm txt-faint mt-1">{exp.company}</p>
-                    <p className="txt-muted leading-relaxed mt-3">
-                      {exp.description}
+      {/* ── Selected Work ────────────────────────────────────────────── */}
+      <section id="work" className="py-14 sm:py-16">
+        <SectionHead label="Selected Work" index="02 / 05" />
+        <div className="flex flex-col gap-6">
+          {projects.map((proj, i) => (
+            <AnimateIn key={i} delay={0.03 * i}>
+              <Framed pad="p-5 sm:p-7">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="eyebrow text-[10px] mb-1.5">
+                      PROJECT {String(i + 1).padStart(2, "0")}
                     </p>
-                    {exp.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-4">
-                        {exp.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="chip text-[11px] px-2 py-0.5 rounded-md"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                    <h3 className="font-display text-2xl sm:text-3xl">{proj.name}</h3>
+                  </div>
+                  <div className="flex items-center gap-4 shrink-0 pt-1">
+                    <a href={proj.github} target="_blank" rel="noreferrer" className="mono-link">
+                      Code
+                    </a>
+                    {proj.deployed && (
+                      <a href={proj.deployed} target="_blank" rel="noreferrer" className="mono-link" data-on="true">
+                        Live ↗
+                      </a>
                     )}
                   </div>
-                  <p className="order-1 sm:order-2 text-xs txt-faint tabular-nums sm:text-right sm:pt-2">
-                    {exp.duration}
-                  </p>
                 </div>
-              </AnimateIn>
-            ))}
-          </div>
-        </section>
-
-        {/* Selected Work */}
-        <section id="projects" className="scroll-mt-24 mt-20 lg:mt-28">
-          <Label>Selected Work</Label>
-          <div className="flex flex-col">
-            {projects.map((proj, i) => (
-              <AnimateIn key={i} delay={0.03 * i}>
-                <article
-                  className={`py-10 first:pt-0 ${
-                    i < projects.length - 1 ? "border-b rule-c" : ""
-                  }`}
+                <p className="mono text-[11px] txt-faint mt-2 tracking-wide">{proj.stack}</p>
+                <a
+                  href={proj.deployed ?? proj.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block mt-5 overflow-hidden border rule-c"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <h3 className="font-display text-2xl sm:text-3xl">
-                      {proj.name}
-                    </h3>
-                    <div className="flex items-center gap-4 shrink-0 pt-1.5 text-sm">
-                      <a href={proj.github} target="_blank" rel="noreferrer" className="icon-link inline-flex items-center gap-1">
-                        Code <ExternalLink size={13} />
-                      </a>
-                      {proj.deployed && (
-                        <a href={proj.deployed} target="_blank" rel="noreferrer" className="icon-link inline-flex items-center gap-1">
-                          Live <ArrowUpRight size={13} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-xs txt-faint mt-2 tracking-wide">{proj.stack}</p>
-                  <a
-                    href={proj.deployed ?? proj.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block mt-5 overflow-hidden rounded-xl border rule-c"
-                  >
-                    <img
-                      src={proj.img}
-                      alt={`${proj.name} interface`}
-                      className="w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
-                    />
-                  </a>
-                  <p className="txt-muted leading-relaxed mt-5 max-w-prose">
-                    {proj.description}
-                  </p>
-                  <ul className="mt-4 flex flex-col gap-2">
-                    {proj.keypoints.map((pt, j) => (
-                      <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
-                        <span className="txt-accent mt-2.5 h-px w-3 shrink-0 bg-current" />
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              </AnimateIn>
+                  <img
+                    src={proj.img}
+                    alt={`${proj.name} interface`}
+                    className="w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
+                  />
+                </a>
+                <p className="txt-muted leading-relaxed mt-5 max-w-prose">
+                  {proj.description}
+                </p>
+                <ul className="mt-4 flex flex-col gap-2">
+                  {proj.keypoints.map((pt, j) => (
+                    <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
+                      <span className="mono txt-accent text-[11px] mt-0.5 shrink-0">
+                        {String(j + 1).padStart(2, "0")}
+                      </span>
+                      <span>{pt}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Framed>
+            </AnimateIn>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Toolkit ──────────────────────────────────────────────────── */}
+      <section id="toolkit" className="py-14 sm:py-16">
+        <SectionHead label="Toolkit" index="03 / 05" />
+        <AnimateIn>
+          <div className="flex flex-wrap gap-2">
+            {techs.map(({ Icon, label }) => (
+              <span key={label} className="chip inline-flex items-center gap-2 px-3 py-1.5 rounded-[3px] text-[12px]">
+                <Icon size={14} className="txt-faint" />
+                {label}
+              </span>
             ))}
           </div>
-        </section>
-
-        {/* Toolkit */}
-        <section id="toolkit" className="scroll-mt-24 mt-20 lg:mt-28">
-          <Label>Toolkit</Label>
-          <AnimateIn>
-            <div className="flex flex-wrap gap-2">
-              {techs.map(({ Icon, label }) => (
-                <span key={label} className="chip inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg">
-                  <Icon size={15} className="txt-faint" />
-                  {label}
-                </span>
-              ))}
-            </div>
-          </AnimateIn>
-          <AnimateIn delay={0.1}>
-            <div className="mt-9">
-              <GitHubStats />
-            </div>
-          </AnimateIn>
-          <AnimateIn delay={0.15}>
-            <div className="mt-10">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h3 className="font-display text-xl">Florida International University</h3>
-                <span className="text-xs txt-faint tabular-nums">2023 – Present</span>
-              </div>
-              <p className="txt-muted mt-2">B.S. Computer Science · GPA 3.61</p>
-              <p className="text-sm txt-faint mt-2 leading-relaxed">
+        </AnimateIn>
+        <AnimateIn delay={0.1}>
+          <div className="mt-8">
+            <GitHubStats />
+          </div>
+        </AnimateIn>
+        <AnimateIn delay={0.15}>
+          <div className="mt-8 grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2">
+            <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1">
+              2023 — PRESENT
+            </p>
+            <div>
+              <h3 className="font-display text-xl">Florida International University</h3>
+              <p className="mono text-[11px] txt-accent mt-1.5">B.S. COMPUTER SCIENCE / GPA 3.61</p>
+              <p className="txt-muted text-sm mt-2 leading-relaxed">
                 Data Structures & Algorithms · Systems Programming · Artificial
-                Intelligence Algorithms
+                Intelligence Algorithms.
               </p>
             </div>
-          </AnimateIn>
-        </section>
-
-        {/* Writing */}
-        <section id="writing" className="scroll-mt-24 mt-20 lg:mt-28">
-          <Label>Writing</Label>
-          <div className="flex flex-col">
-            {posts.map((post, i) => (
-              <AnimateIn key={post.title} delay={0.03 * i}>
-                <Link
-                  to={post.to}
-                  className="group flex items-baseline justify-between gap-4 py-5 border-b rule-c first:pt-0"
-                >
-                  <div>
-                    <h3 className="font-display text-xl group-hover:txt-accent transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="txt-muted text-sm mt-1.5 leading-relaxed max-w-md">
-                      {post.blurb}
-                    </p>
-                  </div>
-                  <span className="text-xs txt-faint tabular-nums whitespace-nowrap shrink-0">
-                    {post.date}
-                  </span>
-                </Link>
-              </AnimateIn>
-            ))}
-            <p className="text-sm txt-faint mt-5">More writing to come.</p>
           </div>
-        </section>
+        </AnimateIn>
+      </section>
 
-        {/* Contact */}
-        <section id="contact" className="scroll-mt-24 mt-20 lg:mt-28">
-          <Label>Get in Touch</Label>
-          <AnimateIn>
-            <p className="txt-muted leading-relaxed max-w-prose mb-6">
-              Have a question, an opportunity, or just want to say hello? Send a
-              note, or email me at{" "}
-              <a href="mailto:lmoreno00528@gmail.com" className="link">
-                lmoreno00528@gmail.com
-              </a>
-              .
-            </p>
-            <ContactForm />
-          </AnimateIn>
-        </section>
-
-        {/* Footer */}
-        <footer className="border-t rule-c pt-8 mt-20 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <LocalClock subtle="txt-faint" />
-          <p className="text-xs txt-faint">
-            © {new Date().getFullYear()} Luis-Angel Moreno
-          </p>
-        </footer>
-      </main>
-
-      {/* ── Résumé modal ─────────────────────────────────────────────── */}
-      <AnimatePresence>
-        {resumeOpen && (
-          <motion.div
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setResumeOpen(false)}
-          >
-            <motion.div
-              className="elevated relative w-full max-w-3xl h-[85vh] rounded-2xl overflow-hidden flex flex-col"
-              initial={{ scale: 0.96, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.96, opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between px-5 py-3 border-b rule-c shrink-0">
-                <span className="eyebrow text-[11px]">Résumé</span>
-                <div className="flex items-center gap-4">
-                  <a
-                    href={ResumePDF}
-                    download="Luis_Resume_2026.pdf"
-                    className="text-xs txt-muted hover:txt-accent transition-colors"
-                  >
-                    Download
-                  </a>
-                  <button onClick={() => setResumeOpen(false)} aria-label="Close" className="icon-link cursor-pointer">
-                    <X className="w-4 h-4" />
-                  </button>
+      {/* ── Writing ──────────────────────────────────────────────────── */}
+      <section id="writing" className="py-14 sm:py-16">
+        <SectionHead label="Writing" index="04 / 05" />
+        <div className="flex flex-col">
+          {posts.map((post, i) => (
+            <AnimateIn key={post.title} delay={0.03 * i}>
+              <Link
+                to={post.to}
+                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-1 py-6 border-b rule-c first:pt-0"
+              >
+                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
+                  {post.date}
+                </p>
+                <div>
+                  <h3 className="font-display text-xl group-hover:txt-accent transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="txt-muted text-sm mt-1.5 leading-relaxed max-w-md">
+                    {post.blurb}
+                  </p>
                 </div>
-              </div>
-              <iframe
-                src={ResumePDF}
-                title="Luis-Angel Moreno's Résumé"
-                className="w-full grow bg-white"
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+              </Link>
+            </AnimateIn>
+          ))}
+          <p className="mono text-[11px] txt-faint mt-5 tracking-wide">
+            MORE ENTRIES SOON
+          </p>
+        </div>
+      </section>
+
+      {/* ── Contact ──────────────────────────────────────────────────── */}
+      <section id="contact" className="py-14 sm:py-16">
+        <SectionHead label="Get in Touch" index="05 / 05" />
+        <AnimateIn>
+          <p className="txt-muted leading-relaxed max-w-prose mb-6">
+            Have a question, an opportunity, or just want to say hello? Send a
+            note, or email me at{" "}
+            <a href="mailto:lmoreno00528@gmail.com" className="link">
+              lmoreno00528@gmail.com
+            </a>
+            .
+          </p>
+          <ContactForm />
+        </AnimateIn>
+      </section>
+
+      {/* ── Footer ───────────────────────────────────────────────────── */}
+      <footer className="border-t rule-c pt-8 mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <LocalClock subtle="txt-faint" />
+        <p className="mono text-[11px] txt-faint tracking-wide">
+          © {new Date().getFullYear()} LUIS-ANGEL MORENO
+        </p>
+      </footer>
+    </main>
   );
 }
