@@ -27,9 +27,7 @@ import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
 import AnimateIn from "./AnimateIn";
 import LocalClock from "./LocalClock";
-import CodificaImg from "../assets/Codifica.webp";
-import CreatorsFIUImg from "../assets/creatorsFIU.webp";
-import RepoAI from "../assets/RepoAI.webp";
+import HeroBackdrop from "./HeroBackdrop";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
@@ -105,7 +103,6 @@ const projects = [
       "Embeds chunks via OpenAI and stores vectors in Pinecone for semantic retrieval.",
       "FastAPI backend with /ingest and /query endpoints; a React 19 + TypeScript frontend.",
     ],
-    img: RepoAI,
     github: "https://github.com/Luimoe05/repo-ai",
     deployed: "https://repo-ai-six.vercel.app/",
   },
@@ -119,7 +116,6 @@ const projects = [
       "Gemini-powered assistant for personalized, multilingual explanations.",
       "35% improvement in AI response time from feedback across 30+ users.",
     ],
-    img: CodificaImg,
     github: "https://github.com/FTLSunstack/FTLCapstone",
   },
   {
@@ -132,7 +128,6 @@ const projects = [
       "Firebase authentication with a 30% login-speed improvement.",
       "Authored 20+ user stories to guide development sprints.",
     ],
-    img: CreatorsFIUImg,
     github: "https://github.com/CreatorsFIU-initBuild/demoDAY",
   },
 ];
@@ -400,6 +395,9 @@ export default function MainPage() {
       <section id="top" className="pt-10 sm:pt-16 pb-16 sm:pb-24">
         <AnimateIn>
           <Framed pad="p-7 sm:p-12">
+           <div className="relative overflow-hidden">
+            <HeroBackdrop />
+            <div className="relative z-10">
             <p className="eyebrow flex items-center gap-2.5">
               <span className="dot-live" />
               <Scramble text="Returning to Salesforce / Summer 2026" />
@@ -440,6 +438,8 @@ export default function MainPage() {
                 </a>
               </div>
             </div>
+            </div>
+           </div>
           </Framed>
         </AnimateIn>
         <div className="flex items-center justify-between mt-5 px-1">
@@ -508,18 +508,6 @@ export default function MainPage() {
                   </div>
                 </div>
                 <p className="mono text-[11px] txt-faint mt-2 tracking-wide">{proj.stack}</p>
-                <a
-                  href={proj.deployed ?? proj.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block mt-5 overflow-hidden border rule-c"
-                >
-                  <img
-                    src={proj.img}
-                    alt={`${proj.name} interface`}
-                    className="w-full transition-transform duration-500 ease-out hover:scale-[1.02]"
-                  />
-                </a>
                 <p className="txt-muted leading-relaxed mt-5 max-w-prose">
                   {proj.description}
                 </p>

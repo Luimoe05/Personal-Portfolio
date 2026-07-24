@@ -53,6 +53,25 @@
   .surface { background: var(--surface); }
   .surface-2 { background: var(--surface-2); }
 
+  /* ── Elevated / liquid-glass panel (command palette, popovers) ──────────
+     Semi-opaque surface tint + heavy backdrop blur & saturation so content
+     behind reads as frosted glass, not raw transparency. Hairline border +
+     top highlight + soft drop shadow give it lift. Theme-aware via tokens. */
+  .elevated {
+    background: color-mix(in oklch, var(--surface) 78%, transparent);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid color-mix(in oklch, var(--line-bright) 40%, transparent);
+    box-shadow:
+      0 1px 0 0 color-mix(in oklch, var(--line-bright) 55%, transparent) inset,
+      0 24px 60px -12px oklch(0% 0 0 / 0.5),
+      0 8px 24px -8px oklch(0% 0 0 / 0.35);
+  }
+  /* Solid fallback where backdrop-filter is unsupported. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .elevated { background: var(--surface); }
+  }
+
   /* ── Type ───────────────────────────────────────────────────────────── */
   .font-display {
     font-family: "Schibsted Grotesk", sans-serif;
