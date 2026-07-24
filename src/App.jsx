@@ -34,6 +34,11 @@ const DARK_TOKENS = {
   "--accent": "oklch(74% 0.14 165)",
   "--accent-ink": "oklch(16% 0.03 165)",
   "--accent-line": "oklch(74% 0.14 165 / 0.3)",
+  "--glass-hi": "oklch(93% 0.004 250 / 0.92)",
+  "--glass-mid": "oklch(93% 0.004 250 / 0.45)",
+  "--glass-sheen": "oklch(99% 0 0 / 0.95)",
+  "--glass-edge": "rgb(255 255 255 / 0.14)",
+  "--glass-shadow": "rgb(0 0 0 / 0.4)",
 };
 const LIGHT_TOKENS = {
   "--bg": "oklch(94.5% 0.006 95)",
@@ -47,6 +52,11 @@ const LIGHT_TOKENS = {
   "--accent": "oklch(42% 0.09 160)",
   "--accent-ink": "oklch(97% 0.02 160)",
   "--accent-line": "oklch(42% 0.09 160 / 0.32)",
+  "--glass-hi": "oklch(24% 0.008 250 / 0.96)",
+  "--glass-mid": "oklch(34% 0.008 250 / 0.8)",
+  "--glass-sheen": "oklch(58% 0.008 250 / 0.92)",
+  "--glass-edge": "rgb(255 255 255 / 0.5)",
+  "--glass-shadow": "oklch(20% 0.008 250 / 0.16)",
 };
 
 function ScrollToTop() {

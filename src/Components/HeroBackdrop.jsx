@@ -1,34 +1,61 @@
 import React, { useRef, useEffect } from "react";
 
 /* ── HeroBackdrop ───────────────────────────────────────────────────────────
-   A dependency-free 3D wireframe "network sphere" rendered on <canvas>.
-   Real perspective projection of an icosahedron: vertices glow, edges fade by
-   depth, the whole thing rotates slowly and eases toward the cursor for a
-   subtle parallax tilt. Reads the live --accent token so it tracks the theme,
-   and freezes to a single static frame when the user prefers reduced motion.
-   Purely decorative → aria-hidden + pointer-events:none; the hero text sits
-   above it on its own stacking layer. */
+   A dependency-free 3D "semantic constellation" rendered on <canvas>.
+   The vertices are the actual stack and projects from this page — laid out on
+   a Fibonacci sphere like an embedding space (a nod to RepoAI's vector
+   search), wired to their nearest neighbours, with data pulses streaming
+   along the edges (a nod to the Spark log-pipeline work). Real perspective
+   projection, slow rotation, eased cursor parallax. Reads the live --accent
+   token so it tracks the theme, and freezes to a single static frame when
+   the user prefers reduced motion. Purely decorative → aria-hidden +
+   pointer-events:none; the hero text sits above it on its own layer. */
 
-// Icosahedron: 12 vertices built from the golden ratio, then edges are every
-// pair of vertices sharing the shortest (edge-length) separation.
-const PHI = (1 + Math.sqrt(5)) / 2;
-const RAW = [
-  [-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0],
-  [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
-  [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1],
+// The constellation's stars: what's actually on this page. Order matters —
+// the Fibonacci lattice spreads consecutive entries far apart, so related
+// labels don't clump.
+const LABELS = [
+  "REPOAI", "REACT", "SPARK", "TYPESCRIPT", "K8S", "CODIFICA",
+  "POSTGRES", "MCP", "NODE", "AWS·S3", "PYTHON", "CREATORSFIU",
+  "DOCKER", "PRISMA", "JAVA", "TAILWIND",
 ];
-const norm = Math.hypot(1, PHI);
-const VERTS = RAW.map(([x, y, z]) => [x / norm, y / norm, z / norm]);
 
+// Fibonacci sphere — near-uniform distribution of n points on a unit sphere.
+function fibSphere(n, jitter = 0) {
+  const pts = [];
+  const ga = Math.PI * (3 - Math.sqrt(5)); // golden angle
+  for (let i = 0; i < n; i++) {
+    const y = 1 - (i / (n - 1)) * 2;
+    const r = Math.sqrt(1 - y * y);
+    const th = ga * i + jitter * Math.sin(i * 12.9898) * 0.5;
+    pts.push([Math.cos(th) * r, y, Math.sin(th) * r]);
+  }
+  return pts;
+}
+
+const NODES = fibSphere(LABELS.length);
+
+// Background "dust" — unlabeled points at a slightly larger radius that give
+// the sphere volume without competing with the labels.
+const DUST = fibSphere(42, 1).map((v) => v.map((c) => c * 1.18));
+
+// Wire each node to its 2 nearest neighbours (deduped).
 const EDGES = (() => {
+  const seen = new Set();
   const out = [];
-  const target = 2 / norm; // icosahedron edge length after normalising
-  for (let i = 0; i < VERTS.length; i++) {
-    for (let j = i + 1; j < VERTS.length; j++) {
-      const dx = VERTS[i][0] - VERTS[j][0];
-      const dy = VERTS[i][1] - VERTS[j][1];
-      const dz = VERTS[i][2] - VERTS[j][2];
-      if (Math.abs(Math.hypot(dx, dy, dz) - target) < 0.01) out.push([i, j]);
+  for (let i = 0; i < NODES.length; i++) {
+    const near = NODES.map((v, j) => ({
+      j,
+      d: j === i ? Infinity : Math.hypot(v[0] - NODES[i][0], v[1] - NODES[i][1], v[2] - NODES[i][2]),
+    }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2);
+    for (const { j } of near) {
+      const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push([Math.min(i, j), Math.max(i, j)]);
+      }
     }
   }
   return out;
@@ -74,7 +101,7 @@ export default function HeroBackdrop() {
       attributeFilter: ["style"],
     });
 
-    let w = 0, h = 0, radius = 0, cx = 0, cy = 0, alpha = 1;
+    let w = 0, h = 0, radius = 0, cx = 0, cy = 0, alpha = 1, wide = true;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const resize = () => {
@@ -86,13 +113,13 @@ export default function HeroBackdrop() {
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const wide = w > 720;
+      wide = w > 720;
       // Anchor to the right of the (left-aligned) hero copy on wide layouts;
       // centre it and dial the intensity down where it sits behind the text.
       cx = wide ? w * 0.76 : w * 0.5;
       cy = h * 0.5;
-      radius = wide ? h * 0.4 : Math.min(w, h) * 0.34;
-      alpha = wide ? 1 : 0.45;
+      radius = wide ? h * 0.36 : Math.min(w, h) * 0.32;
+      alpha = wide ? 1 : 0.4;
     };
     resize();
     const ro = new ResizeObserver(resize);
@@ -109,6 +136,14 @@ export default function HeroBackdrop() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // Data pulses that travel node → node along the wires.
+    const pulses = Array.from({ length: 5 }, (_, i) => ({
+      edge: Math.floor((i / 5) * EDGES.length),
+      t: (i * 0.37) % 1,
+      speed: 0.0022 + (i % 3) * 0.0009,
+      dir: i % 2 ? 1 : -1,
+    }));
+
     const project = (v, ax, ay) => {
       // rotate around Y then X (rotation cosines/sines — distinct from the
       // cx/cy screen-centre coordinates in the outer scope)
@@ -124,6 +159,7 @@ export default function HeroBackdrop() {
         sx: cx + x * radius * persp,
         sy: cy + y * radius * persp,
         depth: (z + 1) / 2,                // 0 (far) → 1 (near)
+        scale: persp,
       };
     };
 
@@ -131,45 +167,103 @@ export default function HeroBackdrop() {
       eased.x += (mouse.x - eased.x) * 0.05;
       eased.y += (mouse.y - eased.y) * 0.05;
 
-      const ay = t * 0.00013 + eased.x * 0.5;
-      const ax = t * 0.00007 + eased.y * -0.4 + 0.35;
+      const ay = t * 0.00011 + eased.x * 0.5;
+      const ax = t * 0.00006 + eased.y * -0.4 + 0.3;
 
       ctx.clearRect(0, 0, w, h);
 
-      // soft accent glow anchoring the sphere
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 2.4);
+      // soft accent glow anchoring the constellation — the outer stop must hit
+      // zero before the nearest canvas edge or the clip shows as a hard rect
+      const glowR = Math.max(radius, Math.min(cx, w - cx, cy, h - cy));
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
       g.addColorStop(0, rgba(0.1 * alpha));
       g.addColorStop(1, rgba(0));
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
 
-      const pts = VERTS.map((v) => project(v, ax, ay));
+      // dust layer — faint depth cues behind everything
+      for (const v of DUST) {
+        const p = project(v, ax, ay);
+        ctx.fillStyle = rgba((0.06 + p.depth * 0.16) * alpha);
+        ctx.beginPath();
+        ctx.arc(p.sx, p.sy, 0.7 + p.depth * 1.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const pts = NODES.map((v) => project(v, ax, ay));
 
       // edges — nearer edges are brighter/thicker
       ctx.lineCap = "round";
       for (const [a, b] of EDGES) {
         const d = (pts[a].depth + pts[b].depth) / 2;
-        ctx.strokeStyle = rgba((0.08 + d * 0.32) * alpha);
-        ctx.lineWidth = 0.5 + d * 1.1;
+        ctx.strokeStyle = rgba((0.06 + d * 0.26) * alpha);
+        ctx.lineWidth = 0.5 + d * 0.9;
         ctx.beginPath();
         ctx.moveTo(pts[a].sx, pts[a].sy);
         ctx.lineTo(pts[b].sx, pts[b].sy);
         ctx.stroke();
       }
 
-      // vertices — glowing nodes, drawn far→near so near ones sit on top
-      const order = pts.map((p, i) => i).sort((i, j) => pts[i].depth - pts[j].depth);
+      // pulses — packets streaming along the wires, with a short comet tail
+      if (!reduced) {
+        for (const pu of pulses) {
+          pu.t += pu.speed * pu.dir * (16.7);
+          if (pu.t > 1 || pu.t < 0) {
+            pu.edge = Math.floor(Math.random() * EDGES.length);
+            pu.dir *= -1;
+            pu.t = pu.dir > 0 ? 0 : 1;
+          }
+          const [a, b] = EDGES[pu.edge];
+          const lerp = (k) => ({
+            x: pts[a].sx + (pts[b].sx - pts[a].sx) * k,
+            y: pts[a].sy + (pts[b].sy - pts[a].sy) * k,
+          });
+          const d = pts[a].depth + (pts[b].depth - pts[a].depth) * pu.t;
+          const head = lerp(pu.t);
+          const tail = lerp(Math.max(0, Math.min(1, pu.t - pu.dir * 0.12)));
+          const grad = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+          grad.addColorStop(0, rgba(0));
+          grad.addColorStop(1, rgba((0.25 + d * 0.55) * alpha));
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1 + d * 1.2;
+          ctx.beginPath();
+          ctx.moveTo(tail.x, tail.y);
+          ctx.lineTo(head.x, head.y);
+          ctx.stroke();
+          ctx.fillStyle = rgba((0.4 + d * 0.6) * alpha);
+          ctx.beginPath();
+          ctx.arc(head.x, head.y, 1 + d * 1.6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // nodes + labels — drawn far→near so near ones sit on top
+      const order = pts.map((_, i) => i).sort((i, j) => pts[i].depth - pts[j].depth);
       for (const i of order) {
         const p = pts[i];
-        const r = 1.4 + p.depth * 2.6;
-        ctx.shadowBlur = 8 + p.depth * 10;
+        const r = 1.3 + p.depth * 2.2;
+        ctx.shadowBlur = 6 + p.depth * 10;
         ctx.shadowColor = rgba(0.7 * alpha);
-        ctx.fillStyle = rgba((0.35 + p.depth * 0.6) * alpha);
+        ctx.fillStyle = rgba((0.3 + p.depth * 0.65) * alpha);
         ctx.beginPath();
         ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
         ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // labels only on the front hemisphere, and only on wide layouts where
+        // the sphere sits clear of the hero copy
+        if (wide && p.depth > 0.52) {
+          const la = ((p.depth - 0.52) / 0.48) * 0.8 * alpha;
+          const size = 7 + p.depth * 3.5;
+          ctx.font = `500 ${size}px "JetBrains Mono", ui-monospace, monospace`;
+          ctx.fillStyle = rgba(la);
+          ctx.textBaseline = "middle";
+          // flip the label to whichever side of the node points outward
+          const rightSide = p.sx >= cx;
+          ctx.textAlign = rightSide ? "left" : "right";
+          ctx.fillText(LABELS[i], p.sx + (rightSide ? r + 5 : -r - 5), p.sy);
+        }
       }
-      ctx.shadowBlur = 0;
 
       if (!reduced) raf = requestAnimationFrame(draw);
     };
