@@ -46,7 +46,7 @@ const LIGHT_TOKENS = {
   "--surface-2": "oklch(91% 0.006 92)",
   "--text": "oklch(20% 0.008 250)",
   "--muted": "oklch(43% 0.008 250)",
-  "--faint": "oklch(45% 0.008 250)",
+  "--faint": "oklch(49% 0.008 250)",
   "--line": "oklch(85% 0.006 92)",
   "--line-bright": "oklch(99% 0.003 95)",
   "--accent": "oklch(42% 0.09 160)",
