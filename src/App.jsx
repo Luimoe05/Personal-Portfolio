@@ -39,6 +39,15 @@ const DARK_TOKENS = {
   "--glass-sheen": "oklch(99% 0 0 / 0.95)",
   "--glass-edge": "rgb(255 255 255 / 0.14)",
   "--glass-shadow": "rgb(0 0 0 / 0.4)",
+  // Liquid-glass material (dark). Here the rim itself carries the light, so
+  // it is a bright white hairline rather than the containing edge it plays on
+  // paper, and the underside darkens to sell the thickness.
+  "--g-tint": "oklch(30% 0.006 250 / 0.4)",
+  "--g-rim": "oklch(100% 0 0 / 0.09)",
+  "--g-spec": "oklch(100% 0 0 / 0.13)",
+  "--g-under": "oklch(0% 0 0 / 0.22)",
+  "--g-band": "oklch(100% 0 0 / 0.13)",
+  "--g-cast": "oklch(0% 0 0 / 0.5)",
 };
 const LIGHT_TOKENS = {
   "--bg": "oklch(94.5% 0.006 95)",
@@ -57,6 +66,13 @@ const LIGHT_TOKENS = {
   "--glass-sheen": "oklch(58% 0.008 250 / 0.92)",
   "--glass-edge": "rgb(255 255 255 / 0.5)",
   "--glass-shadow": "oklch(20% 0.008 250 / 0.16)",
+  // Liquid-glass material (light) — mirrors the :root defaults in index.css.
+  "--g-tint": "oklch(99% 0.003 95 / 0.55)",
+  "--g-rim": "oklch(62% 0.006 92 / 0.16)",
+  "--g-spec": "oklch(100% 0 0 / 0.5)",
+  "--g-under": "oklch(20% 0.008 250 / 0.045)",
+  "--g-band": "oklch(100% 0 0 / 0.62)",
+  "--g-cast": "oklch(20% 0.008 250 / 0.14)",
 };
 
 function ScrollToTop() {
@@ -129,7 +145,7 @@ export default function App() {
       <ScrollToTop />
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 focus:rounded-[3px] btn-accent"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-accent"
       >
         Skip to content
       </a>

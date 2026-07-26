@@ -329,7 +329,7 @@ function GitHubStats() {
 function ContactForm() {
   const [status, setStatus] = useState("idle");
   const inputCls =
-    "w-full rounded-[3px] border rule-c px-3.5 py-2.5 text-sm bg-transparent outline-none transition-colors placeholder:txt-faint focus:border-[color:var(--accent-line)]";
+    "field w-full px-3.5 py-2.5 text-sm outline-none placeholder:txt-faint";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -374,7 +374,7 @@ function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-accent inline-flex items-center gap-2 px-5 py-2.5 rounded-[3px] cursor-pointer disabled:opacity-60"
+          className="btn-accent inline-flex items-center gap-2 px-5 py-2.5 cursor-pointer disabled:opacity-60"
         >
           {status === "sending" ? (
             <>
@@ -425,7 +425,7 @@ export default function MainPage() {
                 href={ResumePDF}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-accent inline-flex items-center gap-2 px-5 py-3 rounded-[3px]"
+                className="btn-accent inline-flex items-center gap-2 px-5 py-3"
               >
                 View résumé
               </a>
@@ -433,7 +433,7 @@ export default function MainPage() {
                 href="https://github.com/Luimoe05"
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-3 rounded-[3px]"
+                className="btn-ghost inline-flex items-center gap-2 px-4 py-3"
               >
                 GitHub <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
@@ -477,7 +477,7 @@ export default function MainPage() {
                   {exp.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-4">
                       {exp.tags.map((tag) => (
-                        <span key={tag} className="chip px-2 py-0.5 rounded-[3px]">
+                        <span key={tag} className="chip px-2 py-0.5">
                           {tag}
                         </span>
                       ))}
@@ -541,7 +541,7 @@ export default function MainPage() {
         <AnimateIn>
           <div className="flex flex-wrap gap-2">
             {techs.map(({ Icon, label }) => (
-              <span key={label} className="chip inline-flex items-center gap-2 px-3 py-1.5 rounded-[3px] text-[12px]">
+              <span key={label} className="chip inline-flex items-center gap-2 px-3 py-1.5 text-[12px]">
                 <Icon size={14} className="txt-faint" />
                 {label}
               </span>

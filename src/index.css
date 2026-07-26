@@ -26,6 +26,19 @@
   --accent: oklch(42% 0.09 160);
   --accent-ink: oklch(97% 0.02 160);
   --accent-line: oklch(42% 0.09 160 / 0.32);
+
+  /* Liquid-glass material (light). On paper a white rim is invisible, so the
+     border does the containing and the specular line does the lighting —
+     inverted from the dark theme, where the rim itself is the highlight. */
+  --g-tint: oklch(99% 0.003 95 / 0.55);
+  --g-rim: oklch(62% 0.006 92 / 0.16);
+  --g-spec: oklch(100% 0 0 / 0.5);
+  --g-under: oklch(20% 0.008 250 / 0.045);
+  --g-band: oklch(100% 0 0 / 0.62);
+  --g-cast: oklch(20% 0.008 250 / 0.14);
+  /* Soft enough to read as a shaped object, tight enough that the corners
+     don't compete with the registration marks and hairline frames. */
+  --r-glass: 6px;
   --glass-hi: oklch(24% 0.008 250 / 0.96);
   --glass-mid: oklch(34% 0.008 250 / 0.8);
   --glass-sheen: oklch(58% 0.008 250 / 0.92);
@@ -162,37 +175,144 @@
   .mono-link:hover { color: var(--text); }
   .mono-link[data-on="true"] { color: var(--accent); }
 
-  /* ── Bracketed / technical button ───────────────────────────────────── */
-  .btn-accent {
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: 1px solid transparent;
-    transition: filter 0.2s ease;
+  /* ── Liquid glass ─────────────────────────────────────────────────────
+     One material, shared by every interactive surface. Three things make it
+     read as glass rather than as a translucent box:
+
+       1. it samples the page — backdrop blur + saturation, so colour behind
+          bleeds through and intensifies instead of sitting under a flat tint;
+       2. it has an edge — a bright specular line along the top and a dark one
+          along the bottom, which together imply a bevel lit from above;
+       3. it has thickness — the cast shadow is offset downward, the surface
+          lifts on hover and compresses on press.
+
+     The sheen band lives in the element's own background layers rather than in
+     a pseudo-element, so it can sweep across on hover without ever painting on
+     top of the label. */
+  .glass,
+  .btn-accent,
+  .btn-ghost,
+  .chip,
+  .field {
+    background-color: var(--g-tint);
+    background-image: linear-gradient(
+      100deg,
+      transparent 38%,
+      var(--g-band) 50%,
+      transparent 62%
+    );
+    background-size: 260% 100%;
+    background-position: 155% 0;
+    background-repeat: no-repeat;
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
+    border: 1px solid var(--g-rim);
+    border-radius: var(--r-glass);
+    box-shadow:
+      inset 0 1px 0 0 var(--g-spec),
+      inset 0 -1px 0 0 var(--g-under),
+      0 6px 18px -8px var(--g-cast);
+    transition:
+      /* Long on purpose. The sheen is light travelling across a surface, not a
+         state change — under ~200ms it reads as a flicker rather than travel. */
+      background-position 0.64s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.16s ease,
+      border-color 0.16s ease,
+      color 0.16s ease;
   }
-  .btn-accent:hover { filter: brightness(1.08); }
+
+  /* Where the backdrop can't be sampled, fall back to an opaque surface —
+     a transparent tint with no blur behind it just looks like a bug. */
+  @supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
+    .glass,
+    .btn-ghost,
+    .chip,
+    .field {
+      background-color: var(--surface);
+    }
+  }
+
+  .glass:hover,
+  .btn-accent:hover,
+  .btn-ghost:hover {
+    background-position: -55% 0;
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 0 var(--g-spec),
+      inset 0 -1px 0 0 var(--g-under),
+      0 11px 26px -8px var(--g-cast);
+  }
+  .glass:active,
+  .btn-accent:active,
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.985);
+    box-shadow:
+      inset 0 1px 0 0 var(--g-spec),
+      inset 0 2px 6px -2px var(--g-under),
+      0 2px 8px -6px var(--g-cast);
+    transition-duration: 0.09s;
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────────── */
+  .btn-accent,
   .btn-ghost {
-    border: 1px solid var(--line);
-    color: var(--text);
     font-family: "JetBrains Mono", monospace;
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: border-color 0.2s ease, color 0.2s ease;
   }
-  .btn-ghost:hover { border-color: var(--accent-line); color: var(--accent); }
+  /* The accent stays near-opaque: the label has to hold its contrast, so the
+     glass layers sit on top of the fill rather than diluting it. */
+  .btn-accent {
+    background-color: color-mix(in oklch, var(--accent) 92%, transparent);
+    color: var(--accent-ink);
+    /* Matched to the fill rather than contrasting with it, so the button reads
+       as one solid object instead of a shape sitting inside a ring. Its edge
+       comes from the specular line and the cast shadow alone. */
+    border-color: color-mix(in oklch, var(--accent) 92%, transparent);
+  }
+  .btn-accent:hover {
+    background-color: color-mix(in oklch, var(--accent) 97%, transparent);
+  }
+  .btn-ghost {
+    color: var(--text);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent-line);
+    color: var(--accent);
+  }
 
   /* ── Hairline chip (mono) ───────────────────────────────────────────── */
   .chip {
     font-family: "JetBrains Mono", monospace;
     font-size: 0.68rem;
     letter-spacing: 0.04em;
-    border: 1px solid var(--line);
     color: var(--muted);
-    transition: border-color 0.2s ease, color 0.2s ease;
+    /* Chips sit a hair tighter than buttons, so the corner curvature stays
+       visually constant across the two sizes rather than looking rounder on
+       the smaller shape. Derived, so retuning the token moves both. */
+    border-radius: calc(var(--r-glass) - 1px);
+    /* Chips are small and appear in dozens — no cast shadow, or the page
+       turns into gravel. */
+    box-shadow: inset 0 1px 0 0 var(--g-spec);
+  }
+
+  /* ── Form field ─────────────────────────────────────────────────────── */
+  .field {
+    color: var(--text);
+    box-shadow:
+      inset 0 1px 0 0 var(--g-spec),
+      inset 0 1px 3px 0 var(--g-under);
+  }
+  .field:focus {
+    border-color: var(--accent-line);
+    box-shadow:
+      inset 0 1px 0 0 var(--g-spec),
+      inset 0 1px 3px 0 var(--g-under),
+      0 0 0 3px color-mix(in oklch, var(--accent) 16%, transparent);
   }
 
   /* ── Live dot ───────────────────────────────────────────────────────── */
@@ -241,5 +361,16 @@
 
   @media (prefers-reduced-motion: reduce) {
     .anim-rise, .post-rise, .dot-live::after, .text-hero { animation: none; }
+
+    /* Glass keeps its depth — the rim, shade and cast shadow are static. Only
+       the motion goes: no sheen sweep, no lift, no press. */
+    .glass, .btn-accent, .btn-ghost, .chip, .field {
+      transition: border-color 0.16s ease, color 0.16s ease;
+    }
+    .glass:hover, .btn-accent:hover, .btn-ghost:hover,
+    .glass:active, .btn-accent:active, .btn-ghost:active {
+      background-position: 155% 0;
+      transform: none;
+    }
   }
 }
