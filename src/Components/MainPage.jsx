@@ -236,6 +236,14 @@ function CountUp({ value }) {
   const [display, setDisplay] = useState(0);
   useEffect(() => {
     if (!inView) return;
+    // Respect reduced motion: land on the final value without the count-up.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setDisplay(value);
+      return;
+    }
     const controls = animate(0, value, {
       duration: 1.3,
       ease: [0.16, 1, 0.3, 1],
@@ -514,7 +522,7 @@ export default function MainPage() {
                 <ul className="mt-4 flex flex-col gap-2">
                   {proj.keypoints.map((pt, j) => (
                     <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
-                      <span className="mono txt-accent text-[11px] mt-0.5 shrink-0">
+                      <span className="mono txt-faint text-[11px] mt-0.5 shrink-0">
                         {String(j + 1).padStart(2, "0")}
                       </span>
                       <span>{pt}</span>
