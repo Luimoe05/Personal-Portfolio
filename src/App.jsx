@@ -14,6 +14,7 @@ import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
 import NotFound from "./Components/NotFound";
 import { Command, Moon, Sun } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 const getInitialTheme = () => {
   if (typeof window === "undefined") return true;
@@ -83,6 +84,42 @@ function ScrollToTop() {
   return null;
 }
 
+function ThemeToggle({ isDark, toggleMode }) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.button
+      onClick={toggleMode}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      whileTap={reduceMotion ? undefined : { scale: 0.8 }}
+      className="icon-link cursor-pointer relative inline-flex items-center justify-center w-6 h-6 rounded-full overflow-hidden"
+    >
+      <AnimatePresence>
+        <motion.span
+          key={isDark ? "burst-dark" : "burst-light"}
+          initial={reduceMotion ? false : { opacity: 0.45, scale: 0 }}
+          animate={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 2.4 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{ background: "var(--accent)" }}
+        />
+      </AnimatePresence>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.span
+          key={isDark ? "sun" : "moon"}
+          initial={reduceMotion ? false : { rotate: -90, opacity: 0, scale: 0.4 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={reduceMotion ? undefined : { rotate: 90, opacity: 0, scale: 0.4 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="flex"
+        >
+          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+        </motion.span>
+      </AnimatePresence>
+    </motion.button>
+  );
+}
+
 function TopBar({ isDark, toggleMode, setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -112,13 +149,7 @@ function TopBar({ isDark, toggleMode, setPaletteOpen }) {
               <Command className="w-3 h-3" />K
             </button>
           )}
-          <button
-            onClick={toggleMode}
-            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-            className="icon-link cursor-pointer inline-flex"
-          >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
+          <ThemeToggle isDark={isDark} toggleMode={toggleMode} />
         </div>
       </div>
     </div>
