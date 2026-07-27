@@ -55,7 +55,7 @@ const experiences = [
     company: "Salesforce — Spark Platform",
     duration: "MAY 2026 — AUG 2026",
     description:
-      "Returning to Salesforce in San Francisco on the Spark platform team. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
+      "Returning to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
     tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
   },
   {
