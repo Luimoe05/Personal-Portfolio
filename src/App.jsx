@@ -211,7 +211,8 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.theme = isDark ? "dark" : "light";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#131315" : "#eeece4");
+    // Keep in sync with --bg in index.css and the pre-paint script in index.html.
+    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#05070c" : "#f0f2f4");
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 

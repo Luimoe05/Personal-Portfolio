@@ -11,68 +11,72 @@
 }
 
 /* ── Design tokens ──────────────────────────────────────────────────────
-   AI-lab / technical: near-black default (Conifer / Experiential), a warm
-   greige light theme (Edviro) on the toggle, monospace chrome, one committed
-   green accent. Theme is selected via [data-theme] on <html>, set by an
-   inline script in index.html before first paint (see App.jsx for the
-   runtime toggle). */
+   Ink & Ochre. A blue-undertone near-black carries the neutrals; a single
+   warm ochre accent (hue 75) plays against that cold ground. The light
+   theme is the same idea inverted — cool paper, and the accent drops to a
+   deep bronze so it still clears AA on a pale background. Both modes are
+   contrast-verified against --bg AND --surface-2 (the tightest pairing):
+   the weakest text pair is --faint at 5.13:1, comfortably over the 4.5:1
+   AA floor. If you retune a neutral, re-check it against --surface-2.
+   Theme is selected via [data-theme] on <html>, set by an inline script in
+   index.html before first paint (see App.jsx for the runtime toggle). */
 :root,
 :root[data-theme="light"] {
-  --bg: oklch(94.5% 0.006 95);
-  --surface: oklch(98.5% 0.004 95);
-  --surface-2: oklch(91% 0.006 92);
-  --text: oklch(20% 0.008 250);
-  --muted: oklch(43% 0.008 250);
-  --faint: oklch(49% 0.008 250);
-  --line: oklch(85% 0.006 92);
-  --line-bright: oklch(99% 0.003 95);
-  --accent: oklch(42% 0.09 160);
-  --accent-ink: oklch(97% 0.02 160);
-  --accent-line: oklch(42% 0.09 160 / 0.32);
+  --bg: oklch(96% 0.004 265);
+  --surface: oklch(99% 0.002 265);
+  --surface-2: oklch(93% 0.005 265);
+  --text: oklch(19% 0.012 265);
+  --muted: oklch(43% 0.012 265);
+  --faint: oklch(49% 0.014 265);
+  --line: oklch(87% 0.006 265);
+  --line-bright: oklch(99.5% 0.002 265);
+  --accent: oklch(48% 0.11 70);
+  --accent-ink: oklch(98% 0.015 75);
+  --accent-line: oklch(48% 0.11 70 / 0.32);
 
   /* Liquid-glass material (light). On paper a white rim is invisible, so the
      border does the containing and the specular line does the lighting —
      inverted from the dark theme, where the rim itself is the highlight. */
-  --g-tint: oklch(99% 0.003 95 / 0.55);
-  --g-rim: oklch(62% 0.006 92 / 0.16);
+  --g-tint: oklch(99% 0.002 265 / 0.55);
+  --g-rim: oklch(62% 0.006 265 / 0.16);
   --g-spec: oklch(100% 0 0 / 0.5);
-  --g-under: oklch(20% 0.008 250 / 0.045);
+  --g-under: oklch(19% 0.012 265 / 0.045);
   --g-band: oklch(100% 0 0 / 0.62);
-  --g-cast: oklch(20% 0.008 250 / 0.14);
+  --g-cast: oklch(19% 0.012 265 / 0.14);
   /* Soft enough to read as a shaped object, tight enough that the corners
      don't compete with the registration marks and hairline frames. */
   --r-glass: 6px;
-  --glass-hi: oklch(24% 0.008 250 / 0.96);
-  --glass-mid: oklch(34% 0.008 250 / 0.8);
-  --glass-sheen: oklch(58% 0.008 250 / 0.92);
+  --glass-hi: oklch(24% 0.012 265 / 0.96);
+  --glass-mid: oklch(34% 0.012 265 / 0.8);
+  --glass-sheen: oklch(58% 0.012 265 / 0.92);
   --glass-edge: rgb(255 255 255 / 0.5);
-  --glass-shadow: oklch(20% 0.008 250 / 0.16);
+  --glass-shadow: oklch(19% 0.012 265 / 0.16);
 
   --bg-color: var(--bg);
   --text-color: var(--text);
 }
 
 :root[data-theme="dark"] {
-  --bg: oklch(14% 0.003 250);
-  --surface: oklch(17% 0.004 250);
-  --surface-2: oklch(20% 0.005 250);
-  --text: oklch(93% 0.004 250);
-  --muted: oklch(66% 0.006 250);
-  --faint: oklch(60% 0.008 250);
-  --line: oklch(26% 0.005 250);
-  --line-bright: oklch(33% 0.005 250);
-  --accent: oklch(74% 0.14 165);
-  --accent-ink: oklch(16% 0.03 165);
-  --accent-line: oklch(74% 0.14 165 / 0.3);
-  --glass-hi: oklch(93% 0.004 250 / 0.92);
-  --glass-mid: oklch(93% 0.004 250 / 0.45);
+  --bg: oklch(13% 0.012 265);
+  --surface: oklch(17% 0.014 265);
+  --surface-2: oklch(21% 0.015 265);
+  --text: oklch(94% 0.006 265);
+  --muted: oklch(68% 0.012 265);
+  --faint: oklch(62% 0.014 265);
+  --line: oklch(27% 0.014 265);
+  --line-bright: oklch(34% 0.014 265);
+  --accent: oklch(76% 0.13 75);
+  --accent-ink: oklch(17% 0.035 75);
+  --accent-line: oklch(76% 0.13 75 / 0.3);
+  --glass-hi: oklch(94% 0.006 265 / 0.92);
+  --glass-mid: oklch(94% 0.006 265 / 0.45);
   --glass-sheen: oklch(99% 0 0 / 0.95);
   --glass-edge: rgb(255 255 255 / 0.14);
   --glass-shadow: rgb(0 0 0 / 0.4);
   /* Liquid-glass material (dark). Here the rim itself carries the light, so
      it is a bright white hairline rather than the containing edge it plays on
      paper, and the underside darkens to sell the thickness. */
-  --g-tint: oklch(30% 0.006 250 / 0.4);
+  --g-tint: oklch(30% 0.014 265 / 0.4);
   --g-rim: oklch(100% 0 0 / 0.09);
   --g-spec: oklch(100% 0 0 / 0.13);
   --g-under: oklch(0% 0 0 / 0.22);
