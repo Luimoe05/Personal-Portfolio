@@ -13,8 +13,11 @@
 /* ── Design tokens ──────────────────────────────────────────────────────
    AI-lab / technical: near-black default (Conifer / Experiential), a warm
    greige light theme (Edviro) on the toggle, monospace chrome, one committed
-   green accent. Light values live here; the dark set is swapped in by App.jsx. */
-:root {
+   green accent. Theme is selected via [data-theme] on <html>, set by an
+   inline script in index.html before first paint (see App.jsx for the
+   runtime toggle). */
+:root,
+:root[data-theme="light"] {
   --bg: oklch(94.5% 0.006 95);
   --surface: oklch(98.5% 0.004 95);
   --surface-2: oklch(91% 0.006 92);
@@ -49,8 +52,41 @@
   --text-color: var(--text);
 }
 
+:root[data-theme="dark"] {
+  --bg: oklch(14% 0.003 250);
+  --surface: oklch(17% 0.004 250);
+  --surface-2: oklch(20% 0.005 250);
+  --text: oklch(93% 0.004 250);
+  --muted: oklch(66% 0.006 250);
+  --faint: oklch(60% 0.008 250);
+  --line: oklch(26% 0.005 250);
+  --line-bright: oklch(33% 0.005 250);
+  --accent: oklch(74% 0.14 165);
+  --accent-ink: oklch(16% 0.03 165);
+  --accent-line: oklch(74% 0.14 165 / 0.3);
+  --glass-hi: oklch(93% 0.004 250 / 0.92);
+  --glass-mid: oklch(93% 0.004 250 / 0.45);
+  --glass-sheen: oklch(99% 0 0 / 0.95);
+  --glass-edge: rgb(255 255 255 / 0.14);
+  --glass-shadow: rgb(0 0 0 / 0.4);
+  /* Liquid-glass material (dark). Here the rim itself carries the light, so
+     it is a bright white hairline rather than the containing edge it plays on
+     paper, and the underside darkens to sell the thickness. */
+  --g-tint: oklch(30% 0.006 250 / 0.4);
+  --g-rim: oklch(100% 0 0 / 0.09);
+  --g-spec: oklch(100% 0 0 / 0.13);
+  --g-under: oklch(0% 0 0 / 0.22);
+  --g-band: oklch(100% 0 0 / 0.13);
+  --g-cast: oklch(0% 0 0 / 0.5);
+
+  --bg-color: var(--bg);
+  --text-color: var(--text);
+}
+
 @layer base {
-  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
   body {
     font-family: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
     background-color: var(--bg);

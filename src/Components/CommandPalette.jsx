@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.div> JSX tags below; this config lacks jsx-uses-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -6,6 +7,7 @@ import {
   User,
   Briefcase,
   FolderGit2,
+  Wrench,
   PenLine,
   Mail,
   FileText,
@@ -15,26 +17,36 @@ import {
 } from "lucide-react";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export default function CommandPalette({ open, setOpen }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const inputRef = useRef(null);
   const listRef = useRef(null);
+  const dialogRef = useRef(null);
+  const selectedItemRef = useRef(null);
+  const previousFocusRef = useRef(null);
 
-  const goSection = (id) => {
-    navigate("/");
-    setTimeout(
-      () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }),
-      60
-    );
-  };
+  const goSection = useCallback(
+    (id) => {
+      navigate("/");
+      setTimeout(
+        () => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }),
+        60
+      );
+    },
+    [navigate]
+  );
 
   const actions = useMemo(
     () => [
-      { id: "about", label: "Go to About", group: "Navigate", Icon: User, run: () => goSection("about") },
+      { id: "top", label: "Go to Top", group: "Navigate", Icon: User, run: () => goSection("top") },
       { id: "experience", label: "Go to Experience", group: "Navigate", Icon: Briefcase, run: () => goSection("experience") },
-      { id: "projects", label: "Go to Projects", group: "Navigate", Icon: FolderGit2, run: () => goSection("projects") },
+      { id: "projects", label: "Go to Projects", group: "Navigate", Icon: FolderGit2, run: () => goSection("work") },
+      { id: "toolkit", label: "Go to Toolkit", group: "Navigate", Icon: Wrench, run: () => goSection("toolkit") },
       { id: "writing", label: "Go to Writing", group: "Navigate", Icon: PenLine, run: () => goSection("writing") },
       { id: "contact", label: "Go to Contact", group: "Navigate", Icon: Mail, run: () => goSection("contact") },
       { id: "resume", label: "View résumé", group: "Actions", Icon: FileText, run: () => window.open(ResumePDF, "_blank") },
@@ -43,7 +55,7 @@ export default function CommandPalette({ open, setOpen }) {
       { id: "linkedin", label: "LinkedIn — luisanm", group: "Links", Icon: Linkedin, run: () => window.open("https://www.linkedin.com/in/luisanm/", "_blank") },
       { id: "email", label: "Email me", group: "Links", Icon: Mail, run: () => window.open("mailto:lmoreno00528@gmail.com") },
     ],
-    []
+    [goSection, navigate]
   );
 
   const filtered = useMemo(() => {
@@ -61,17 +73,28 @@ export default function CommandPalette({ open, setOpen }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [setOpen]);
 
   useEffect(() => {
     if (open) {
+      previousFocusRef.current = document.activeElement;
       setQuery("");
       setSelected(0);
       setTimeout(() => inputRef.current?.focus(), 30);
+    } else {
+      const toRestore = previousFocusRef.current;
+      if (toRestore instanceof HTMLElement && document.contains(toRestore)) {
+        toRestore.focus();
+      }
+      previousFocusRef.current = null;
     }
   }, [open]);
 
   useEffect(() => setSelected(0), [query]);
+
+  useEffect(() => {
+    selectedItemRef.current?.scrollIntoView({ block: "nearest" });
+  }, [selected]);
 
   const runAction = (action) => {
     if (!action) return;
@@ -91,6 +114,23 @@ export default function CommandPalette({ open, setOpen }) {
     } else if (e.key === "Enter") {
       e.preventDefault();
       runAction(filtered[selected]);
+    } else if (e.key === "Tab") {
+      const container = dialogRef.current;
+      if (!container) return;
+      const focusable = Array.from(container.querySelectorAll(FOCUSABLE_SELECTOR));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey) {
+        if (active === first || !container.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !container.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   };
 
@@ -105,6 +145,10 @@ export default function CommandPalette({ open, setOpen }) {
           onClick={() => setOpen(false)}
         >
           <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
             className="elevated w-full max-w-lg rounded-xl overflow-hidden"
             initial={{ scale: 0.97, opacity: 0, y: -8 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -139,6 +183,7 @@ export default function CommandPalette({ open, setOpen }) {
                 return (
                   <button
                     key={action.id}
+                    ref={isSel ? selectedItemRef : null}
                     onMouseEnter={() => setSelected(i)}
                     onClick={() => runAction(action)}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors"
