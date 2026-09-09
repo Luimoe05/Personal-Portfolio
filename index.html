@@ -2,9 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./src/assets/favi.png" />
+    <link rel="icon" type="image/png" href="./src/assets/favi.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#fbfaf7" />
+    <meta name="theme-color" content="#070707" />
+
+    <!-- Resolves the theme before first paint so there is no flash of the
+         wrong palette. Must stay after the theme-color meta it updates and
+         before the stylesheet Vite injects at the end of <head>. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var theme;
+          if (stored === "dark" || stored === "light") {
+            theme = stored;
+          } else {
+            var prefersLight =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: light)").matches;
+            theme = prefersLight ? "light" : "dark";
+          }
+          document.documentElement.dataset.theme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", theme === "dark" ? "#070707" : "#f5f5f5");
+        } catch (e) {}
+      })();
+    </script>
 
     <title>Luis-Angel Moreno — Software Developer</title>
     <meta

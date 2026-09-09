@@ -6,74 +6,24 @@ import {
   useLocation,
   Link,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import MainPage from "./Components/MainPage";
-import TopNavbar from "./Components/TopNavbar";
+import TopNavbar, { sections } from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
 import NotFound from "./Components/NotFound";
-import { Command, Moon, Sun } from "lucide-react";
+import { Command, Menu, Moon, Sun, X } from "lucide-react";
+// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.div>/<motion.button> JSX tags below; this config lacks jsx-uses-vars
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
+// The inline script in index.html already set document.documentElement's
+// data-theme attribute before first paint (localStorage, falling back to
+// prefers-color-scheme, defaulting to dark). Read that back so React's
+// initial state never disagrees with what's already on screen.
 const getInitialTheme = () => {
-  if (typeof window === "undefined") return true;
-  const stored = localStorage.getItem("theme");
-  if (stored) return stored === "dark";
-  return true; // default to the near-black lab theme
-};
-
-const DARK_TOKENS = {
-  "--bg": "oklch(14% 0.003 250)",
-  "--surface": "oklch(17% 0.004 250)",
-  "--surface-2": "oklch(20% 0.005 250)",
-  "--text": "oklch(93% 0.004 250)",
-  "--muted": "oklch(66% 0.006 250)",
-  "--faint": "oklch(60% 0.008 250)",
-  "--line": "oklch(26% 0.005 250)",
-  "--line-bright": "oklch(33% 0.005 250)",
-  "--accent": "oklch(74% 0.14 165)",
-  "--accent-ink": "oklch(16% 0.03 165)",
-  "--accent-line": "oklch(74% 0.14 165 / 0.3)",
-  "--glass-hi": "oklch(93% 0.004 250 / 0.92)",
-  "--glass-mid": "oklch(93% 0.004 250 / 0.45)",
-  "--glass-sheen": "oklch(99% 0 0 / 0.95)",
-  "--glass-edge": "rgb(255 255 255 / 0.14)",
-  "--glass-shadow": "rgb(0 0 0 / 0.4)",
-  // Liquid-glass material (dark). Here the rim itself carries the light, so
-  // it is a bright white hairline rather than the containing edge it plays on
-  // paper, and the underside darkens to sell the thickness.
-  "--g-tint": "oklch(30% 0.006 250 / 0.4)",
-  "--g-rim": "oklch(100% 0 0 / 0.09)",
-  "--g-spec": "oklch(100% 0 0 / 0.13)",
-  "--g-under": "oklch(0% 0 0 / 0.22)",
-  "--g-band": "oklch(100% 0 0 / 0.13)",
-  "--g-cast": "oklch(0% 0 0 / 0.5)",
-};
-const LIGHT_TOKENS = {
-  "--bg": "oklch(94.5% 0.006 95)",
-  "--surface": "oklch(98.5% 0.004 95)",
-  "--surface-2": "oklch(91% 0.006 92)",
-  "--text": "oklch(20% 0.008 250)",
-  "--muted": "oklch(43% 0.008 250)",
-  "--faint": "oklch(49% 0.008 250)",
-  "--line": "oklch(85% 0.006 92)",
-  "--line-bright": "oklch(99% 0.003 95)",
-  "--accent": "oklch(42% 0.09 160)",
-  "--accent-ink": "oklch(97% 0.02 160)",
-  "--accent-line": "oklch(42% 0.09 160 / 0.32)",
-  "--glass-hi": "oklch(24% 0.008 250 / 0.96)",
-  "--glass-mid": "oklch(34% 0.008 250 / 0.8)",
-  "--glass-sheen": "oklch(58% 0.008 250 / 0.92)",
-  "--glass-edge": "rgb(255 255 255 / 0.5)",
-  "--glass-shadow": "oklch(20% 0.008 250 / 0.16)",
-  // Liquid-glass material (light) — mirrors the :root defaults in index.css.
-  "--g-tint": "oklch(99% 0.003 95 / 0.55)",
-  "--g-rim": "oklch(62% 0.006 92 / 0.16)",
-  "--g-spec": "oklch(100% 0 0 / 0.5)",
-  "--g-under": "oklch(20% 0.008 250 / 0.045)",
-  "--g-band": "oklch(100% 0 0 / 0.62)",
-  "--g-cast": "oklch(20% 0.008 250 / 0.14)",
+  if (typeof document === "undefined") return true;
+  return document.documentElement.dataset.theme !== "light";
 };
 
 function ScrollToTop() {
@@ -120,38 +70,136 @@ function ThemeToggle({ isDark, toggleMode }) {
   );
 }
 
+// Mobile section nav: a compact disclosure panel anchored under the top bar.
+// Reuses TopNavbar's `sections` list (single source of truth) rather than a
+// second hardcoded set of links. Desktop is untouched — this only ever
+// renders below the `sm` breakpoint.
+function MobileMenu({ open, onClose, triggerRef }) {
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+        triggerRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose, triggerRef]);
+
+  const goSection = (id) => {
+    onClose();
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="mobile-nav-backdrop"
+          className="fixed inset-0 z-30 sm:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.15 }}
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+      {open && (
+        <motion.div
+          key="mobile-nav-panel"
+          id="mobile-nav-panel"
+          role="menu"
+          aria-label="Section navigation"
+          className="absolute left-0 right-0 top-full z-40 border-b rule-c elevated sm:hidden"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: reduceMotion ? 0.1 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <nav className="max-w-5xl mx-auto px-5 py-2 flex flex-col">
+            {sections.map(({ id, label }) => (
+              <button
+                key={id}
+                role="menuitem"
+                onClick={() => goSection(id)}
+                className="mono-link min-h-[44px] flex items-center text-left"
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 function TopBar({ isDark, toggleMode, setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuTriggerRef = useRef(null);
 
+  // The blurred bar below establishes a CSS containing block (backdrop-filter
+  // does that per spec), which would clip a `position: fixed` backdrop to the
+  // bar's own 48px box instead of the viewport. Keep the positioning context
+  // (`relative`) on this outer, filter-free wrapper instead, so the mobile
+  // menu's fixed backdrop and absolutely-positioned panel size against it
+  // correctly while still anchoring visually right under the bar.
   return (
-    <div
-      className="sticky top-0 z-40 border-b rule-c backdrop-blur-md"
-      style={{ background: "color-mix(in oklch, var(--bg) 85%, transparent)" }}
-    >
-      <div className="max-w-5xl mx-auto px-5 sm:px-8 h-12 flex items-center justify-between gap-4">
-        <Link to="/" className="mono text-[13px] tracking-[0.14em] uppercase hover:txt-accent transition-colors flex items-center gap-2">
-          <span className="txt-accent">✳</span> Luis-Angel Moreno
-        </Link>
+    <div className="sticky top-0 z-40 relative">
+      <div
+        className="border-b rule-c backdrop-blur-md"
+        style={{ background: "color-mix(in oklch, var(--bg) 85%, transparent)" }}
+      >
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 h-12 flex items-center justify-between gap-3">
+          <Link to="/" className="mono text-[11px] sm:text-[13px] tracking-[0.06em] sm:tracking-[0.14em] uppercase hover:txt-accent transition-colors flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span className="txt-accent">✳</span> Luis-Angel Moreno
+          </Link>
 
-        <div className="flex items-center gap-5">
-          {isHome && (
-            <div className="hidden sm:block">
-              <TopNavbar />
-            </div>
-          )}
-          {isHome && (
-            <button
-              onClick={() => setPaletteOpen(true)}
-              aria-label="Open quick view (Command K)"
-              className="hidden sm:inline-flex items-center gap-1 mono-link"
-            >
-              <Command className="w-3 h-3" />K
-            </button>
-          )}
-          <ThemeToggle isDark={isDark} toggleMode={toggleMode} />
+          <div className="flex items-center gap-2 sm:gap-5">
+            {isHome && (
+              <button
+                ref={menuTriggerRef}
+                onClick={() => setMobileMenuOpen((o) => !o)}
+                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-nav-panel"
+                className="icon-link sm:hidden inline-flex items-center justify-center w-11 h-11 -mr-2.5 cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            )}
+            {isHome && (
+              <div className="hidden sm:block">
+                <TopNavbar />
+              </div>
+            )}
+            {isHome && (
+              <button
+                onClick={() => setPaletteOpen(true)}
+                aria-label="Open quick view (Command K)"
+                className="hidden sm:inline-flex items-center gap-1 mono-link"
+              >
+                <Command className="w-3 h-3" />K
+              </button>
+            )}
+            <ThemeToggle isDark={isDark} toggleMode={toggleMode} />
+          </div>
         </div>
       </div>
+
+      {isHome && (
+        <MobileMenu
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+          triggerRef={menuTriggerRef}
+        />
+      )}
     </div>
   );
 }
@@ -161,11 +209,10 @@ export default function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const tokens = isDark ? DARK_TOKENS : LIGHT_TOKENS;
-    for (const [k, v] of Object.entries(tokens)) root.style.setProperty(k, v);
+    document.documentElement.dataset.theme = isDark ? "dark" : "light";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
-    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#131315" : "#eeece4");
+    // Keep in sync with --bg in index.css and the pre-paint script in index.html.
+    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#070707" : "#f5f5f5");
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
@@ -176,7 +223,7 @@ export default function App() {
       <ScrollToTop />
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-accent"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-solid"
       >
         Skip to content
       </a>
@@ -192,9 +239,9 @@ export default function App() {
         />
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/summer" element={<AboutSF isDark={isDark} />} />
-          <Route path="/summer-2026" element={<Summer2026 isDark={isDark} />} />
-          <Route path="*" element={<NotFound isDark={isDark} />} />
+          <Route path="/summer" element={<AboutSF />} />
+          <Route path="/summer-2026" element={<Summer2026 />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

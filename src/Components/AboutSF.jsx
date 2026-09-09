@@ -1,10 +1,9 @@
 import React from "react";
 import PostLayout from "./PostLayout.jsx";
 
-export default function AboutSF({ isDark }) {
+export default function AboutSF() {
   return (
     <PostLayout
-      isDark={isDark}
       meta={["Aug 2025", "San Francisco", "3 min read"]}
       title="Summer 2025 in San Francisco"
       dek="My first internship at Salesforce through the FTL program — the highs, the nerves, and building something from zero."

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-const sections = [
+// eslint-disable-next-line react-refresh/only-export-components -- shared with App.jsx's mobile nav panel so both consume the same section list as one source of truth
+export const sections = [
   { id: "experience", label: "Experience" },
   { id: "work", label: "Work" },
   { id: "writing", label: "Writing" },

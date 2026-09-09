@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Mail,
   Github,
@@ -7,7 +7,6 @@ import {
   Send,
   Loader2,
 } from "lucide-react";
-import { animate, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   SiReact,
@@ -230,102 +229,6 @@ function SectionHead({ label, index }) {
   );
 }
 
-function CountUp({ value }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    // Respect reduced motion: land on the final value without the count-up.
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setDisplay(value);
-      return;
-    }
-    const controls = animate(0, value, {
-      duration: 1.3,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setDisplay(Math.round(v)),
-    });
-    return () => controls.stop();
-  }, [inView, value]);
-  return (
-    <span ref={ref} className="tabular-nums">
-      {display.toLocaleString()}
-    </span>
-  );
-}
-
-function GitHubStats() {
-  const [stats, setStats] = useState(null);
-  useEffect(() => {
-    let active = true;
-    const CACHE_KEY = "gh-stats";
-    let cached = null;
-    try {
-      cached = JSON.parse(localStorage.getItem(CACHE_KEY));
-    } catch {
-      cached = null;
-    }
-    if (cached) setStats(cached);
-    (async () => {
-      try {
-        const [user, repos, contrib] = await Promise.all([
-          fetch("https://api.github.com/users/Luimoe05").then((r) => r.json()),
-          fetch("https://api.github.com/users/Luimoe05/repos?per_page=100")
-            .then((r) => r.json())
-            .catch(() => []),
-          fetch("https://github-contributions-api.jogruber.de/v4/Luimoe05?y=last")
-            .then((r) => r.json())
-            .catch(() => null),
-        ]);
-        if (!active) return;
-        if (user.public_repos == null) return;
-        const stars = Array.isArray(repos)
-          ? repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0)
-          : cached?.stars ?? 0;
-        const fresh = {
-          repos: user.public_repos,
-          stars,
-          contributions: contrib?.total?.lastYear ?? cached?.contributions ?? 0,
-        };
-        setStats(fresh);
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify(fresh));
-        } catch {
-          /* non-fatal */
-        }
-      } catch {
-        /* keep cached */
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (!stats) return null;
-  const items = [
-    { label: "REPOSITORIES", value: stats.repos },
-    { label: "CONTRIBUTIONS · 1Y", value: stats.contributions },
-    { label: "STARS", value: stats.stars },
-  ];
-  return (
-    <div className="grid grid-cols-3 border rule-c">
-      {items.map((it, i) => (
-        <div key={it.label} className={`px-4 py-5 ${i > 0 ? "border-l rule-c" : ""}`}>
-          <div className="font-display text-2xl sm:text-3xl">
-            <CountUp value={it.value} />
-          </div>
-          <div className="eyebrow text-[9px] mt-1.5">{it.label}</div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function ContactForm() {
   const [status, setStatus] = useState("idle");
   const inputCls =
@@ -374,7 +277,7 @@ function ContactForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-accent inline-flex items-center gap-2 px-5 py-2.5 cursor-pointer disabled:opacity-60"
+          className="btn-solid inline-flex items-center gap-2 px-4 py-2"
         >
           {status === "sending" ? (
             <>
@@ -387,7 +290,7 @@ function ContactForm() {
           )}
         </button>
         {status === "error" && (
-          <span className="mono text-[11px] text-red-400">
+          <span className="mono text-[11px] txt-danger">
             ERROR — EMAIL ME DIRECTLY
           </span>
         )}
@@ -403,12 +306,12 @@ export default function MainPage() {
       <section id="top" className="pt-10 sm:pt-16 pb-16 sm:pb-24">
         <AnimateIn>
           <Framed pad="p-7 sm:p-12">
-           <div className="relative overflow-hidden">
+           <div className="relative">
             <HeroBackdrop />
             <div className="relative z-10">
             <p className="eyebrow flex items-center gap-2.5">
               <span className="dot-live" />
-              <Scramble text="Returning to Salesforce / Summer 2026" />
+              <Scramble text="2x Salesforce Intern / Summer 2025 & 2026" />
             </p>
             <h1 className="text-hero mt-6">
               Luis-Angel
@@ -425,7 +328,7 @@ export default function MainPage() {
                 href={ResumePDF}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-accent inline-flex items-center gap-2 px-5 py-3"
+                className="btn-solid inline-flex items-center gap-2 px-4 py-2.5"
               >
                 View résumé
               </a>
@@ -433,7 +336,7 @@ export default function MainPage() {
                 href="https://github.com/Luimoe05"
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-3"
+                className="btn-ghost inline-flex items-center gap-2 px-4 py-2.5"
               >
                 GitHub <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
@@ -470,7 +373,7 @@ export default function MainPage() {
                   <h3 className="font-display text-xl sm:text-2xl">
                     {exp.position}
                   </h3>
-                  <p className="mono text-[11px] txt-accent tracking-wide mt-1.5">
+                  <p className="mono text-[11px] txt-muted tracking-wide mt-1.5">
                     {exp.company}
                   </p>
                   <p className="txt-muted leading-relaxed mt-3">{exp.description}</p>
@@ -549,18 +452,13 @@ export default function MainPage() {
           </div>
         </AnimateIn>
         <AnimateIn delay={0.1}>
-          <div className="mt-8">
-            <GitHubStats />
-          </div>
-        </AnimateIn>
-        <AnimateIn delay={0.15}>
           <div className="mt-8 grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2">
             <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1">
               2023 — PRESENT
             </p>
             <div>
               <h3 className="font-display text-xl">Florida International University</h3>
-              <p className="mono text-[11px] txt-accent mt-1.5">B.S. COMPUTER SCIENCE / GPA 3.61</p>
+              <p className="mono text-[11px] txt-muted mt-1.5">B.S. COMPUTER SCIENCE / GPA 3.61</p>
               <p className="txt-muted text-sm mt-2 leading-relaxed">
                 Data Structures & Algorithms · Systems Programming · Artificial
                 Intelligence Algorithms.

@@ -23,7 +23,13 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // Components referenced only inside JSX read as unused without a
+      // JSX-aware plugin, so capitalised names are ignored — args too, for
+      // destructured components like `techs.map(({ Icon }) => <Icon />)`.
+      'no-unused-vars': [
+        'error',
+        { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^[A-Z_]' },
+      ],
     },
   },
 ])
