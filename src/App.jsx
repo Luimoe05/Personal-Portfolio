@@ -212,7 +212,7 @@ export default function App() {
     document.documentElement.dataset.theme = isDark ? "dark" : "light";
     const themeMeta = document.querySelector('meta[name="theme-color"]');
     // Keep in sync with --bg in index.css and the pre-paint script in index.html.
-    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#05070c" : "#f0f2f4");
+    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#070707" : "#f5f5f5");
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
@@ -223,7 +223,7 @@ export default function App() {
       <ScrollToTop />
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-accent"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-solid"
       >
         Skip to content
       </a>
@@ -239,9 +239,9 @@ export default function App() {
         />
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/summer" element={<AboutSF isDark={isDark} />} />
-          <Route path="/summer-2026" element={<Summer2026 isDark={isDark} />} />
-          <Route path="*" element={<NotFound isDark={isDark} />} />
+          <Route path="/summer" element={<AboutSF />} />
+          <Route path="/summer-2026" element={<Summer2026 />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

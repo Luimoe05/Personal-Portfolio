@@ -1,10 +1,9 @@
 import React from "react";
 import PostLayout, { PullQuote } from "./PostLayout.jsx";
 
-export default function Summer2026({ isDark }) {
+export default function Summer2026() {
   return (
     <PostLayout
-      isDark={isDark}
       meta={["Jul 18, 2026", "San Francisco", "2 min read"]}
       title="Summer 2026 at Salesforce"
       dek="Returning to the city a second time — and finding the craft rewritten."
