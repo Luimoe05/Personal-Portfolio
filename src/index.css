@@ -216,6 +216,66 @@
   .mono-link:hover { color: var(--text); }
   .mono-link[data-on="true"] { color: var(--accent); }
 
+  /* ── Floating nav pill ────────────────────────────────────────────────
+     The nav is a capsule that hovers over the page rather than a bar welded
+     to its top edge, so it needs its own ground: the page scrolls *under* it
+     and a flat fill would read as a stripe. Same frosting recipe as
+     `.elevated`, dialled down — a nav that sits on screen permanently should
+     not carry a dialog's shadow. */
+  .nav-shell {
+    border-radius: 9999px;
+    background: color-mix(in oklch, var(--surface) 74%, transparent);
+    /* 14px, not the palette's 28px. A backdrop filter re-rasterises whatever
+       is behind it, and this element is behind the reader for the whole
+       scroll — the blur radius is the single biggest cost on the page. */
+    -webkit-backdrop-filter: blur(14px) saturate(170%);
+    backdrop-filter: blur(14px) saturate(170%);
+    /* Own compositing layer, so a scroll under the pill repaints the page but
+       not the pill. */
+    transform: translateZ(0);
+    border: 1px solid color-mix(in oklch, var(--line-bright) 45%, transparent);
+    box-shadow:
+      0 1px 0 0 color-mix(in oklch, var(--line-bright) 45%, transparent) inset,
+      0 10px 30px -14px oklch(0% 0 0 / 0.45),
+      0 2px 8px -4px oklch(0% 0 0 / 0.25);
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    .nav-shell { background: var(--surface); }
+  }
+
+  /* Section buttons inside the pill. The label keeps the `.mono-link` colour
+     steps; this only adds the hit area and the capsule the marker slides in. */
+  .nav-pill {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.34rem 0.7rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+  /* Marker for the section you are currently in. One element shared across
+     all four buttons (framer-motion `layoutId`), so it travels between them
+     instead of fading out here and in over there. */
+  .nav-pill-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: 9999px;
+    background: color-mix(in oklch, var(--text) 11%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--line-bright) 40%, transparent) inset;
+  }
+
+  /* The mobile panel's rows carry the same marker, statically — there is no
+     rail for it to travel along there, just a list. */
+  .nav-row {
+    border-radius: 1rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .nav-row[data-on="true"] {
+    background: color-mix(in oklch, var(--text) 11%, transparent);
+  }
+
   /* ── Buttons ──────────────────────────────────────────────────────────
      Deliberately plain. A button here is a label, a hairline, and a small
      amount of padding — no blur, no sheen, no cast shadow, no lift. The only

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.span> JSX below; this config lacks jsx-uses-vars
+import { motion, useReducedMotion } from "framer-motion";
 
-// eslint-disable-next-line react-refresh/only-export-components -- shared with App.jsx's mobile nav panel so both consume the same section list as one source of truth
+// eslint-disable-next-line react-refresh/only-export-components -- shared with App.jsx's nav shell and mobile panel so every surface consumes the same section list as one source of truth
 export const sections = [
   { id: "experience", label: "Experience" },
   { id: "work", label: "Work" },
@@ -8,10 +10,18 @@ export const sections = [
   { id: "contact", label: "Contact" },
 ];
 
-export default function TopNavbar() {
+// Which section is under the reader right now. Lifted out of the nav itself
+// because the shell also needs it: on mobile the collapsed pill shows the
+// active label in place of the name, and there is only ever one observer.
+// eslint-disable-next-line react-refresh/only-export-components -- see above
+export function useActiveSection(enabled = true) {
   const [active, setActive] = useState("");
 
   useEffect(() => {
+    if (!enabled) {
+      setActive("");
+      return;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
@@ -26,10 +36,26 @@ export default function TopNavbar() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [enabled]);
+
+  return active;
+}
+
+// The section rail inside the nav pill. The active item is marked by a single
+// shared background element (`layoutId`), so switching sections slides one
+// capsule between labels rather than cross-fading four separate backgrounds.
+export default function TopNavbar({
+  active,
+  compact = false,
+  markerId = "nav-active-pill",
+}) {
+  const reduceMotion = useReducedMotion();
 
   return (
-    <nav className="flex items-center gap-5">
+    <nav
+      aria-label="Sections"
+      className={`flex items-center ${compact ? "gap-0.5" : "gap-1"}`}
+    >
       {sections.map(({ id, label }) => (
         <button
           key={id}
@@ -38,9 +64,20 @@ export default function TopNavbar() {
           }
           data-on={active === id}
           aria-current={active === id ? "true" : undefined}
-          className="mono-link"
+          className="mono-link nav-pill"
         >
-          {label}
+          {active === id && (
+            <motion.span
+              layoutId={markerId}
+              className="nav-pill-bg"
+              transition={
+                reduceMotion
+                  ? { duration: 0 }
+                  : { type: "spring", stiffness: 520, damping: 42, mass: 0.6 }
+              }
+            />
+          )}
+          <span className="relative z-10">{label}</span>
         </button>
       ))}
     </nav>
