@@ -59,6 +59,25 @@ function useScrolled(collapseAt = 72, expandAt = 24) {
   return scrolled;
 }
 
+// Matches a CSS media query from JS. The nav needs this rather than a
+// `sm:` class because the collapse swaps which element is mounted, not how one
+// element looks — a class can hide the wrong pill but can't stop it rendering.
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(
+    () => typeof window !== "undefined" && window.matchMedia(query).matches
+  );
+
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = (e) => setMatches(e.matches);
+    setMatches(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [query]);
+
+  return matches;
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -183,7 +202,6 @@ function PillContents({
   compact,
   isHome,
   active,
-  activeLabel,
   isDark,
   toggleMode,
   onPalette,
@@ -200,11 +218,6 @@ function PillContents({
       >
         <span className="txt-accent">✳</span>
         {!compact && <span className="whitespace-nowrap">Luis-Angel Moreno</span>}
-        {/* Desktop keeps the whole rail visible when collapsed; on mobile this
-            label is the only thing saying where you are. */}
-        {compact && activeLabel && (
-          <span className="whitespace-nowrap txt-muted sm:hidden">{activeLabel}</span>
-        )}
       </Link>
 
       <div className="flex items-center gap-2 sm:gap-4">
@@ -237,9 +250,7 @@ function PillContents({
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-panel"
-            className={`icon-link sm:hidden inline-flex items-center justify-center cursor-pointer shrink-0 ${
-              compact ? "w-9 h-9" : "w-11 h-11"
-            }`}
+            className="icon-link sm:hidden inline-flex items-center justify-center cursor-pointer shrink-0 w-11 h-11"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -251,11 +262,15 @@ function PillContents({
   );
 }
 
-// A floating capsule rather than a bar pinned to the page edge. At the top of
-// the home page it is the full-width identity bar; past the first scroll it
-// contracts around the section rail alone, so what stays on screen is a
-// position indicator ("you are in Work") rather than a masthead. Sub-pages
-// have no sections, so they keep the wide form at every scroll position.
+// A floating capsule rather than a bar pinned to the page edge. On a desktop
+// home page it starts as the full-width identity bar and, past the first
+// scroll, contracts around the section rail alone, so what stays on screen is
+// a position indicator ("you are in Work") rather than a masthead.
+//
+// It holds the wide form at every scroll position in two cases: sub-pages,
+// which have no sections to collapse down to, and mobile, where the rail is a
+// hamburger already — collapsing there would shrink the name, the menu and the
+// theme toggle without dropping any of them.
 //
 // The two forms are two separate elements that cross-fade, NOT one element
 // animating its own width. Morphing a single pill means animating layout —
@@ -272,8 +287,11 @@ function TopBar({ isDark, toggleMode, setPaletteOpen }) {
 
   const scrolled = useScrolled();
   const active = useActiveSection(isHome);
-  const compact = isHome && scrolled;
-  const activeLabel = sections.find((s) => s.id === active)?.label ?? "";
+  // Tailwind's `sm`. Below it the section rail has nowhere to go — the pill
+  // would collapse to a hamburger and a toggle, which is the same two controls
+  // in a smaller box, so the shrink costs a tap target and returns nothing.
+  const isDesktop = useMediaQuery("(min-width: 40rem)");
+  const compact = isHome && scrolled && isDesktop;
 
   // The panel hangs off the bottom of the pill; leaving it open through a
   // swap would strand it under a capsule that just changed shape. Fires on
@@ -300,7 +318,6 @@ function TopBar({ isDark, toggleMode, setPaletteOpen }) {
       compact={compact}
       isHome={isHome}
       active={active}
-      activeLabel={activeLabel}
       isDark={isDark}
       toggleMode={toggleMode}
       onPalette={() => setPaletteOpen(true)}
