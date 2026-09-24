@@ -94,13 +94,6 @@ export default function HeroBackdrop() {
     let rgb = readAccent();
     const rgba = (a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
 
-    // Re-read the accent whenever the theme toggle rewrites the root tokens.
-    const themeObserver = new MutationObserver(() => (rgb = readAccent()));
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
-
     let w = 0, h = 0, radius = 0, cx = 0, cy = 0, alpha = 1, wide = true;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -269,6 +262,23 @@ export default function HeroBackdrop() {
     };
 
     let raf = requestAnimationFrame(draw);
+
+    // The theme toggle flips [data-theme] on <html>; it never touches inline
+    // styles, so watching "style" here meant the accent was read once at mount
+    // and the constellation stayed near-white after a switch to light —
+    // invisible against the light background. With reduced motion there is no
+    // running loop to pick the new colour up, so repaint the static frame.
+    const themeObserver = new MutationObserver(() => {
+      rgb = readAccent();
+      if (reduced) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(draw);
+      }
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class", "style"],
+    });
 
     return () => {
       cancelAnimationFrame(raf);
