@@ -98,7 +98,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  section[id] { scroll-margin-top: 6rem; }
+  section[id] { scroll-margin-top: 5.25rem; }
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
   ::selection { background: color-mix(in oklch, var(--accent) 26%, transparent); }

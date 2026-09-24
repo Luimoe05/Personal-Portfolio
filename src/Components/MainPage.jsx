@@ -219,7 +219,7 @@ function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
 /* Mono section header: LABEL ———————— INDEX */
 function SectionHead({ label, index }) {
   return (
-    <div className="flex items-center gap-4 mb-10">
+    <div className="flex items-center gap-4 mb-7">
       <h2 className="eyebrow whitespace-nowrap">{label}</h2>
       <span className="h-px flex-1" style={{ background: "var(--line)" }} aria-hidden="true" />
       <span className="eyebrow txt-faint opacity-70" aria-hidden="true">
@@ -301,11 +301,11 @@ function ContactForm() {
 
 export default function MainPage() {
   return (
-    <main id="content" tabIndex={-1} className="max-w-5xl mx-auto px-5 sm:px-8 pb-24 outline-none">
+    <main id="content" tabIndex={-1} className="max-w-5xl mx-auto px-5 sm:px-8 pb-10 sm:pb-14 outline-none">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section id="top" className="pt-10 sm:pt-16 pb-16 sm:pb-24">
+      <section id="top" className="pt-6 sm:pt-10 pb-9 sm:pb-12">
         <AnimateIn>
-          <Framed pad="p-7 sm:p-12">
+          <Framed pad="p-6 sm:p-9">
            <div className="relative">
             <HeroBackdrop />
             <div className="relative z-10">
@@ -313,17 +313,17 @@ export default function MainPage() {
               <span className="dot-live" />
               <Scramble text="2x Salesforce Intern / Summer 2025 & 2026" />
             </p>
-            <h1 className="text-hero mt-6">
+            <h1 className="text-hero mt-5">
               Luis-Angel
               <br />
               Moreno
             </h1>
-            <p className="mt-6 text-lg sm:text-xl txt-muted leading-relaxed max-w-2xl">
+            <p className="mt-5 text-lg sm:text-xl txt-muted leading-relaxed max-w-2xl">
               Software engineer. I build platform tooling at Salesforce and
               applications that serve communities, the kind of work that makes
               hard systems legible.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-3">
               <a
                 href={ResumePDF}
                 target="_blank"
@@ -353,19 +353,19 @@ export default function MainPage() {
            </div>
           </Framed>
         </AnimateIn>
-        <div className="flex items-center justify-between mt-5 px-1">
+        <div className="flex items-center justify-between mt-4 px-1">
           <p className="eyebrow">CS · Florida Int'l University</p>
           <LocalClock subtle="txt-faint" />
         </div>
       </section>
 
       {/* ── Experience ───────────────────────────────────────────────── */}
-      <section id="experience" className="py-16 sm:py-24">
+      <section id="experience" className="py-9 sm:py-12">
         <SectionHead label="Experience" index="01 / 05" />
         <div className="flex flex-col">
           {experiences.map((exp, i) => (
             <AnimateIn key={i} delay={0.03 * i}>
-              <div className="grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-8 first:pt-0">
+              <div className="grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-6 first:pt-0">
                 <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
                   {exp.duration}
                 </p>
@@ -378,7 +378,7 @@ export default function MainPage() {
                   </p>
                   <p className="txt-muted leading-relaxed mt-3">{exp.description}</p>
                   {exp.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-4">
+                    <div className="flex flex-wrap gap-1.5 mt-3">
                       {exp.tags.map((tag) => (
                         <span key={tag} className="chip px-2 py-0.5">
                           {tag}
@@ -394,12 +394,12 @@ export default function MainPage() {
       </section>
 
       {/* ── Selected Work ────────────────────────────────────────────── */}
-      <section id="work" className="py-16 sm:py-24">
+      <section id="work" className="py-9 sm:py-12">
         <SectionHead label="Selected Work" index="02 / 05" />
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-5">
           {projects.map((proj, i) => (
             <AnimateIn key={i} delay={0.03 * i}>
-              <Framed pad="p-5 sm:p-7">
+              <Framed pad="p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="eyebrow text-[10px] mb-1.5">
@@ -419,7 +419,7 @@ export default function MainPage() {
                   </div>
                 </div>
                 <p className="mono text-[11px] txt-faint mt-2 tracking-wide">{proj.stack}</p>
-                <p className="txt-muted leading-relaxed mt-5 max-w-prose">
+                <p className="txt-muted leading-relaxed mt-4 max-w-prose">
                   {proj.description}
                 </p>
                 <ul className="mt-4 flex flex-col gap-2">
@@ -439,7 +439,7 @@ export default function MainPage() {
       </section>
 
       {/* ── Toolkit ──────────────────────────────────────────────────── */}
-      <section id="toolkit" className="py-16 sm:py-24">
+      <section id="toolkit" className="py-9 sm:py-12">
         <SectionHead label="Toolkit" index="03 / 05" />
         <AnimateIn>
           <div className="flex flex-wrap gap-2">
@@ -452,7 +452,7 @@ export default function MainPage() {
           </div>
         </AnimateIn>
         <AnimateIn delay={0.1}>
-          <div className="mt-8 grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2">
+          <div className="mt-6 grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2">
             <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1">
               2023 — PRESENT
             </p>
@@ -469,14 +469,14 @@ export default function MainPage() {
       </section>
 
       {/* ── Writing ──────────────────────────────────────────────────── */}
-      <section id="writing" className="py-16 sm:py-24">
+      <section id="writing" className="py-9 sm:py-12">
         <SectionHead label="Writing" index="04 / 05" />
         <div className="flex flex-col">
           {posts.map((post, i) => (
             <AnimateIn key={post.title} delay={0.03 * i}>
               <Link
                 to={post.to}
-                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-7 first:pt-0"
+                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-5 first:pt-0"
               >
                 <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2 transition-colors duration-300 group-hover:txt-accent">
                   {post.date}
@@ -496,17 +496,17 @@ export default function MainPage() {
               </Link>
             </AnimateIn>
           ))}
-          <p className="mono text-[11px] txt-faint mt-8 tracking-wide">
+          <p className="mono text-[11px] txt-faint mt-6 tracking-wide">
             MORE ENTRIES SOON
           </p>
         </div>
       </section>
 
       {/* ── Contact ──────────────────────────────────────────────────── */}
-      <section id="contact" className="py-16 sm:py-24">
+      <section id="contact" className="py-9 sm:py-12">
         <SectionHead label="Get in Touch" index="05 / 05" />
         <AnimateIn>
-          <p className="txt-muted leading-relaxed max-w-prose mb-6">
+          <p className="txt-muted leading-relaxed max-w-prose mb-5">
             Have a question, an opportunity, or just want to say hello? Send a
             note, or email me at{" "}
             <a href="mailto:lmoreno00528@gmail.com" className="link">
@@ -519,7 +519,7 @@ export default function MainPage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="border-t rule-c pt-8 mt-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="border-t rule-c pt-6 mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <LocalClock subtle="txt-faint" />
         <p className="mono text-[11px] txt-faint tracking-wide">
           © {new Date().getFullYear()} LUIS-ANGEL MORENO
