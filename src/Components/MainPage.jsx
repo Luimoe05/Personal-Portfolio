@@ -49,7 +49,7 @@ const experiences = [
     company: "Salesforce — Spark Platform",
     duration: "May – Aug 2026",
     description:
-      "Returning to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
+      "Returned to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
     tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
   },
   {
@@ -292,14 +292,14 @@ export default function MainPage() {
       <section id="top" className="bg-canvas px-6 pt-16 pb-20 text-center md:pt-28 md:pb-28">
         <AnimateIn>
           <p className="text-[17px] font-semibold text-flag md:text-[21px]">
-            Software Engineer Intern at Salesforce
+            Previously Software Engineer Intern at Salesforce
           </p>
           <h1 className="mt-2 text-[48px] leading-[1.05] font-semibold tracking-[-0.015em] sm:text-[64px] md:text-[80px]">
             Luis-Angel Moreno
           </h1>
           <p className="mx-auto mt-4 max-w-[680px] text-[21px] leading-[1.19] text-ink-2 md:text-[28px] md:leading-[1.14]">
-            I build platform tooling at Salesforce, and apps that make hard
-            systems easy to use.
+            I built platform tooling at Salesforce. Now I build apps that make
+            hard systems easy to use.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             <a href={ResumePDF} target="_blank" rel="noreferrer" className={pillCls}>
