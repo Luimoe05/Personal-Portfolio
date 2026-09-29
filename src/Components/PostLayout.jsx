@@ -1,78 +1,65 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import AnimateIn from "./AnimateIn";
 
-// A raised, accent-barred extract — the one visual climax of a post.
+// A large pulled line, set like the quotes in an Apple Newsroom story.
 export function PullQuote({ children }) {
   return (
-    <figure className="post-rise my-7">
-      <blockquote
-        className="border-l-2 pl-5 font-display text-xl sm:text-2xl leading-snug tracking-tight"
-        style={{ borderColor: "var(--accent)" }}
-      >
+    <figure className="my-6 border-y border-line py-8">
+      <blockquote className="text-[28px] leading-[1.2] font-semibold tracking-[-0.01em] text-ink">
         {children}
       </blockquote>
     </figure>
   );
 }
 
-// Shared "dispatch" layout for every blog post: a monospace dateline, a display
-// title, a dek, a hairline, and a roomy long-form body. Content renders with a
-// CSS entrance that always ends visible, so a post can never be left blank.
-export default function PostLayout({
-  meta = [],
-  title,
-  dek,
-  children,
-  backTo = "/",
-}) {
-  const navigate = useNavigate();
-
+// Shared long-form layout for every blog post, modelled on Apple Newsroom:
+// a small category line, a big headline, a dek, then a narrow reading column.
+// Paragraph and subhead styles are applied from here so the posts themselves
+// stay plain JSX.
+export default function PostLayout({ meta = [], title, dek, children, backTo = "/" }) {
   return (
-    <main className="mx-auto max-w-[680px] px-6 pb-14">
-      <button
-        onClick={() => navigate(backTo)}
-        className="btn-quiet group mt-2 mb-7 inline-flex items-center gap-1.5 px-3 py-1.5 -ml-3"
-      >
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-        Back to home
-      </button>
-
-      <header className="flex flex-col gap-5">
-        {meta.length > 0 && (
-          <p className="post-meta post-rise">
-            {meta.join("   ·   ")}
-          </p>
-        )}
-        <h1
-          className="post-rise font-display text-4xl sm:text-5xl font-black tracking-tight"
-          style={{ animationDelay: "0.05s" }}
+    <main id="content" tabIndex={-1} className="bg-canvas px-6 pb-24 outline-none">
+      <div className="mx-auto max-w-[692px]">
+        <Link
+          to={backTo}
+          className="group mt-6 inline-flex items-center gap-0.5 text-[15px] text-link hover:underline"
         >
-          {title}
-        </h1>
-        {dek && (
-          <p
-            className="post-rise text-lg sm:text-xl leading-relaxed txt-muted"
-            style={{ animationDelay: "0.1s" }}
-          >
-            {dek}
-          </p>
-        )}
-      </header>
+          <ChevronLeft
+            className="h-4 w-4 transition-transform motion-safe:group-hover:-translate-x-0.5"
+            strokeWidth={2}
+            aria-hidden="true"
+          />
+          Home
+        </Link>
 
-      <hr className="my-7 rule-c" />
+        <AnimateIn>
+          <header className="pt-10 md:pt-14">
+            {meta.length > 0 && (
+              <p className="text-xs font-semibold tracking-[0.06em] text-ink-2 uppercase">
+                {meta.join(" · ")}
+              </p>
+            )}
+            <h1 className="mt-3 text-[40px] leading-[1.1] font-bold tracking-[-0.015em] md:text-[48px] md:leading-[1.08]">
+              {title}
+            </h1>
+            {dek && (
+              <p className="mt-4 text-[21px] leading-[1.38] text-ink-2">{dek}</p>
+            )}
+          </header>
+        </AnimateIn>
 
-      <div
-        className="post-body post-rise flex flex-col gap-6"
-        style={{ animationDelay: "0.15s" }}
-      >
-        {children}
+        <AnimateIn delay={0.1}>
+          <div className="mt-12 flex flex-col gap-6 text-[19px] leading-[1.58] [&_h2]:mt-6 [&_h2]:text-[28px] [&_h2]:leading-tight [&_h2]:font-semibold [&_h2]:tracking-[-0.01em]">
+            {children}
+          </div>
+        </AnimateIn>
+
+        <p className="mt-14 border-t border-line pt-6 text-sm text-ink-2">
+          Luis-Angel Moreno
+        </p>
       </div>
-
-      <hr className="mt-10 mb-5 rule-c" />
-      <p className="post-meta" style={{ opacity: 0.55 }}>
-        — Luis-Angel Moreno
-      </p>
     </main>
   );
 }

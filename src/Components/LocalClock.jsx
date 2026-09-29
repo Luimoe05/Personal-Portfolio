@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-// Live local-time readout (Miami / Eastern), inspired by the footer clock on
-// aboutdariel.me. Updates every 10s so the minute stays current.
-export default function LocalClock({ subtle }) {
+// Live local-time readout (Miami / Eastern). Updates every 10s so the minute
+// stays current.
+export default function LocalClock({ className = "" }) {
   const [time, setTime] = useState("");
 
   useEffect(() => {
@@ -21,10 +21,8 @@ export default function LocalClock({ subtle }) {
   }, []);
 
   return (
-    <p className={`mono text-xs uppercase tracking-[0.12em] ${subtle}`}>
-      Miami, FL
-      <span className="mx-1.5 opacity-50">/</span>
-      <span className="tabular-nums">{time}</span>
+    <p className={className}>
+      Miami, FL · <span className="tabular-nums">{time}</span>
     </p>
   );
 }

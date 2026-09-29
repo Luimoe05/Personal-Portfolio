@@ -1,16 +1,43 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-// CSS-driven mount entrance (fade + rise). A CSS animation advances on the
-// document timeline and always resolves to its end state, so content can never
-// get stuck invisible the way a throttled rAF/JS reveal (e.g. framer-motion in
-// a hidden/backgrounded tab) can.
-const AnimateIn = ({ children, delay = 0, duration = 0.5 }) => (
-  <div
-    className="anim-rise"
-    style={{ animationDelay: `${delay}s`, animationDuration: `${duration}s` }}
-  >
-    {children}
-  </div>
-);
+// Apple-style scroll reveal: a short fade-and-rise the first time the block
+// enters the viewport. Pure CSS transition toggled by an IntersectionObserver,
+// so it resolves to fully visible even if the observer is unavailable.
+// Reduced motion skips the movement and shows the content immediately.
+export default function AnimateIn({ children, delay = 0, className = "" }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
 
-export default AnimateIn;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}s` }}
+      className={`transition duration-1000 ease-apple motion-reduce:transition-none ${
+        shown
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-8 motion-reduce:opacity-100 motion-reduce:translate-y-0"
+      } ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
