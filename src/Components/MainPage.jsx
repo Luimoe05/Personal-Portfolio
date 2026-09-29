@@ -1,12 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Mail,
-  Github,
-  Linkedin,
-  ArrowUpRight,
-  Send,
-  Loader2,
-} from "lucide-react";
+import React, { useState } from "react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   SiReact,
@@ -26,7 +19,9 @@ import { IoLogoNodejs } from "react-icons/io";
 import { FaJava } from "react-icons/fa";
 import AnimateIn from "./AnimateIn";
 import LocalClock from "./LocalClock";
-import HeroBackdrop from "./HeroBackdrop";
+import RepoAIShot from "../assets/RepoAI.webp";
+import CodificaShot from "../assets/Codifica.webp";
+import CreatorsShot from "../assets/creatorsFIU.webp";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
@@ -52,7 +47,7 @@ const experiences = [
   {
     position: "Software Engineer Intern",
     company: "Salesforce — Spark Platform",
-    duration: "MAY 2026 — AUG 2026",
+    duration: "May – Aug 2026",
     description:
       "Returning to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud. Cut Spark logging costs by ~$300K/month by shipping a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3, replacing the team's Splunk pipeline. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
     tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
@@ -60,7 +55,7 @@ const experiences = [
   {
     position: "Software Engineering Intern",
     company: "Salesforce — FTL Program",
-    duration: "JUN 2025 — AUG 2025",
+    duration: "Jun – Aug 2025",
     description:
       "As a Full Stack Intern at Salesforce and part of the FTL program, I developed Codifica, an AI-powered in-browser code editor designed to enhance learning accessibility by explaining coding concepts in users' native language.",
     tags: ["React", "Node.js", "Express", "Prisma", "PostgreSQL"],
@@ -68,7 +63,7 @@ const experiences = [
   {
     position: "Director of Digital Media",
     company: "INIT",
-    duration: "DEC 2025 — PRESENT",
+    duration: "Dec 2025 – present",
     description:
       "In charge of photography and videography for the largest tech organization at Florida International University.",
     tags: [],
@@ -76,7 +71,7 @@ const experiences = [
   {
     position: "INIT Build",
     company: "INIT",
-    duration: "FEB 2025 — APR 2025",
+    duration: "Feb – Apr 2025",
     description:
       "Collaborated on a 7-person team to build CreatorsFIU, a full-stack student marketplace. Led user authentication with Firebase and developed the responsive front-end with React and Tailwind CSS.",
     tags: ["React", "Firebase", "Tailwind"],
@@ -84,7 +79,7 @@ const experiences = [
   {
     position: "STARS Tutor",
     company: "Florida International University",
-    duration: "AUG 2025 — PRESENT",
+    duration: "Aug 2025 – present",
     description:
       "Provided tutoring for undergraduate CS students covering Data Structures & Algorithms, Systems Programming, Computer Architecture, and Programming 2 (Java).",
     tags: [],
@@ -104,6 +99,7 @@ const projects = [
     ],
     github: "https://github.com/Luimoe05/repo-ai",
     deployed: "https://repo-ai-six.vercel.app/",
+    image: RepoAIShot,
   },
   {
     name: "Codifica",
@@ -116,6 +112,7 @@ const projects = [
       "35% improvement in AI response time from feedback across 30+ users.",
     ],
     github: "https://github.com/FTLSunstack/FTLCapstone",
+    image: CodificaShot,
   },
   {
     name: "CreatorsFIU",
@@ -128,6 +125,7 @@ const projects = [
       "Authored 20+ user stories to guide development sprints.",
     ],
     github: "https://github.com/CreatorsFIU-initBuild/demoDAY",
+    image: CreatorsShot,
   },
 ];
 
@@ -136,103 +134,85 @@ const posts = [
     title: "Summer 2026 at Salesforce",
     blurb:
       "Returning to San Francisco a second time, and finding that AI agents had quietly rewritten the craft.",
-    date: "2026.07",
+    date: "July 2026",
     to: "/summer-2026",
   },
   {
     title: "Summer 2025 in San Francisco",
     blurb:
       "My time interning at Salesforce through the FTL program: the highs, the nerves, and building from zero.",
-    date: "2025.08",
+    date: "August 2025",
     to: "/summer",
   },
 ];
 
-/* Monospace text-scramble reveal — small terminal-flavored hero motion */
-const SCRAMBLE_CHARS = "!<>-_\\/[]{}=+*^?#0123456789";
-function Scramble({ text, className = "", duration = 900, delay = 150 }) {
-  const [display, setDisplay] = useState(text);
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setDisplay(text);
-      return;
-    }
-    let raf;
-    let start = null;
-    const step = (now) => {
-      if (start === null) start = now;
-      const elapsed = now - start - delay;
-      if (elapsed < 0) {
-        raf = requestAnimationFrame(step);
-        return;
-      }
-      const p = Math.min(1, elapsed / duration);
-      const revealed = Math.floor(p * text.length);
-      let out = "";
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        if (ch === " " || i < revealed) out += ch;
-        else out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-      }
-      setDisplay(out);
-      if (p < 1) raf = requestAnimationFrame(step);
-      else setDisplay(text);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [text, duration, delay]);
+/* ── Building blocks ─────────────────────────────────────────────────────
+   Full-bleed bands alternating white and grey (black and near-black in dark
+   mode), a 980px content column, and Apple's "Learn more ›" text link.
+   Cards take the opposite tone of their band: `bg-card` on grey bands,
+   `bg-card-2` on white ones. */
+
+const bandTone = {
+  white: "bg-canvas text-ink",
+  mist: "bg-mist text-ink",
+};
+
+function Band({ id, tone = "white", className = "", children }) {
   return (
-    <span className={className}>
-      <span aria-hidden="true">{display}</span>
-      <span className="sr-only">{text}</span>
-    </span>
+    <section id={id} className={`${bandTone[tone]} px-6 py-20 md:py-28 ${className}`}>
+      <div className="mx-auto max-w-[980px]">{children}</div>
+    </section>
   );
 }
 
-/* Corner registration marks around a bordered box (the "lab" framing) */
-function Framed({ children, className = "", pad = "p-6 sm:p-8" }) {
-  const marks = [
-    "top-0 left-0 -translate-x-1/2 -translate-y-1/2",
-    "top-0 right-0 translate-x-1/2 -translate-y-1/2",
-    "bottom-0 left-0 -translate-x-1/2 translate-y-1/2",
-    "bottom-0 right-0 translate-x-1/2 translate-y-1/2",
-  ];
+function SectionTitle({ children, sub }) {
   return (
-    <div className={`relative border rule-c ${className}`}>
-      {marks.map((m) => (
-        <span
-          key={m}
-          aria-hidden
-          className={`absolute ${m} txt-faint text-[11px] leading-none select-none opacity-60`}
-        >
-          +
-        </span>
-      ))}
-      <div className={pad}>{children}</div>
-    </div>
+    <AnimateIn className="mb-10 md:mb-14">
+      <h2 className="text-[40px] leading-[1.1] font-semibold tracking-[-0.015em] md:text-[56px] md:leading-[1.07]">
+        {children}
+      </h2>
+      {sub && (
+        <p className="mt-3 max-w-[620px] text-[19px] leading-snug text-ink-2 md:text-[21px]">
+          {sub}
+        </p>
+      )}
+    </AnimateIn>
   );
 }
 
-/* Mono section header: LABEL ———————— INDEX */
-function SectionHead({ label, index }) {
+function MoreLink({ href, to, children, external = true }) {
+  const cls = "group inline-flex items-center gap-0.5 text-[17px] text-link hover:underline";
+  const inner = (
+    <>
+      {children}
+      <ChevronRight
+        className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-0.5"
+        strokeWidth={2}
+        aria-hidden="true"
+      />
+    </>
+  );
+  if (to) {
+    return (
+      <Link to={to} className={cls}>
+        {inner}
+      </Link>
+    );
+  }
   return (
-    <div className="flex items-center gap-4 mb-7">
-      <h2 className="eyebrow whitespace-nowrap">{label}</h2>
-      <span className="h-px flex-1" style={{ background: "var(--line)" }} aria-hidden="true" />
-      <span className="eyebrow txt-faint opacity-70" aria-hidden="true">
-        {index}
-      </span>
-    </div>
+    <a href={href} className={cls} {...(external ? { target: "_blank", rel: "noreferrer" } : {})}>
+      {inner}
+    </a>
   );
 }
+
+const pillCls =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-blue px-[22px] py-3 text-[17px] text-white transition-colors hover:bg-blue-hover disabled:cursor-default disabled:opacity-60";
 
 function ContactForm() {
   const [status, setStatus] = useState("idle");
   const inputCls =
-    "field w-full px-3.5 py-2.5 text-sm outline-none placeholder:txt-faint";
+    "w-full rounded-xl border border-field bg-canvas px-4 py-3.5 text-[17px] text-ink outline-none transition placeholder:text-ink-2 focus:border-blue focus:ring-4 focus:ring-blue/15";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -256,274 +236,280 @@ function ContactForm() {
   };
 
   if (status === "success") {
-    return <p className="txt-muted">Message received. I'll be in touch soon.</p>;
+    return (
+      <p className="text-center text-[21px] text-ink">
+        Message received. I'll be in touch soon.
+      </p>
+    );
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3 max-w-lg">
-      <div className="flex flex-col sm:flex-row gap-3">
+    <form onSubmit={onSubmit} className="mx-auto flex max-w-[560px] flex-col gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <input name="name" required aria-label="Your name" placeholder="Name" className={inputCls} />
         <input name="email" type="email" required aria-label="Your email" placeholder="Email" className={inputCls} />
       </div>
       <textarea
         name="message"
         required
-        rows={4}
+        rows={5}
         aria-label="Your message"
         placeholder="What's on your mind?"
         className={`${inputCls} resize-none`}
       />
-      <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={status === "sending"}
-          className="btn-solid inline-flex items-center gap-2 px-4 py-2"
-        >
+      <div className="mt-3 flex flex-col items-center gap-3">
+        <button type="submit" disabled={status === "sending"} className={`${pillCls} cursor-pointer`}>
           {status === "sending" ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" /> Sending
+              <Loader2 className="h-4 w-4 animate-spin" /> Sending
             </>
           ) : (
-            <>
-              <Send className="w-3.5 h-3.5" /> Send message
-            </>
+            "Send message"
           )}
         </button>
         {status === "error" && (
-          <span className="mono text-[11px] txt-danger">
-            ERROR — EMAIL ME DIRECTLY
-          </span>
+          <p role="alert" className="text-sm text-danger">
+            That didn't go through. Email me directly instead.
+          </p>
         )}
       </div>
     </form>
   );
 }
 
+const highlights = [
+  { value: "2×", label: "software engineering internships at Salesforce, San Francisco" },
+  { value: "3.61", label: "GPA, B.S. Computer Science at Florida International University" },
+  { value: "2027", label: "graduating in May with a B.S. in Computer Science" },
+];
+
 export default function MainPage() {
+  const [featured, ...rest] = experiences;
+
   return (
-    <main id="content" tabIndex={-1} className="max-w-5xl mx-auto px-5 sm:px-8 pb-10 sm:pb-14 outline-none">
+    <main id="content" tabIndex={-1} className="outline-none">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section id="top" className="pt-6 sm:pt-10 pb-9 sm:pb-12">
+      <section id="top" className="bg-canvas px-6 pt-16 pb-20 text-center md:pt-28 md:pb-28">
         <AnimateIn>
-          <Framed pad="p-6 sm:p-9">
-           <div className="relative">
-            <HeroBackdrop />
-            <div className="relative z-10">
-            <p className="eyebrow flex items-center gap-2.5">
-              <span className="dot-live" />
-              <Scramble text="2x Salesforce Intern / Summer 2025 & 2026" />
-            </p>
-            <h1 className="text-hero mt-5">
-              Luis-Angel
-              <br />
-              Moreno
-            </h1>
-            <p className="mt-5 text-lg sm:text-xl txt-muted leading-relaxed max-w-2xl">
-              Software engineer. I build platform tooling at Salesforce and
-              applications that serve communities, the kind of work that makes
-              hard systems legible.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <a
-                href={ResumePDF}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-solid inline-flex items-center gap-2 px-4 py-2.5"
-              >
-                View résumé
-              </a>
-              <a
-                href="https://github.com/Luimoe05"
-                target="_blank"
-                rel="noreferrer"
-                className="btn-ghost inline-flex items-center gap-2 px-4 py-2.5"
-              >
-                GitHub <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
-              <div className="flex items-center gap-4 pl-2">
-                <a href="https://www.linkedin.com/in/luisanm/" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="icon-link">
-                  <Linkedin className="w-[18px] h-[18px]" />
-                </a>
-                <a href="mailto:lmoreno00528@gmail.com" aria-label="Email" className="icon-link">
-                  <Mail className="w-[18px] h-[18px]" />
-                </a>
-              </div>
-            </div>
-            </div>
-           </div>
-          </Framed>
+          <p className="text-[17px] font-semibold text-flag md:text-[21px]">
+            Software Engineer Intern at Salesforce
+          </p>
+          <h1 className="mt-2 text-[48px] leading-[1.05] font-semibold tracking-[-0.015em] sm:text-[64px] md:text-[80px]">
+            Luis-Angel Moreno
+          </h1>
+          <p className="mx-auto mt-4 max-w-[680px] text-[21px] leading-[1.19] text-ink-2 md:text-[28px] md:leading-[1.14]">
+            I build platform tooling at Salesforce, and apps that make hard
+            systems easy to use.
+          </p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+            <a href={ResumePDF} target="_blank" rel="noreferrer" className={pillCls}>
+              View résumé
+            </a>
+            <MoreLink href="https://github.com/Luimoe05">GitHub</MoreLink>
+            <MoreLink href="https://www.linkedin.com/in/luisanm/">LinkedIn</MoreLink>
+          </div>
         </AnimateIn>
-        <div className="flex items-center justify-between mt-4 px-1">
-          <p className="eyebrow">CS · Florida Int'l University</p>
-          <LocalClock subtle="txt-faint" />
-        </div>
+
+        <AnimateIn delay={0.15}>
+          <dl className="mx-auto mt-20 grid max-w-[980px] gap-10 border-t border-line pt-12 sm:grid-cols-3 sm:gap-6 md:mt-24">
+            {highlights.map(({ value, label }) => (
+              // Label first in the DOM so a screen reader hears the label, then
+              // the figure; flex-col-reverse puts the figure on top visually.
+              <div key={value} className="flex flex-col-reverse">
+                <dt className="mx-auto mt-3 max-w-[240px] text-[15px] leading-snug text-ink-2">
+                  {label}
+                </dt>
+                <dd className="text-[48px] leading-none font-semibold tracking-[-0.015em] md:text-[56px]">
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </AnimateIn>
       </section>
 
       {/* ── Experience ───────────────────────────────────────────────── */}
-      <section id="experience" className="py-9 sm:py-12">
-        <SectionHead label="Experience" index="01 / 05" />
-        <div className="flex flex-col">
-          {experiences.map((exp, i) => (
-            <AnimateIn key={i} delay={0.03 * i}>
-              <div className="grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-6 first:pt-0">
-                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1.5">
-                  {exp.duration}
-                </p>
-                <div>
-                  <h3 className="font-display text-xl sm:text-2xl">
-                    {exp.position}
-                  </h3>
-                  <p className="mono text-[11px] txt-muted tracking-wide mt-1.5">
-                    {exp.company}
-                  </p>
-                  <p className="txt-muted leading-relaxed mt-3">{exp.description}</p>
-                  {exp.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {exp.tags.map((tag) => (
-                        <span key={tag} className="chip px-2 py-0.5">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+      <Band id="experience" tone="mist">
+        <SectionTitle sub="Platform engineering at Salesforce, plus the communities I help run at FIU.">
+          Experience.
+        </SectionTitle>
+
+        <AnimateIn>
+          <article className="rounded-[28px] bg-card p-8 md:p-12">
+            <p className="text-[15px] font-semibold text-flag">Latest</p>
+            <h3 className="mt-1 text-[28px] leading-tight font-semibold tracking-[-0.01em] md:text-[40px]">
+              {featured.position}
+            </h3>
+            <p className="mt-2 text-[17px] text-ink-2">
+              {featured.company} · {featured.duration}
+            </p>
+            <p className="mt-6 max-w-[760px] text-[17px] leading-relaxed">{featured.description}</p>
+            <p className="mt-6 text-sm text-ink-2">{featured.tags.join(" · ")}</p>
+          </article>
+        </AnimateIn>
+
+        <div className="mt-5 grid gap-5 md:grid-cols-2">
+          {rest.map((exp, i) => (
+            <AnimateIn key={exp.position} delay={0.06 * (i % 2)}>
+              <article className="flex h-full flex-col rounded-[28px] bg-card p-8">
+                <p className="text-sm text-ink-2">{exp.duration}</p>
+                <h3 className="mt-1 text-[24px] leading-tight font-semibold tracking-[-0.01em]">
+                  {exp.position}
+                </h3>
+                <p className="mt-1 text-[17px] text-ink-2">{exp.company}</p>
+                <p className="mt-4 text-[15px] leading-relaxed">{exp.description}</p>
+                {exp.tags.length > 0 && (
+                  <p className="mt-auto pt-5 text-sm text-ink-2">{exp.tags.join(" · ")}</p>
+                )}
+              </article>
             </AnimateIn>
           ))}
         </div>
-      </section>
+      </Band>
 
       {/* ── Selected Work ────────────────────────────────────────────── */}
-      <section id="work" className="py-9 sm:py-12">
-        <SectionHead label="Selected Work" index="02 / 05" />
+      <Band id="work" tone="white">
+        <SectionTitle sub="Things I've designed, built, and shipped end to end.">
+          Selected work.
+        </SectionTitle>
+
         <div className="flex flex-col gap-5">
-          {projects.map((proj, i) => (
-            <AnimateIn key={i} delay={0.03 * i}>
-              <Framed pad="p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="eyebrow text-[10px] mb-1.5">
-                      PROJECT {String(i + 1).padStart(2, "0")}
-                    </p>
-                    <h3 className="font-display text-2xl sm:text-3xl">{proj.name}</h3>
-                  </div>
-                  <div className="flex items-center gap-4 shrink-0 pt-1">
-                    <a href={proj.github} target="_blank" rel="noreferrer" className="mono-link">
-                      Code
-                    </a>
+          {projects.map((proj) => (
+            <AnimateIn key={proj.name}>
+              <article className="overflow-hidden rounded-[28px] bg-card-2 text-center">
+                <div className="px-8 pt-12 md:px-16 md:pt-16">
+                  <h3 className="text-[40px] leading-tight font-semibold tracking-[-0.015em] md:text-[48px]">
+                    {proj.name}
+                  </h3>
+                  <p className="mx-auto mt-3 max-w-[640px] text-[19px] leading-snug md:text-[21px]">
+                    {proj.description}
+                  </p>
+                  <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
                     {proj.deployed && (
-                      <a href={proj.deployed} target="_blank" rel="noreferrer" className="mono-link" data-on="true">
-                        Live ↗
-                      </a>
+                      <MoreLink href={proj.deployed}>
+                        Visit site
+                      </MoreLink>
                     )}
+                    <MoreLink href={proj.github}>
+                      View code
+                    </MoreLink>
                   </div>
+
+                  <ul className="mx-auto mt-10 grid max-w-[820px] gap-6 text-left sm:grid-cols-3">
+                    {proj.keypoints.map((pt) => (
+                      <li key={pt} className="border-t border-line pt-4 text-sm leading-relaxed text-ink-2">
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-8 text-xs text-ink-2">{proj.stack}</p>
                 </div>
-                <p className="mono text-[11px] txt-faint mt-2 tracking-wide">{proj.stack}</p>
-                <p className="txt-muted leading-relaxed mt-4 max-w-prose">
-                  {proj.description}
-                </p>
-                <ul className="mt-4 flex flex-col gap-2">
-                  {proj.keypoints.map((pt, j) => (
-                    <li key={j} className="text-sm txt-muted leading-relaxed flex gap-3">
-                      <span className="mono txt-faint text-[11px] mt-0.5 shrink-0">
-                        {String(j + 1).padStart(2, "0")}
-                      </span>
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Framed>
+
+                <img
+                  src={proj.image}
+                  alt={`${proj.name} screenshot`}
+                  loading="lazy"
+                  className="mx-auto mt-10 mb-10 block w-[88%] rounded-2xl md:mt-12 md:mb-12"
+                />
+              </article>
             </AnimateIn>
           ))}
         </div>
-      </section>
+      </Band>
 
       {/* ── Toolkit ──────────────────────────────────────────────────── */}
-      <section id="toolkit" className="py-9 sm:py-12">
-        <SectionHead label="Toolkit" index="03 / 05" />
+      <Band id="toolkit" tone="mist">
+        <SectionTitle sub="The languages, frameworks, and infrastructure I reach for.">
+          Toolkit.
+        </SectionTitle>
+
         <AnimateIn>
-          <div className="flex flex-wrap gap-2">
+          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             {techs.map(({ Icon, label }) => (
-              <span key={label} className="chip inline-flex items-center gap-2 px-3 py-1.5 text-[12px]">
-                <Icon size={14} className="txt-faint" />
-                {label}
-              </span>
+              <li
+                key={label}
+                className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card px-2 py-6"
+              >
+                <Icon size={28} aria-hidden="true" />
+                <span className="text-[13px]">{label}</span>
+              </li>
             ))}
-          </div>
+          </ul>
         </AnimateIn>
+
         <AnimateIn delay={0.1}>
-          <div className="mt-6 grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2">
-            <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-1">
-              2023 — PRESENT
+          <article className="mt-5 rounded-[28px] bg-card p-8 md:p-12">
+            <p className="text-[15px] font-semibold text-flag">Education</p>
+            <h3 className="mt-1 text-[28px] leading-tight font-semibold tracking-[-0.01em] md:text-[32px]">
+              Florida International University
+            </h3>
+            <p className="mt-2 text-[17px] text-ink-2">
+              B.S. Computer Science · GPA 3.61 · Graduating May 2027
             </p>
-            <div>
-              <h3 className="font-display text-xl">Florida International University</h3>
-              <p className="mono text-[11px] txt-muted mt-1.5">B.S. COMPUTER SCIENCE / GPA 3.61</p>
-              <p className="txt-muted text-sm mt-2 leading-relaxed">
-                Data Structures & Algorithms · Systems Programming · Artificial
-                Intelligence Algorithms.
-              </p>
-            </div>
-          </div>
+            <p className="mt-4 text-[17px]">
+              Data Structures & Algorithms · Systems Programming · Artificial
+              Intelligence Algorithms
+            </p>
+          </article>
         </AnimateIn>
-      </section>
+      </Band>
 
       {/* ── Writing ──────────────────────────────────────────────────── */}
-      <section id="writing" className="py-9 sm:py-12">
-        <SectionHead label="Writing" index="04 / 05" />
-        <div className="flex flex-col">
+      <Band id="writing" tone="white">
+        <SectionTitle sub="Notes from two summers in San Francisco.">Writing.</SectionTitle>
+
+        <div className="grid gap-5 md:grid-cols-2">
           {posts.map((post, i) => (
-            <AnimateIn key={post.title} delay={0.03 * i}>
+            <AnimateIn key={post.title} delay={0.06 * i}>
               <Link
                 to={post.to}
-                className="group grid sm:grid-cols-[9rem_1fr] gap-x-8 gap-y-2 py-5 first:pt-0"
+                className="group flex h-full flex-col rounded-[28px] bg-card-2 p-8 transition duration-500 ease-apple hover:shadow-[0_8px_30px_rgb(0_0_0/0.08)] motion-safe:hover:scale-[1.015] md:p-10"
               >
-                <p className="mono text-[11px] txt-faint tracking-[0.08em] sm:pt-2 transition-colors duration-300 group-hover:txt-accent">
-                  {post.date}
-                </p>
-                <div className="transition-transform duration-300 ease-out motion-safe:group-hover:translate-x-1.5">
-                  <h3 className="font-display text-xl sm:text-2xl inline-flex items-center gap-2 transition-colors duration-300 group-hover:txt-accent">
-                    {post.title}
-                    <ArrowUpRight
-                      className="w-5 h-5 shrink-0 opacity-0 transition-all duration-300 ease-out group-hover:opacity-100 motion-safe:-translate-x-2 motion-safe:group-hover:translate-x-0"
-                      aria-hidden="true"
-                    />
-                  </h3>
-                  <p className="txt-muted text-sm mt-2.5 leading-relaxed max-w-md">
-                    {post.blurb}
-                  </p>
-                </div>
+                <p className="text-sm text-ink-2">{post.date}</p>
+                <h3 className="mt-2 text-[28px] leading-tight font-semibold tracking-[-0.01em]">
+                  {post.title}
+                </h3>
+                <p className="mt-3 text-[17px] leading-relaxed text-ink-2">{post.blurb}</p>
+                <span className="mt-auto inline-flex items-center gap-0.5 pt-6 text-[17px] text-link group-hover:underline">
+                  Read more
+                  <ChevronRight className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+                </span>
               </Link>
             </AnimateIn>
           ))}
-          <p className="mono text-[11px] txt-faint mt-6 tracking-wide">
-            MORE ENTRIES SOON
-          </p>
         </div>
-      </section>
+        <p className="mt-8 text-center text-sm text-ink-2">More entries soon.</p>
+      </Band>
 
       {/* ── Contact ──────────────────────────────────────────────────── */}
-      <section id="contact" className="py-9 sm:py-12">
-        <SectionHead label="Get in Touch" index="05 / 05" />
+      <Band id="contact" tone="mist" className="text-center">
         <AnimateIn>
-          <p className="txt-muted leading-relaxed max-w-prose mb-5">
-            Have a question, an opportunity, or just want to say hello? Send a
-            note, or email me at{" "}
-            <a href="mailto:lmoreno00528@gmail.com" className="link">
+          <h2 className="text-[40px] leading-[1.1] font-semibold tracking-[-0.015em] md:text-[56px] md:leading-[1.07]">
+            Let's talk.
+          </h2>
+          <p className="mx-auto mt-3 mb-10 max-w-[560px] text-[19px] leading-snug text-ink-2 md:text-[21px]">
+            A question, an opportunity, or just hello. Send a note, or email{" "}
+            <a href="mailto:lmoreno00528@gmail.com" className="text-link hover:underline">
               lmoreno00528@gmail.com
             </a>
             .
           </p>
           <ContactForm />
         </AnimateIn>
-      </section>
+      </Band>
 
       {/* ── Footer ───────────────────────────────────────────────────── */}
-      <footer className="border-t rule-c pt-6 mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <LocalClock subtle="txt-faint" />
-        <p className="mono text-[11px] txt-faint tracking-wide">
-          © {new Date().getFullYear()} LUIS-ANGEL MORENO
-        </p>
+      <footer className="bg-canvas px-6 py-8 text-xs text-ink-2">
+        <div className="mx-auto flex max-w-[980px] flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p>Copyright © {new Date().getFullYear()} Luis-Angel Moreno. All rights reserved.</p>
+          <nav aria-label="Elsewhere" className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href="https://github.com/Luimoe05" target="_blank" rel="noreferrer" className="hover:underline">GitHub</a>
+            <a href="https://www.linkedin.com/in/luisanm/" target="_blank" rel="noreferrer" className="hover:underline">LinkedIn</a>
+            <a href="mailto:lmoreno00528@gmail.com" className="hover:underline">Email</a>
+            <a href={ResumePDF} target="_blank" rel="noreferrer" className="hover:underline">Résumé</a>
+          </nav>
+          <LocalClock />
+        </div>
       </footer>
     </main>
   );

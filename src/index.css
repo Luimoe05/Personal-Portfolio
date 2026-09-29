@@ -1,90 +1,73 @@
-@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..600&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap");
 @import "tailwindcss";
 
-/* Geist Pixel Square — Vercel's pixel display face (SIL OFL), self-hosted.
-   Used only for the hero name; single 500 weight. */
-@font-face {
-  font-family: "GeistPixelSquare";
-  src: url("./assets/fonts/GeistPixel-Square.woff2") format("woff2");
-  font-weight: 500;
-  font-display: swap;
-}
+/* Apple-style tokens. Everything else on the site is a Tailwind utility —
+   this file only names the palette and the type stack those utilities use.
 
-/* ── Design tokens ──────────────────────────────────────────────────────
-   Greyscale. Every neutral is chroma 0 — true grey, no blue or warm cast —
-   and there is no colour accent: emphasis is a step in contrast, not a
-   change in hue. --accent is simply the extreme of the ramp (near-black on
-   paper, near-white on ink), so anything that wants to stand out gets there
-   by being further from the background than --text is, and the page stays
-   monochrome.
+   Each colour is a CSS variable swapped by [data-theme] on <html> (set before
+   first paint by the inline script in index.html), and `@theme inline` points
+   the Tailwind colour names at those variables. So `bg-canvas` or
+   `text-ink-2` is correct in both themes with no `dark:` variants anywhere.
 
-   Contrast-verified against --bg AND --surface-2 (the tightest pairing).
-   Weakest text pair is --faint on --surface-2 at 4.97:1, over the 4.5:1 AA
-   floor. --line-strong is the input boundary and clears the 3:1 that WCAG
-   1.4.11 asks of a control's edge; --line is decorative separation only and
-   is deliberately below that. If you retune a neutral, re-check it against
-   --surface-2.
-
-   Theme is selected via [data-theme] on <html>, set by an inline script in
-   index.html before first paint (see App.jsx for the runtime toggle). */
+   Contrast-checked for WCAG AA on every surface each colour sits on:
+     light  ink-2 on mist 4.66   link on mist 5.11   flag on white 5.50
+     dark   ink-2 on card 6.54   link on card 5.58   flag on card  5.34
+     both   white on blue 4.70
+   `line` is decorative only. `field` is the input edge and clears the 3:1
+   that WCAG 1.4.11 asks of a control boundary in both themes. */
 :root,
 :root[data-theme="light"] {
-  --bg: oklch(97% 0 0);
-  --surface: oklch(100% 0 0);
-  --surface-2: oklch(94% 0 0);
-  --text: oklch(20% 0 0);
-  --muted: oklch(44% 0 0);
-  --faint: oklch(50% 0 0);
-  --line: oklch(88% 0 0);
-  --line-strong: oklch(62% 0 0);
-  --line-bright: oklch(100% 0 0);
-  --accent: oklch(10% 0 0);
-  /* The single exception to the greyscale rule. A failed submit has to be
-     distinguishable at a glance, and the palette has no other way to say
-     "this went wrong" — every neutral is already spoken for by hierarchy.
-     Tuned per theme rather than a fixed Tailwind red, which sat at 2.54:1
-     on this background and failed AA outright. */
-  --danger: oklch(48% 0.17 27);
-
-  /* Corner radius. One value, shared by buttons, fields and chips so the
-     shapes read as one family; chips derive a hair tighter so the curvature
-     looks constant at their smaller size. */
-  --r-btn: 6px;
-
-  /* Hero name gradient. The only gradient left on the page — a graphite
-     sheen clipped into the glyphs. Light theme runs dark-on-paper; the dark
-     theme inverts it below. */
-  --glass-hi: oklch(24% 0 0 / 0.96);
-  --glass-mid: oklch(38% 0 0 / 0.8);
-  --glass-sheen: oklch(62% 0 0 / 0.92);
-  --glass-edge: rgb(255 255 255 / 0.5);
-  --glass-shadow: oklch(20% 0 0 / 0.16);
-
-  --bg-color: var(--bg);
-  --text-color: var(--text);
+  color-scheme: light;
+  --canvas: #ffffff;
+  --mist: #f5f5f7;
+  --card: #ffffff;
+  --card-2: #f5f5f7;
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --line: #d2d2d7;
+  --field: #86868b;
+  --link: #0066cc;
+  --flag: #b64400;
+  --danger: #d70015;
 }
 
 :root[data-theme="dark"] {
-  --bg: oklch(13% 0 0);
-  --surface: oklch(17% 0 0);
-  --surface-2: oklch(21% 0 0);
-  --text: oklch(93% 0 0);
-  --muted: oklch(68% 0 0);
-  --faint: oklch(62% 0 0);
-  --line: oklch(27% 0 0);
-  --line-strong: oklch(50% 0 0);
-  --line-bright: oklch(34% 0 0);
-  --accent: oklch(99% 0 0);
-  --danger: oklch(70% 0.14 27);
+  color-scheme: dark;
+  --canvas: #000000;
+  --mist: #0b0b0c;
+  --card: #1d1d1f;
+  --card-2: #1d1d1f;
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --line: #424245;
+  --field: #86868b;
+  --link: #2997ff;
+  --flag: #f56300;
+  --danger: #ff453a;
+}
 
-  --glass-hi: oklch(94% 0 0 / 0.92);
-  --glass-mid: oklch(94% 0 0 / 0.45);
-  --glass-sheen: oklch(99% 0 0 / 0.95);
-  --glass-edge: rgb(255 255 255 / 0.14);
-  --glass-shadow: rgb(0 0 0 / 0.4);
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-mist: var(--mist);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-line: var(--line);
+  --color-field: var(--field);
+  --color-link: var(--link);
+  --color-flag: var(--flag);
+  --color-danger: var(--danger);
+}
 
-  --bg-color: var(--bg);
-  --text-color: var(--text);
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter",
+    "Helvetica Neue", Arial, sans-serif;
+
+  --color-blue: #0071e3;
+  --color-blue-hover: #0077ed;
+
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -92,348 +75,35 @@
     html { scroll-behavior: smooth; }
   }
   body {
-    font-family: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
-    background-color: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    @apply bg-canvas font-sans text-ink antialiased;
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.022em;
   }
-  section[id] { scroll-margin-top: 5.25rem; }
+  /* Clears the 48px global nav when jumping to a section. */
+  section[id] { scroll-margin-top: 3rem; }
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
-  ::selection { background: color-mix(in oklch, var(--accent) 26%, transparent); }
-  :focus-visible {
-    outline: 1.5px solid var(--accent);
-    outline-offset: 3px;
-  }
-}
+  :focus-visible { @apply outline-2 outline-offset-2 outline-blue; }
 
-@layer utilities {
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  /* Theme switch. ThemeToggle wraps the swap in a View Transition and grows
+     the new theme out of the button as an expanding circle (see App.jsx).
+     The browser's default cross-fade is turned off so only that clip-path
+     animation runs, and the new snapshot is layered on top of the old. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(root) { z-index: 1; }
 
-  /* ── Token color helpers ────────────────────────────────────────────── */
-  .txt-muted { color: var(--muted); }
-  .txt-faint { color: var(--faint); }
-  .txt-accent { color: var(--accent); }
-  .txt-danger { color: var(--danger); }
-  .rule-c { border-color: var(--line); }
-  .surface { background: var(--surface); }
-  .surface-2 { background: var(--surface-2); }
-
-  /* ── Elevated / liquid-glass panel (command palette, popovers) ──────────
-     Semi-opaque surface tint + heavy backdrop blur & saturation so content
-     behind reads as frosted glass, not raw transparency. Hairline border +
-     top highlight + soft drop shadow give it lift. Theme-aware via tokens. */
-  .elevated {
-    background: color-mix(in oklch, var(--surface) 78%, transparent);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    backdrop-filter: blur(28px) saturate(180%);
-    border: 1px solid color-mix(in oklch, var(--line-bright) 40%, transparent);
-    box-shadow:
-      0 1px 0 0 color-mix(in oklch, var(--line-bright) 55%, transparent) inset,
-      0 24px 60px -12px oklch(0% 0 0 / 0.5),
-      0 8px 24px -8px oklch(0% 0 0 / 0.35);
-  }
-  /* Solid fallback where backdrop-filter is unsupported. */
-  @supports not (backdrop-filter: blur(1px)) {
-    .elevated { background: var(--surface); }
-  }
-
-  /* ── Type ───────────────────────────────────────────────────────────── */
-  .font-display {
-    font-family: "Schibsted Grotesk", sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.02;
-  }
-  .text-hero {
-    font-family: "GeistPixelSquare", "JetBrains Mono", ui-monospace, monospace;
-    font-weight: 500;
-    font-size: clamp(2.5rem, 6.2vw + 0.5rem, 4.9rem);
-    letter-spacing: 0.01em;
-    line-height: 1.04;
-    /* grey liquid-glass: translucent silver gradient clipped into the glyphs,
-       with a specular band that drifts across. The --glass-* tokens are
-       theme-swapped in App.jsx — silver on dark, graphite on light — so the
-       sheen never washes out against the light background. */
-    color: transparent;
-    background-image: linear-gradient(
-      115deg,
-      var(--glass-hi) 0%,
-      var(--glass-mid) 28%,
-      var(--glass-sheen) 42%,
-      var(--glass-mid) 55%,
-      var(--glass-hi) 76%,
-      var(--glass-mid) 100%
-    );
-    background-size: 230% 100%;
-    background-position: 0% 50%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    filter: drop-shadow(0 1px 0 var(--glass-edge))
-      drop-shadow(0 10px 26px var(--glass-shadow));
-    animation: glass-flow 9s ease-in-out infinite alternate;
-  }
-  @keyframes glass-flow {
-    from { background-position: 0% 50%; }
-    to { background-position: 100% 50%; }
-  }
-  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace; }
-  .eyebrow {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-weight: 500;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--faint);
-  }
-
-  /* ── Links ──────────────────────────────────────────────────────────── */
-  .link {
-    color: var(--text);
-    text-decoration: none;
-    background-image: linear-gradient(var(--accent), var(--accent));
-    background-size: 0% 1px;
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
-  }
-  .link:hover { color: var(--accent); background-size: 100% 1px; }
-  .icon-link { color: var(--muted); transition: color 0.2s ease; }
-  .icon-link:hover { color: var(--accent); }
-
-  /* ── Mono nav / labels ──────────────────────────────────────────────── */
-  .mono-link {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--faint);
-    transition: color 0.2s ease;
-    cursor: pointer;
-  }
-  .mono-link:hover { color: var(--text); }
-  .mono-link[data-on="true"] { color: var(--accent); }
-
-  /* ── Floating nav pill ────────────────────────────────────────────────
-     The nav is a capsule that hovers over the page rather than a bar welded
-     to its top edge, so it needs its own ground: the page scrolls *under* it
-     and a flat fill would read as a stripe. Same frosting recipe as
-     `.elevated`, dialled down — a nav that sits on screen permanently should
-     not carry a dialog's shadow. */
-  .nav-shell {
-    border-radius: 9999px;
-    background: color-mix(in oklch, var(--surface) 74%, transparent);
-    /* 14px, not the palette's 28px. A backdrop filter re-rasterises whatever
-       is behind it, and this element is behind the reader for the whole
-       scroll — the blur radius is the single biggest cost on the page. */
-    -webkit-backdrop-filter: blur(14px) saturate(170%);
-    backdrop-filter: blur(14px) saturate(170%);
-    /* Own compositing layer, so a scroll under the pill repaints the page but
-       not the pill. */
-    transform: translateZ(0);
-    border: 1px solid color-mix(in oklch, var(--line-bright) 45%, transparent);
-    box-shadow:
-      0 1px 0 0 color-mix(in oklch, var(--line-bright) 45%, transparent) inset,
-      0 10px 30px -14px oklch(0% 0 0 / 0.45),
-      0 2px 8px -4px oklch(0% 0 0 / 0.25);
-  }
-  @supports not (backdrop-filter: blur(1px)) {
-    .nav-shell { background: var(--surface); }
-  }
-
-  /* Section buttons inside the pill. The label keeps the `.mono-link` colour
-     steps; this only adds the hit area and the capsule the marker slides in. */
-  .nav-pill {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    padding: 0.34rem 0.7rem;
-    border-radius: 9999px;
-    white-space: nowrap;
-  }
-  /* Marker for the section you are currently in. One element shared across
-     all four buttons (framer-motion `layoutId`), so it travels between them
-     instead of fading out here and in over there. */
-  .nav-pill-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    border-radius: 9999px;
-    background: color-mix(in oklch, var(--text) 11%, transparent);
-    box-shadow: 0 0 0 1px color-mix(in oklch, var(--line-bright) 40%, transparent) inset;
-  }
-
-  /* The mobile panel's rows carry the same marker, statically — there is no
-     rail for it to travel along there, just a list. */
-  .nav-row {
-    border-radius: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-  .nav-row[data-on="true"] {
-    background: color-mix(in oklch, var(--text) 11%, transparent);
-  }
-
-  /* ── Buttons ──────────────────────────────────────────────────────────
-     Deliberately plain. A button here is a label, a hairline, and a small
-     amount of padding — no blur, no sheen, no cast shadow, no lift. The only
-     thing that moves on hover is colour, which is enough feedback at this
-     size and keeps the controls from competing with the prose they sit under.
-
-     Two levels, and only two:
-       .btn-solid  one per view — filled with the ink colour, so it carries
-                   weight from contrast alone rather than from an accent hue
-       .btn-ghost  everything else — a hairline that fills in on hover
-       .btn-quiet  in-flow / back links — no border at all until hover */
-  .btn-solid,
-  .btn-ghost,
-  .btn-quiet {
-    font-family: inherit;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.005em;
-    border: 1px solid transparent;
-    border-radius: var(--r-btn);
-    cursor: pointer;
-    transition:
-      background-color 0.16s ease,
-      border-color 0.16s ease,
-      color 0.16s ease,
-      opacity 0.16s ease;
-  }
-
-  /* Ink, not accent. The ochre is loud at button size and was pulling the eye
-     away from the copy; borrowing --text for the fill keeps the one primary
-     action obvious without adding a second colour to the page. */
-  .btn-solid {
-    background-color: var(--text);
-    border-color: var(--text);
-    color: var(--bg);
-  }
-  .btn-solid:hover {
-    background-color: color-mix(in oklch, var(--text) 82%, var(--bg));
-    border-color: color-mix(in oklch, var(--text) 82%, var(--bg));
-  }
-
-  .btn-ghost {
-    background-color: transparent;
-    border-color: var(--line);
-    color: var(--text);
-  }
-  .btn-ghost:hover {
-    background-color: var(--surface-2);
-    border-color: color-mix(in oklch, var(--text) 26%, transparent);
-  }
-
-  .btn-quiet {
-    background-color: transparent;
-    color: var(--muted);
-  }
-  .btn-quiet:hover {
-    background-color: var(--surface-2);
-    color: var(--text);
-  }
-
-  .btn-solid:disabled,
-  .btn-ghost:disabled,
-  .btn-quiet:disabled {
-    opacity: 0.55;
-    cursor: default;
-  }
-  .btn-solid:disabled:hover { background-color: var(--text); border-color: var(--text); }
-  .btn-ghost:disabled:hover { background-color: transparent; border-color: var(--line); }
-  .btn-quiet:disabled:hover { background-color: transparent; color: var(--muted); }
-
-  /* ── Hairline chip (mono) ───────────────────────────────────────────── */
-  .chip {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-    background-color: var(--surface-2);
-    border: 1px solid var(--line);
-    /* Chips sit a hair tighter than buttons, so the corner curvature stays
-       visually constant across the two sizes rather than looking rounder on
-       the smaller shape. Derived, so retuning the token moves both. */
-    border-radius: calc(var(--r-btn) - 1px);
-  }
-
-  /* ── Form fields ──────────────────────────────────────────────────────
-     Same logic as the buttons: a fill, a hairline, and nothing else. The
-     fill is --surface so the box reads as a distinct well against --bg
-     before the eye even reaches the border.
-
-     The border is --line-strong, not --line: on an input the border IS the
-     control's affordance, and WCAG 1.4.11 wants 3:1 for that boundary,
-     where a decorative separator has no floor. Focus then goes to --accent
-     — the darkest/lightest end of the ramp — plus a soft ring, which is a
-     large enough jump to read instantly without introducing a hue. */
-  .field {
-    background-color: var(--surface);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-btn);
-    color: var(--text);
-    transition: border-color 0.16s ease, box-shadow 0.16s ease;
-  }
-  .field:hover:not(:focus) {
-    border-color: color-mix(in oklch, var(--line-strong) 70%, var(--text));
-  }
-  .field:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 14%, transparent);
-  }
-
-  /* ── Live dot ───────────────────────────────────────────────────────── */
-  .dot-live {
-    position: relative;
-    display: inline-flex;
-    height: 0.4rem; width: 0.4rem;
-    border-radius: 9999px;
-    background: var(--accent);
-  }
-  .dot-live::after {
-    content: ""; position: absolute; inset: 0;
-    border-radius: 9999px; background: var(--accent);
-    animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-  @keyframes ping { 0% { transform: scale(1); opacity: 0.6; } 75%,100% { transform: scale(2.6); opacity: 0; } }
-
-  /* ── Film grain ─────────────────────────────────────────────────────── */
-  .grain {
-    position: fixed; inset: 0; z-index: 100;
-    pointer-events: none; opacity: 0.035; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* ── Long-form (shared sub-pages) ───────────────────────────────────── */
-  .post-meta {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--faint);
-  }
-  .post-body p { font-size: 1.075rem; line-height: 1.8; color: var(--muted); }
-  .post-body > p:first-of-type { font-size: 1.2rem; color: var(--text); }
-  .post-body h2 {
-    font-family: "Schibsted Grotesk", sans-serif; font-weight: 800;
-    font-size: 1.5rem; margin-top: 1rem; letter-spacing: -0.01em; color: var(--text);
-  }
-  @keyframes post-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  .post-rise { animation: post-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-  /* ── Mount entrance ─────────────────────────────────────────────────── */
-  @keyframes anim-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-  .anim-rise {
-    animation-name: anim-rise; animation-duration: 0.65s;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); animation-fill-mode: both;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .anim-rise, .post-rise, .dot-live::after, .text-hero { animation: none; }
-
-    /* Buttons and fields only ever transition colour, which is safe under
-       reduced-motion — nothing here moves, so there is nothing to disable. */
+  /* Held on <html> for the duration of a theme switch. Cards, fields and nav
+     links carry colour transitions for hover; without this they would fade to
+     the new theme on their own clock instead of flipping with the circle,
+     leaving patches of the old theme behind it. */
+  [data-theme-switching] *,
+  [data-theme-switching] *::before,
+  [data-theme-switching] *::after {
+    transition: none !important;
   }
 }

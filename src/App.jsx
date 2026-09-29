@@ -4,79 +4,21 @@ import {
   Routes,
   Route,
   useLocation,
+  useNavigate,
   Link,
 } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import MainPage from "./Components/MainPage";
 import TopNavbar, { sections, useActiveSection } from "./Components/TopNavbar";
 import AboutSF from "./Components/AboutSF";
 import Summer2026 from "./Components/Summer2026";
 import CommandPalette from "./Components/CommandPalette";
 import NotFound from "./Components/NotFound";
-import { Command, Menu, Moon, Sun, X } from "lucide-react";
-// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.div>/<motion.button> JSX tags below; this config lacks jsx-uses-vars
+import ThemeToggle from "./Components/ThemeToggle";
+import useScrollLock from "./Components/useScrollLock";
+import { Search, Menu, X } from "lucide-react";
+// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.div> JSX tags below; this config lacks jsx-uses-vars
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-
-// The inline script in index.html already set document.documentElement's
-// data-theme attribute before first paint (localStorage, falling back to
-// prefers-color-scheme, defaulting to dark). Read that back so React's
-// initial state never disagrees with what's already on screen.
-const getInitialTheme = () => {
-  if (typeof document === "undefined") return true;
-  return document.documentElement.dataset.theme !== "light";
-};
-
-// True once the page has scrolled past `collapseAt`, false again below
-// `expandAt`. The two thresholds are deliberately apart: a single boundary
-// makes the nav flip state on every jitter of a trackpad scroll sitting right
-// on it. rAF-throttled so a scroll never queues more than one render a frame.
-function useScrolled(collapseAt = 72, expandAt = 24) {
-  const [scrolled, setScrolled] = useState(
-    () => typeof window !== "undefined" && window.scrollY > collapseAt
-  );
-
-  useEffect(() => {
-    let frame = 0;
-    const read = () => {
-      const y = window.scrollY;
-      setScrolled((was) => (was ? y > expandAt : y > collapseAt));
-    };
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        read();
-      });
-    };
-    read();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [collapseAt, expandAt]);
-
-  return scrolled;
-}
-
-// Matches a CSS media query from JS. The nav needs this rather than a
-// `sm:` class because the collapse swaps which element is mounted, not how one
-// element looks — a class can hide the wrong pill but can't stop it rendering.
-function useMediaQuery(query) {
-  const [matches, setMatches] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(query).matches
-  );
-
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    const onChange = (e) => setMatches(e.matches);
-    setMatches(mql.matches);
-    mql.addEventListener("change", onChange);
-    return () => mql.removeEventListener("change", onChange);
-  }, [query]);
-
-  return matches;
-}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -86,50 +28,28 @@ function ScrollToTop() {
   return null;
 }
 
-function ThemeToggle({ isDark, toggleMode }) {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <motion.button
-      onClick={toggleMode}
-      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
-      whileTap={reduceMotion ? undefined : { scale: 0.8 }}
-      className="icon-link cursor-pointer relative inline-flex items-center justify-center w-6 h-6 rounded-full overflow-hidden shrink-0"
-    >
-      {/* `initial={false}`: the toggle is remounted every time the nav swaps
-          between its two pills, and without this the ripple would fire on each
-          of those swaps rather than only on an actual theme change. */}
-      <AnimatePresence initial={false}>
-        <motion.span
-          key={isDark ? "burst-dark" : "burst-light"}
-          initial={reduceMotion ? false : { opacity: 0.45, scale: 0 }}
-          animate={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 2.4 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
-          className="absolute inset-0 rounded-full pointer-events-none"
-          style={{ background: "var(--accent)" }}
-        />
-      </AnimatePresence>
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={isDark ? "sun" : "moon"}
-          initial={reduceMotion ? false : { rotate: -90, opacity: 0, scale: 0.4 }}
-          animate={{ rotate: 0, opacity: 1, scale: 1 }}
-          exit={reduceMotion ? undefined : { rotate: 90, opacity: 0, scale: 0.4 }}
-          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="flex"
-        >
-          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </motion.span>
-      </AnimatePresence>
-    </motion.button>
+// Scrolls to a home-page section from anywhere. On a sub-page it routes home
+// first and waits a tick for the sections to mount.
+function useGoSection() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  return useCallback(
+    (id) => {
+      const go = () =>
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      if (pathname === "/") go();
+      else {
+        navigate("/");
+        setTimeout(go, 60);
+      }
+    },
+    [navigate, pathname]
   );
 }
 
-// Mobile section nav: a floating card that hangs under the nav pill.
-// Reuses TopNavbar's `sections` list (single source of truth) rather than a
-// second hardcoded set of links. Desktop is untouched — this only ever
-// renders below the `sm` breakpoint.
-function MobileMenu({ open, onClose, triggerRef, active }) {
+// Apple's mobile menu: the bar grows into a full-screen sheet of large,
+// bold links that cascade in.
+function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -144,49 +64,35 @@ function MobileMenu({ open, onClose, triggerRef, active }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose, triggerRef]);
 
-  const goSection = (id) => {
-    onClose();
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
+  useScrollLock(open);
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
-          key="mobile-nav-backdrop"
-          className="fixed inset-0 pointer-events-auto sm:hidden"
+          id="mobile-nav-panel"
+          className="fixed inset-x-0 top-12 bottom-0 z-40 bg-canvas md:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.15 }}
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
-      {open && (
-        <motion.div
-          key="mobile-nav-panel"
-          id="mobile-nav-panel"
-          role="menu"
-          aria-label="Section navigation"
-          className="absolute left-0 right-0 top-full mt-2 z-20 rounded-3xl overflow-hidden elevated pointer-events-auto sm:hidden"
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-          transition={{ duration: reduceMotion ? 0.1 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduceMotion ? 0 : 0.2 }}
         >
-          <nav className="px-3 py-2 flex flex-col">
-            {sections.map(({ id, label }) => (
-              <button
+          <nav aria-label="Sections" className="flex flex-col px-12 pt-6">
+            {sections.map(({ id, label }, i) => (
+              <motion.button
                 key={id}
-                role="menuitem"
-                onClick={() => goSection(id)}
-                data-on={active === id}
+                onClick={() => {
+                  onClose();
+                  onGo(id);
+                }}
                 aria-current={active === id ? "true" : undefined}
-                className="mono-link nav-row min-h-[44px] flex items-center text-left"
+                className="cursor-pointer py-2 text-left text-[28px] font-semibold tracking-tight text-ink"
+                initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: reduceMotion ? 0 : 0.04 * i + 0.05, duration: 0.3 }}
               >
                 {label}
-              </button>
+              </motion.button>
             ))}
           </nav>
         </motion.div>
@@ -195,224 +101,102 @@ function MobileMenu({ open, onClose, triggerRef, active }) {
   );
 }
 
-// Everything inside the capsule. Both the wide and the collapsed pill render
-// this — the flag only decides which pieces are along for the ride — so the
-// two never drift apart as the nav gains controls.
-function PillContents({
-  compact,
-  isHome,
-  active,
-  isDark,
-  toggleMode,
-  onPalette,
-  mobileMenuOpen,
-  onToggleMobileMenu,
-  menuTriggerRef,
-}) {
+// The global nav: a thin, full-width frosted bar pinned to the top, as on
+// apple.com. Name on the left, section links in the middle, the theme switch
+// and search (the command palette) on the right.
+function GlobalNav({ setPaletteOpen }) {
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuTriggerRef = useRef(null);
+  const active = useActiveSection(isHome);
+  const goSection = useGoSection();
+
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
   return (
     <>
-      <Link
-        to="/"
-        aria-label="Home"
-        className="mono text-[11px] sm:text-[13px] tracking-[0.06em] sm:tracking-[0.14em] uppercase hover:txt-accent transition-colors flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0 px-1"
+      <header
+        className={`fixed inset-x-0 top-0 z-50 h-12 backdrop-blur-xl backdrop-saturate-[1.8] transition-colors ${
+          menuOpen ? "bg-canvas" : "bg-canvas/80"
+        }`}
       >
-        <span className="txt-accent">✳</span>
-        {!compact && <span className="whitespace-nowrap">Luis-Angel Moreno</span>}
-      </Link>
+        <div className="mx-auto flex h-full max-w-[1024px] items-center justify-between px-4 sm:px-6">
+          <Link
+            to="/"
+            aria-label="Luis-Angel Moreno, home"
+            className="text-sm font-semibold tracking-tight text-ink"
+          >
+            Luis-Angel Moreno
+          </Link>
 
-      <div className="flex items-center gap-2 sm:gap-4">
-        {isHome && (
-          <div className="hidden sm:block">
-            <TopNavbar
-              active={active}
-              compact={compact}
-              // Both pills are on screen at once mid-crossfade; a shared
-              // layoutId would make the marker fly between the two of them.
-              markerId={compact ? "nav-marker-compact" : "nav-marker-wide"}
-            />
+          <div className="hidden md:block">
+            <TopNavbar active={active} onGo={goSection} />
           </div>
-        )}
 
-        {isHome && !compact && (
-          <button
-            onClick={onPalette}
-            aria-label="Open quick view (Command K)"
-            className="hidden sm:inline-flex items-center gap-1 mono-link whitespace-nowrap"
-          >
-            <Command className="w-3 h-3" />K
-          </button>
-        )}
+          <div className="flex items-center">
+            <ThemeToggle />
+            <button
+              onClick={() => setPaletteOpen(true)}
+              aria-label="Search (Command K)"
+              className="inline-flex h-11 w-11 cursor-pointer items-center justify-center text-ink/80 transition-colors hover:text-ink"
+            >
+              <Search className="h-4 w-4" strokeWidth={1.75} />
+            </button>
+            <button
+              ref={menuTriggerRef}
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav-panel"
+              className="-mr-3 inline-flex h-11 w-11 cursor-pointer items-center justify-center text-ink/80 transition-colors hover:text-ink md:hidden"
+            >
+              {menuOpen ? (
+                <X className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              ) : (
+                <Menu className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
 
-        {isHome && (
-          <button
-            ref={menuTriggerRef}
-            onClick={onToggleMobileMenu}
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileMenuOpen}
-            aria-controls="mobile-nav-panel"
-            className="icon-link sm:hidden inline-flex items-center justify-center cursor-pointer shrink-0 w-11 h-11"
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        )}
-
-        <ThemeToggle isDark={isDark} toggleMode={toggleMode} />
-      </div>
+      {/* Outside the header: its backdrop-filter would make it the containing
+          block for this fixed sheet and clip it to the 48px bar. */}
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        triggerRef={menuTriggerRef}
+        active={active}
+        onGo={goSection}
+      />
     </>
   );
 }
 
-// A floating capsule rather than a bar pinned to the page edge. On a desktop
-// home page it starts as the full-width identity bar and, past the first
-// scroll, contracts around the section rail alone, so what stays on screen is
-// a position indicator ("you are in Work") rather than a masthead.
-//
-// It holds the wide form at every scroll position in two cases: sub-pages,
-// which have no sections to collapse down to, and mobile, where the rail is a
-// hamburger already — collapsing there would shrink the name, the menu and the
-// theme toggle without dropping any of them.
-//
-// The two forms are two separate elements that cross-fade, NOT one element
-// animating its own width. Morphing a single pill means animating layout —
-// framer does that by scaling the box, which stretches the text inside it and
-// forces the backdrop blur to re-rasterise every frame. Both look like
-// stutter. Swapping two correctly-sized boxes moves nothing but `transform`
-// and `opacity`, which the compositor handles without a relayout.
-function TopBar({ isDark, toggleMode, setPaletteOpen }) {
-  const location = useLocation();
-  const isHome = location.pathname === "/";
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const menuTriggerRef = useRef(null);
-  const reduceMotion = useReducedMotion();
-
-  const scrolled = useScrolled();
-  const active = useActiveSection(isHome);
-  // Tailwind's `sm`. Below it the section rail has nowhere to go — the pill
-  // would collapse to a hamburger and a toggle, which is the same two controls
-  // in a smaller box, so the shrink costs a tap target and returns nothing.
-  const isDesktop = useMediaQuery("(min-width: 40rem)");
-  const compact = isHome && scrolled && isDesktop;
-
-  // The panel hangs off the bottom of the pill; leaving it open through a
-  // swap would strand it under a capsule that just changed shape. Fires on
-  // the collapse only, so opening the menu while already compact is fine.
-  useEffect(() => {
-    if (compact) setMobileMenuOpen(false);
-  }, [compact]);
-
-  const swap = reduceMotion
-    ? { duration: 0 }
-    : { duration: 0.26, ease: [0.16, 1, 0.3, 1] };
-
-  const shared = {
-    initial: reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: -4 },
-    animate: { opacity: 1, scale: 1, y: 0 },
-    exit: reduceMotion
-      ? { opacity: 0, pointerEvents: "none" }
-      : { opacity: 0, scale: 0.96, y: -4, pointerEvents: "none" },
-    transition: swap,
-  };
-
-  const contents = (
-    <PillContents
-      compact={compact}
-      isHome={isHome}
-      active={active}
-      isDark={isDark}
-      toggleMode={toggleMode}
-      onPalette={() => setPaletteOpen(true)}
-      mobileMenuOpen={mobileMenuOpen}
-      onToggleMobileMenu={() => setMobileMenuOpen((o) => !o)}
-      menuTriggerRef={menuTriggerRef}
-    />
-  );
-
-  return (
-    // `pointer-events-none` on the gutter so the strip either side of a
-    // collapsed pill doesn't swallow clicks meant for the page underneath.
-    <div className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:pt-4 pointer-events-none">
-      {/* Fixed height: both pills are absolutely placed inside it so they can
-          overlap during the swap, and the mobile panel anchors to a box that
-          doesn't move. */}
-      <div className="relative mx-auto w-full max-w-5xl h-14">
-        <AnimatePresence initial={false}>
-          {compact ? (
-            <motion.div
-              key="nav-compact"
-              {...shared}
-              style={{ x: "-50%", willChange: "transform, opacity" }}
-              className="nav-shell pointer-events-auto absolute top-0 left-1/2 z-10 flex items-center gap-1 h-11 max-w-full px-2 sm:px-2.5"
-            >
-              {contents}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="nav-wide"
-              {...shared}
-              style={{ willChange: "transform, opacity" }}
-              className="nav-shell pointer-events-auto absolute top-0 inset-x-0 z-10 flex items-center justify-between gap-3 h-14 px-3 sm:px-5"
-            >
-              {contents}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {isHome && (
-          <MobileMenu
-            open={mobileMenuOpen}
-            onClose={() => setMobileMenuOpen(false)}
-            triggerRef={menuTriggerRef}
-            active={active}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
-  const [isDark, setIsDark] = useState(getInitialTheme);
   const [paletteOpen, setPaletteOpen] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = isDark ? "dark" : "light";
-    const themeMeta = document.querySelector('meta[name="theme-color"]');
-    // Keep in sync with --bg in index.css and the pre-paint script in index.html.
-    if (themeMeta) themeMeta.setAttribute("content", isDark ? "#070707" : "#f5f5f5");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark]);
-
-  const toggleMode = () => setIsDark((d) => !d);
 
   return (
     <Router>
       <ScrollToTop />
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[110] focus:px-4 focus:py-2 btn-solid"
+        className="sr-only rounded-full bg-blue px-4 py-2 text-sm text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[110]"
       >
         Skip to content
       </a>
-      <div className="grain" aria-hidden="true" />
 
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
 
-      <div className="min-h-screen">
-        <TopBar
-          isDark={isDark}
-          toggleMode={toggleMode}
-          setPaletteOpen={setPaletteOpen}
-        />
-        {/* The nav floats out of flow now, so the page owes it the height it
-            used to occupy: 12px gutter + a 56px pill. */}
-        <div className="pt-[4.25rem] sm:pt-[4.5rem]">
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/summer" element={<AboutSF />} />
-            <Route path="/summer-2026" element={<Summer2026 />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
+      <GlobalNav setPaletteOpen={setPaletteOpen} />
+      <div className="min-h-screen pt-12">
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/summer" element={<AboutSF />} />
+          <Route path="/summer-2026" element={<Summer2026 />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </div>
     </Router>
   );

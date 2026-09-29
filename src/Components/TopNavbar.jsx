@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.span> JSX below; this config lacks jsx-uses-vars
-import { motion, useReducedMotion } from "framer-motion";
 
-// eslint-disable-next-line react-refresh/only-export-components -- shared with App.jsx's nav shell and mobile panel so every surface consumes the same section list as one source of truth
+// eslint-disable-next-line react-refresh/only-export-components -- shared with App.jsx's nav bar and mobile menu so every surface consumes the same section list as one source of truth
 export const sections = [
   { id: "experience", label: "Experience" },
   { id: "work", label: "Work" },
@@ -10,9 +8,7 @@ export const sections = [
   { id: "contact", label: "Contact" },
 ];
 
-// Which section is under the reader right now. Lifted out of the nav itself
-// because the shell also needs it: on mobile the collapsed pill shows the
-// active label in place of the name, and there is only ever one observer.
+// Which section is under the reader right now.
 // eslint-disable-next-line react-refresh/only-export-components -- see above
 export function useActiveSection(enabled = true) {
   const [active, setActive] = useState("");
@@ -41,43 +37,22 @@ export function useActiveSection(enabled = true) {
   return active;
 }
 
-// The section rail inside the nav pill. The active item is marked by a single
-// shared background element (`layoutId`), so switching sections slides one
-// capsule between labels rather than cross-fading four separate backgrounds.
-export default function TopNavbar({
-  active,
-  compact = false,
-  markerId = "nav-active-pill",
-}) {
-  const reduceMotion = useReducedMotion();
-
+// The desktop section links in the global nav: small, quiet text links, the
+// way apple.com lays out its top bar. The current section is the only one at
+// full ink.
+export default function TopNavbar({ active, onGo }) {
   return (
-    <nav
-      aria-label="Sections"
-      className={`flex items-center ${compact ? "gap-0.5" : "gap-1"}`}
-    >
+    <nav aria-label="Sections" className="flex items-center gap-8">
       {sections.map(({ id, label }) => (
         <button
           key={id}
-          onClick={() =>
-            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-          }
-          data-on={active === id}
+          onClick={() => onGo(id)}
           aria-current={active === id ? "true" : undefined}
-          className="mono-link nav-pill"
+          className={`cursor-pointer text-xs tracking-normal transition-colors hover:text-ink ${
+            active === id ? "text-ink" : "text-ink/80"
+          }`}
         >
-          {active === id && (
-            <motion.span
-              layoutId={markerId}
-              className="nav-pill-bg"
-              transition={
-                reduceMotion
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 520, damping: 42, mass: 0.6 }
-              }
-            />
-          )}
-          <span className="relative z-10">{label}</span>
+          {label}
         </button>
       ))}
     </nav>
