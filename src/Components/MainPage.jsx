@@ -24,6 +24,9 @@ import CodificaShot from "../assets/Codifica.webp";
 import CreatorsShot from "../assets/creatorsFIU.webp";
 import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
+// Temporarily hiding project screenshots to compare the layout without them.
+const SHOW_PROJECT_IMAGES = false;
+
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
 
 const techs = [
@@ -377,7 +380,7 @@ export default function MainPage() {
           {projects.map((proj) => (
             <AnimateIn key={proj.name}>
               <article className="overflow-hidden rounded-[28px] bg-card-2 text-center">
-                <div className="px-8 pt-12 md:px-16 md:pt-16">
+                <div className="px-8 pt-12 pb-12 md:px-16 md:pt-16 md:pb-16">
                   <h3 className="text-[40px] leading-tight font-semibold tracking-[-0.015em] md:text-[48px]">
                     {proj.name}
                   </h3>
@@ -405,12 +408,14 @@ export default function MainPage() {
                   <p className="mt-8 text-xs text-ink-2">{proj.stack}</p>
                 </div>
 
-                <img
-                  src={proj.image}
-                  alt={`${proj.name} screenshot`}
-                  loading="lazy"
-                  className="mx-auto mt-10 mb-10 block w-[88%] rounded-2xl md:mt-12 md:mb-12"
-                />
+                {SHOW_PROJECT_IMAGES && (
+                  <img
+                    src={proj.image}
+                    alt={`${proj.name} screenshot`}
+                    loading="lazy"
+                    className="mx-auto mb-10 block w-[88%] rounded-2xl md:mb-12"
+                  />
+                )}
               </article>
             </AnimateIn>
           ))}
