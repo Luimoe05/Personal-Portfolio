@@ -142,7 +142,7 @@ export default function CommandPalette({ open, setOpen }) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-start justify-center bg-black/20 px-4 pt-[18vh]"
+          className="fixed inset-0 z-[70] flex items-start justify-center bg-black/20 px-4 pt-[18vh] backdrop-blur-[4px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -153,7 +153,7 @@ export default function CommandPalette({ open, setOpen }) {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="w-full max-w-[600px] overflow-hidden rounded-2xl border border-ink/10 bg-card/85 shadow-[0_24px_80px_rgb(0_0_0/0.25)] backdrop-blur-2xl backdrop-saturate-[1.8]"
+            className="w-full max-w-[600px] overflow-hidden rounded-2xl border border-ink/10 bg-card shadow-[0_24px_80px_rgb(0_0_0/0.25)]"
             initial={{ scale: 0.97, opacity: 0, y: -8 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.97, opacity: 0, y: -8 }}
