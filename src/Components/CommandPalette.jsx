@@ -50,7 +50,7 @@ export default function CommandPalette({ open, setOpen }) {
       { id: "toolkit", label: "Go to Toolkit", group: "Navigate", Icon: Wrench, run: () => goSection("toolkit") },
       { id: "writing", label: "Go to Writing", group: "Navigate", Icon: PenLine, run: () => goSection("writing") },
       { id: "contact", label: "Go to Contact", group: "Navigate", Icon: Mail, run: () => goSection("contact") },
-      { id: "resume", label: "View résumé", group: "Actions", Icon: FileText, run: () => window.open(ResumePDF, "_blank") },
+      { id: "resume", label: "View resume", group: "Actions", Icon: FileText, run: () => window.open(ResumePDF, "_blank") },
       { id: "summer", label: "Read: Summer 2025 recap", group: "Actions", Icon: PenLine, run: () => navigate("/summer") },
       { id: "summer-2026", label: "Read: Summer 2026 at Salesforce", group: "Actions", Icon: PenLine, run: () => navigate("/summer-2026") },
       { id: "github", label: "GitHub — @Luimoe05", group: "Links", Icon: Github, run: () => window.open("https://github.com/Luimoe05", "_blank") },

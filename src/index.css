@@ -10,8 +10,8 @@
    `text-ink-2` is correct in both themes with no `dark:` variants anywhere.
 
    Contrast-checked for WCAG AA on every surface each colour sits on:
-     light  ink-2 on mist 4.66   link on mist 5.11   flag on white 5.50
-     dark   ink-2 on card 6.54   link on card 5.58   flag on card  5.34
+     light  ink-2 on mist 4.66   link on mist 5.11
+     dark   ink-2 on card 6.54   link on card 5.58
      both   white on blue 4.70
    `line` is decorative only. `field` is the input edge and clears the 3:1
    that WCAG 1.4.11 asks of a control boundary in both themes. */
@@ -27,7 +27,7 @@
   --line: #d2d2d7;
   --field: #86868b;
   --link: #0066cc;
-  --flag: #b64400;
+  --flag: oklch(0.48 0.08 250);
   --danger: #d70015;
 }
 
@@ -42,7 +42,7 @@
   --line: #424245;
   --field: #86868b;
   --link: #2997ff;
-  --flag: #f56300;
+  --flag: oklch(0.76 0.06 250);
   --danger: #ff453a;
 }
 
