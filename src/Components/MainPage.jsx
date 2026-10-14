@@ -221,7 +221,7 @@ function ContactForm() {
     if (status === "success") successButtonRef.current?.focus();
   }, [status]);
   const inputCls =
-    "w-full rounded-xl border border-field bg-canvas px-4 py-3.5 text-[17px] text-ink outline-none transition placeholder:text-ink-2 focus:border-blue focus:ring-4 focus:ring-blue/15";
+    "contact-field w-full rounded-xl border border-field bg-canvas px-4 py-3.5 text-[17px] text-ink outline-none transition placeholder:text-ink-2 focus:border-blue focus:ring-4 focus:ring-blue/15";
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -267,11 +267,11 @@ function ContactForm() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label htmlFor="contact-name" className="mb-2 block text-sm font-medium">Name</label>
-              <input ref={nameRef} id="contact-name" name="name" autoComplete="name" required className={inputCls} />
+              <input ref={nameRef} id="contact-name" name="name" autoComplete="name" placeholder="Your name" required className={inputCls} />
             </div>
             <div>
               <label htmlFor="contact-email" className="mb-2 block text-sm font-medium">Email</label>
-              <input id="contact-email" name="email" type="email" autoComplete="email" required className={inputCls} />
+              <input id="contact-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" required className={inputCls} />
             </div>
           </div>
           <div>

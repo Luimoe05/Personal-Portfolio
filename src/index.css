@@ -86,6 +86,19 @@
   p { text-wrap: pretty; }
   :focus-visible { @apply outline-2 outline-offset-2 outline-blue; }
 
+  .contact-field { caret-color: var(--ink); }
+
+  /* Browser autofill can override field colours. Keep its text and surface
+     tied to the current theme, including when the theme changes mid-entry. */
+  .contact-field:autofill {
+    color: var(--ink);
+    background-color: var(--canvas);
+  }
+  .contact-field:-webkit-autofill {
+    -webkit-text-fill-color: var(--ink);
+    -webkit-box-shadow: 0 0 0 1000px var(--canvas) inset;
+  }
+
   /* Theme switch. ThemeToggle wraps the swap in a View Transition and grows
      the new theme out of the button as an expanding circle (see App.jsx).
      The browser's default cross-fade is turned off so only that clip-path
