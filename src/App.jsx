@@ -51,17 +51,58 @@ function useGoSection() {
 // bold links that cascade in.
 function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
   const reduceMotion = useReducedMotion();
+  const panelRef = useRef(null);
 
   useEffect(() => {
     if (!open) return;
+    const panel = panelRef.current;
+    const trigger = triggerRef.current;
+    const header = trigger?.closest("header");
+    if (!panel || !header) return;
+
+    const background = [document.getElementById("page-content"), document.getElementById("skip-link")].filter(Boolean);
+    const previousInert = background.map((element) => element.inert);
+    background.forEach((element) => { element.inert = true; });
+
+    const focusable = () => [header, panel].flatMap((container) =>
+      Array.from(container.querySelectorAll('a[href], button:not([disabled])'))
+        .filter((element) => element.getClientRects().length > 0)
+    );
+    panel.querySelector("button")?.focus();
+
     const onKey = (e) => {
       if (e.key === "Escape") {
+        e.preventDefault();
         onClose();
-        triggerRef.current?.focus();
+      } else if (e.key === "Tab") {
+        const controls = focusable();
+        const index = controls.indexOf(document.activeElement);
+        if (index === -1 || (e.shiftKey ? index === 0 : index === controls.length - 1)) {
+          e.preventDefault();
+          (e.shiftKey ? controls.at(-1) : controls[0])?.focus();
+        }
       }
     };
+    const onFocus = (e) => {
+      if (!header.contains(e.target) && !panel.contains(e.target)) {
+        panel.querySelector("button")?.focus();
+      }
+    };
+    // A menu opened on mobile must release its focus/scroll locks on desktop.
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onResize = () => { if (desktop.matches) onClose(); };
+    onResize();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("focusin", onFocus);
+    desktop.addEventListener("change", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("focusin", onFocus);
+      desktop.removeEventListener("change", onResize);
+      background.forEach((element, i) => { element.inert = previousInert[i]; });
+      // The mobile trigger is hidden after a desktop resize.
+      (trigger?.getClientRects().length ? trigger : header.querySelector("a"))?.focus();
+    };
   }, [open, onClose, triggerRef]);
 
   useScrollLock(open);
@@ -70,8 +111,9 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={panelRef}
           id="mobile-nav-panel"
-          className="fixed inset-x-0 top-12 bottom-0 z-40 bg-canvas md:hidden"
+          className="fixed inset-x-0 top-12 bottom-0 z-40 overflow-y-auto bg-canvas md:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -104,15 +146,16 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
 // The global nav: a thin, full-width frosted bar pinned to the top, as on
 // apple.com. Name on the left, section links in the middle, the theme switch
 // and search (the command palette) on the right.
-function GlobalNav({ setPaletteOpen }) {
+function GlobalNav({ paletteOpen, setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const menuTriggerRef = useRef(null);
   const active = useActiveSection(isHome);
   const goSection = useGoSection();
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  useEffect(() => setMenuOpen(false), [location.pathname]);
+  useEffect(() => setMenuOpen(false), [location.pathname, paletteOpen]);
 
   return (
     <>
@@ -164,8 +207,8 @@ function GlobalNav({ setPaletteOpen }) {
       {/* Outside the header: its backdrop-filter would make it the containing
           block for this fixed sheet and clip it to the 48px bar. */}
       <MobileMenu
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
+        open={menuOpen && !paletteOpen}
+        onClose={closeMenu}
         triggerRef={menuTriggerRef}
         active={active}
         onGo={goSection}
@@ -181,6 +224,7 @@ export default function App() {
     <Router>
       <ScrollToTop />
       <a
+        id="skip-link"
         href="#content"
         className="sr-only rounded-full bg-blue px-4 py-2 text-sm text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[110]"
       >
@@ -189,8 +233,8 @@ export default function App() {
 
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
 
-      <GlobalNav setPaletteOpen={setPaletteOpen} />
-      <div className="min-h-screen pt-12">
+      <GlobalNav paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />
+      <div id="page-content" className="min-h-screen pt-12">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/summer" element={<AboutSF />} />

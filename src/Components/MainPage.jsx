@@ -26,21 +26,27 @@ import ResumePDF from "../assets/Luis_Resume_2026.pdf";
 
 const CONTACT_ENDPOINT = "https://formspree.io/f/maqroyll";
 
-const techs = [
-  { Icon: SiReact, label: "React" },
-  { Icon: SiTypescript, label: "TypeScript" },
-  { Icon: IoLogoNodejs, label: "Node.js" },
-  { Icon: SiExpress, label: "Express" },
-  { Icon: SiPostgresql, label: "PostgreSQL" },
-  { Icon: SiPrisma, label: "Prisma" },
-  { Icon: FaJava, label: "Java" },
-  { Icon: SiPython, label: "Python" },
-  { Icon: SiKubernetes, label: "Kubernetes" },
-  { Icon: SiDocker, label: "Docker" },
-  { Icon: SiAmazon, label: "AWS" },
-  { Icon: SiApachespark, label: "Spark" },
-  { Icon: SiTailwindcss, label: "Tailwind" },
-  { Icon: SiVite, label: "Vite" },
+const techGroups = [
+  { label: "Languages", techs: [
+    { Icon: SiTypescript, label: "TypeScript" },
+    { Icon: FaJava, label: "Java" },
+    { Icon: SiPython, label: "Python" },
+  ] },
+  { label: "Application development", techs: [
+    { Icon: SiReact, label: "React" },
+    { Icon: IoLogoNodejs, label: "Node.js" },
+    { Icon: SiExpress, label: "Express" },
+    { Icon: SiPostgresql, label: "PostgreSQL" },
+    { Icon: SiPrisma, label: "Prisma" },
+    { Icon: SiTailwindcss, label: "Tailwind" },
+    { Icon: SiVite, label: "Vite" },
+  ] },
+  { label: "Platform & infrastructure", techs: [
+    { Icon: SiKubernetes, label: "Kubernetes" },
+    { Icon: SiDocker, label: "Docker" },
+    { Icon: SiAmazon, label: "AWS" },
+    { Icon: SiApachespark, label: "Spark" },
+  ] },
 ];
 
 const experiences = [
@@ -49,7 +55,12 @@ const experiences = [
     company: "Salesforce — Spark Platform",
     duration: "May – Aug 2026",
     description:
-      "Returned to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud. Contributed to a team effort that reduced Spark logging costs by ~$300K/month, building a log-search REST API that streams, decompresses, and greps gzipped logs from AWS S3 as part of the team's migration away from Splunk. Exposed it as an MCP tool over an Envoy service-mesh mTLS connection so an AI agent could autonomously diagnose Spark job failures, root-caused a Kubernetes ambiguous-selector bug to restore autoscaling on the Spark History Server, and shipped a Claude Code plugin bundling 4 MCP servers and 7 skills.",
+      "Returned to Salesforce in San Francisco on the Spark platform team within Hyperforce Platform Services Cloud.",
+    accomplishments: [
+      "Contributed to a team effort that reduced Spark logging costs by ~$300K/month. Built a REST API to search gzipped logs in AWS S3 as part of the team's migration away from Splunk.",
+      "Enabled AI agents to diagnose Spark job failures by exposing the API as an MCP tool over Envoy mTLS. Root-caused a Kubernetes selector bug to restore Spark History Server autoscaling.",
+      "Shipped a Claude Code plugin bundling 4 MCP servers and 7 skills for developer workflows.",
+    ],
     tags: ["Kubernetes", "Helm", "Docker", "AWS (S3)", "Apache Spark", "MCP", "Envoy / mTLS"],
   },
   {
@@ -374,6 +385,11 @@ export default function MainPage() {
               {featured.company} · {featured.duration}
             </p>
             <p className="mt-6 max-w-[760px] text-[17px] leading-relaxed">{featured.description}</p>
+            <ul className="mt-4 max-w-[760px] list-disc space-y-3 pl-5 text-[17px] leading-relaxed marker:text-ink-2">
+              {featured.accomplishments.map((accomplishment) => (
+                <li key={accomplishment}>{accomplishment}</li>
+              ))}
+            </ul>
             <p className="mt-6 text-sm text-ink-2">{featured.tags.join(" · ")}</p>
           </article>
         </AnimateIn>
@@ -454,17 +470,21 @@ export default function MainPage() {
         </SectionTitle>
 
         <AnimateIn>
-          <ul className="flex flex-wrap gap-x-6 gap-y-5">
-            {techs.map(({ Icon, label }) => (
-              <li
-                key={label}
-                className="flex items-center gap-2.5"
-              >
-                <Icon size={22} aria-hidden="true" />
-                <span className="text-sm">{label}</span>
-              </li>
+          <div className="grid gap-8 md:grid-cols-[0.8fr_1.2fr_1fr] md:gap-10">
+            {techGroups.map((group) => (
+              <div key={group.label}>
+                <h3 className="mb-4 text-[17px] font-semibold">{group.label}</h3>
+                <ul aria-label={group.label} className="flex flex-wrap gap-x-6 gap-y-4">
+                  {group.techs.map(({ Icon, label }) => (
+                    <li key={label} className="flex items-center gap-2.5">
+                      <Icon size={22} aria-hidden="true" />
+                      <span className="text-sm">{label}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </AnimateIn>
 
         <AnimateIn delay={0.1}>
