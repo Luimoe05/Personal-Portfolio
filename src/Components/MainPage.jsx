@@ -90,7 +90,7 @@ const experiences = [
   {
     position: "STARS Tutor",
     company: "Florida International University",
-    duration: "Aug 2025 – present",
+    duration: "Aug 2025 – Apr 2026",
     description:
       "Provided tutoring for undergraduate CS students covering Data Structures & Algorithms, Systems Programming, Computer Architecture, and Programming 2 (Java).",
     tags: [],
