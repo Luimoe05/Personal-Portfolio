@@ -6,7 +6,7 @@ export default function AboutSF() {
     <PostLayout
       meta={["Aug 2025", "San Francisco", "3 min read"]}
       title="Summer 2025 in San Francisco"
-      dek="My first internship at Salesforce through the FTL program — the highs, the nerves, and building something from zero."
+      dek="My first internship at Salesforce through the FTL program: the highs, the nerves, and building something from zero."
     >
       <p>
         This past summer, I had the pleasure of interning at Salesforce in San
@@ -45,7 +45,7 @@ export default function AboutSF() {
         Taking a project from ideation to deployment underscored a critical
         lesson: the importance of clear and efficient communication. I learned
         that the ability to ask insightful questions and articulate complex
-        ideas — both with teammates and managers — is what truly drives a
+        ideas (both with teammates and managers) is what truly drives a
         project forward and ensures the team is aligned on its goals.
       </p>
     </PostLayout>

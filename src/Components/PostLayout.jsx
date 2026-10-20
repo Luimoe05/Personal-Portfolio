@@ -1,32 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import AnimateIn from "./AnimateIn";
 
-// A large pulled line, set like the quotes in an Apple Newsroom story.
+// A large pulled line, set apart from the body by rules.
 export function PullQuote({ children }) {
   return (
-    <figure className="my-6 border-y border-line py-8">
-      <blockquote className="text-[28px] leading-[1.2] font-semibold tracking-[-0.01em] text-ink">
+    <figure className="my-6 border-t-2 border-b border-t-ink border-b-line py-8">
+      <blockquote className="text-h3 font-bold tracking-[-0.02em] text-ink">
         {children}
       </blockquote>
     </figure>
   );
 }
 
-// Shared long-form layout for every blog post, modelled on Apple Newsroom:
-// a small category line, a big headline, a dek, then a narrow reading column.
+// Shared long-form layout for every blog post: a small meta line, a big
+// headline, a dek, then a narrow reading column.
 // Paragraph and subhead styles are applied from here so the posts themselves
 // stay plain JSX.
 export default function PostLayout({ meta = [], title, dek, children, backTo = "/" }) {
   return (
-    <main id="content" tabIndex={-1} className="bg-canvas px-6 pb-24 outline-none">
+    <main id="content" tabIndex={-1} className="bg-canvas px-6 pb-24 outline-none md:px-10">
       <div className="mx-auto max-w-[692px]">
         <Link
           to={backTo}
-          className="group mt-6 inline-flex items-center gap-0.5 text-[15px] text-link hover:underline"
+          className="group mt-6 inline-flex items-center gap-1 text-small font-medium text-accent underline decoration-accent/35 underline-offset-4 hover:decoration-accent"
         >
-          <ChevronLeft
+          <ArrowLeft
             className="h-4 w-4 transition-transform motion-safe:group-hover:-translate-x-0.5"
             strokeWidth={2}
             aria-hidden="true"
@@ -37,26 +37,26 @@ export default function PostLayout({ meta = [], title, dek, children, backTo = "
         <AnimateIn>
           <header className="pt-10 md:pt-14">
             {meta.length > 0 && (
-              <p className="text-xs font-semibold tracking-[0.06em] text-ink-2 uppercase">
+              <p className="text-caption font-semibold tracking-[0.08em] text-ink-2 uppercase">
                 {meta.join(" · ")}
               </p>
             )}
-            <h1 className="mt-3 text-[40px] leading-[1.1] font-bold tracking-[-0.015em] md:text-[48px] md:leading-[1.08]">
+            <h1 className="mt-3 text-h2 font-bold tracking-[-0.025em]">
               {title}
             </h1>
             {dek && (
-              <p className="mt-4 text-[21px] leading-[1.38] text-ink-2">{dek}</p>
+              <p className="mt-4 text-lead text-ink-2">{dek}</p>
             )}
           </header>
         </AnimateIn>
 
         <AnimateIn delay={0.1}>
-          <div className="mt-12 flex flex-col gap-6 text-[19px] leading-[1.58] [&_h2]:mt-6 [&_h2]:text-[28px] [&_h2]:leading-tight [&_h2]:font-semibold [&_h2]:tracking-[-0.01em]">
+          <div className="mt-12 flex flex-col gap-6 text-[1.1875rem] leading-[1.6] [&_h2]:mt-6 [&_h2]:[&_h2]:text-h3 [&_h2]:font-bold [&_h2]:tracking-[-0.02em]">
             {children}
           </div>
         </AnimateIn>
 
-        <p className="mt-14 border-t border-line pt-6 text-sm text-ink-2">
+        <p className="mt-14 border-t border-line pt-6 text-small text-ink-2">
           Luis-Angel Moreno
         </p>
       </div>

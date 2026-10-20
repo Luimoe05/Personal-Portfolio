@@ -1,49 +1,55 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap");
+@import "@fontsource-variable/hanken-grotesk/wght.css";
 @import "tailwindcss";
 
-/* Apple-style tokens. Everything else on the site is a Tailwind utility —
-   this file only names the palette and the type stack those utilities use.
+/* Site tokens. Everything else on the site is a Tailwind utility; this file
+   only names the palette, the type scale, and the one font family
+   (Hanken Grotesk, self-hosted).
 
    Each colour is a CSS variable swapped by [data-theme] on <html> (set before
    first paint by the inline script in index.html), and `@theme inline` points
    the Tailwind colour names at those variables. So `bg-canvas` or
    `text-ink-2` is correct in both themes with no `dark:` variants anywhere.
 
-   Contrast-checked for WCAG AA on every surface each colour sits on:
-     light  ink-2 on mist 4.66   link on mist 5.11
-     dark   ink-2 on card 6.54   link on card 5.58
-     both   white on blue 4.70
-   `line` is decorative only. `field` is the input edge and clears the 3:1
-   that WCAG 1.4.11 asks of a control boundary in both themes. */
+   Palette: near-neutral greys with a faint green cast, and one muted sage
+   green accent (hue 158) used sparingly for actions and labels. `band` /
+   `on-band` is the charcoal contact section. Aim for WCAG AA on every surface
+   a colour sits on (body text 4.5:1, control edges 3:1); `line` is
+   decorative only. */
 :root,
 :root[data-theme="light"] {
   color-scheme: light;
-  --canvas: #ffffff;
-  --mist: #f5f5f7;
-  --card: #ffffff;
-  --card-2: #f5f5f7;
-  --ink: #1d1d1f;
-  --ink-2: #6e6e73;
-  --line: #d2d2d7;
-  --field: #86868b;
-  --link: #0066cc;
-  --flag: oklch(0.48 0.08 250);
-  --danger: #d70015;
+  --canvas: oklch(0.985 0.003 158);
+  --mist: oklch(0.96 0.004 158);
+  --card: oklch(0.995 0.002 158);
+  --card-2: oklch(0.96 0.004 158);
+  --ink: oklch(0.22 0.006 158);
+  --ink-2: oklch(0.47 0.006 158);
+  --line: oklch(0.89 0.004 158);
+  --field: oklch(0.6 0.005 158);
+  --accent: oklch(0.45 0.055 158);
+  --accent-hover: oklch(0.39 0.05 158);
+  --on-accent: oklch(0.985 0.003 158);
+  --band: oklch(0.25 0.008 158);
+  --on-band: oklch(0.97 0.003 158);
+  --danger: oklch(0.52 0.2 27);
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --canvas: #000000;
-  --mist: #0b0b0c;
-  --card: #1d1d1f;
-  --card-2: #1d1d1f;
-  --ink: #f5f5f7;
-  --ink-2: #a1a1a6;
-  --line: #424245;
-  --field: #86868b;
-  --link: #2997ff;
-  --flag: oklch(0.76 0.06 250);
-  --danger: #ff453a;
+  --canvas: oklch(0.175 0.004 158);
+  --mist: oklch(0.21 0.005 158);
+  --card: oklch(0.245 0.005 158);
+  --card-2: oklch(0.245 0.005 158);
+  --ink: oklch(0.95 0.004 158);
+  --ink-2: oklch(0.74 0.005 158);
+  --line: oklch(0.32 0.005 158);
+  --field: oklch(0.56 0.005 158);
+  --accent: oklch(0.78 0.06 158);
+  --accent-hover: oklch(0.84 0.05 158);
+  --on-accent: oklch(0.2 0.01 158);
+  --band: oklch(0.235 0.006 158);
+  --on-band: oklch(0.95 0.004 158);
+  --danger: oklch(0.72 0.17 25);
 }
 
 @theme inline {
@@ -55,19 +61,36 @@
   --color-ink-2: var(--ink-2);
   --color-line: var(--line);
   --color-field: var(--field);
-  --color-link: var(--link);
-  --color-flag: var(--flag);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-band: var(--band);
+  --color-on-band: var(--on-band);
   --color-danger: var(--danger);
 }
 
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter",
-    "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
 
-  --color-blue: #0071e3;
-  --color-blue-hover: #0077ed;
+  /* Type scale, ~1.25 apart. Headings are fluid; body and below are fixed. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.5;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.55;
+  --text-lead: clamp(1.1875rem, 1.05rem + 0.55vw, 1.5rem);
+  --text-lead--line-height: 1.35;
+  --text-h4: 1.3125rem;
+  --text-h4--line-height: 1.2;
+  --text-h3: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+  --text-h3--line-height: 1.12;
+  --text-h2: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
+  --text-h2--line-height: 1.04;
+  --text-hero: clamp(3rem, 1.6rem + 6.2vw, 6.5rem);
+  --text-hero--line-height: 0.95;
 
-  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -75,16 +98,16 @@
     html { scroll-behavior: smooth; }
   }
   body {
-    @apply bg-canvas font-sans text-ink antialiased;
-    font-size: 17px;
-    line-height: 1.47;
-    letter-spacing: -0.022em;
+    @apply bg-canvas font-sans text-body text-ink antialiased;
+    font-kerning: normal;
   }
-  /* Clears the 48px global nav when jumping to a section. */
-  section[id] { scroll-margin-top: 3rem; }
+  /* Clears the floating nav (12px offset + 56px oval) when jumping to a
+     section. */
+  section[id] { scroll-margin-top: 5rem; }
   h1, h2, h3 { text-wrap: balance; }
   p { text-wrap: pretty; }
-  :focus-visible { @apply outline-2 outline-offset-2 outline-blue; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-accent; }
+  .bg-band :focus-visible { outline-color: var(--on-band); }
 
   .contact-field { caret-color: var(--ink); }
 
@@ -99,21 +122,17 @@
     -webkit-box-shadow: 0 0 0 1000px var(--canvas) inset;
   }
 
-  /* Theme switch. ThemeToggle wraps the swap in a View Transition and grows
-     the new theme out of the button as an expanding circle (see App.jsx).
-     The browser's default cross-fade is turned off so only that clip-path
-     animation runs, and the new snapshot is layered on top of the old. */
+  /* Theme switch. ThemeToggle wraps the swap in a View Transition; the
+     browser's default cross-fade runs, shortened to a quick dissolve. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
+    animation-duration: 180ms;
+    animation-timing-function: ease-out;
   }
-  ::view-transition-new(root) { z-index: 1; }
 
   /* Held on <html> for the duration of a theme switch. Cards, fields and nav
      links carry colour transitions for hover; without this they would fade to
-     the new theme on their own clock instead of flipping with the circle,
-     leaving patches of the old theme behind it. */
+     the new theme on their own clock instead of flipping with the page. */
   [data-theme-switching] *,
   [data-theme-switching] *::before,
   [data-theme-switching] *::after {

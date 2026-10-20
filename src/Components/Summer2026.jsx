@@ -4,13 +4,13 @@ import PostLayout, { PullQuote } from "./PostLayout.jsx";
 export default function Summer2026() {
   return (
     <PostLayout
-      meta={["Jul 18, 2026", "San Francisco", "2 min read"]}
+      meta={["Jul 18, 2026", "San Francisco", "1 min read"]}
       title="Summer 2026 at Salesforce"
-      dek="Returning to the city a second time — and finding the craft rewritten."
+      dek="Returning to the city a second time, and finding the craft rewritten."
     >
       <p>
         Coming to San Francisco for a second time was nerve-racking. Interning
-        in the city last year taught me a lot — it showed me how fast the
+        in the city last year taught me a lot. It showed me how fast the
         industry evolves, and the immense concentration of extremely intelligent
         people packed all over the city. Even so, I didn't expect to be
         surprised by just how much things had changed.
@@ -19,8 +19,8 @@ export default function Summer2026() {
       <p>
         Driving into the city, I saw the huge influx of AI startups; almost
         every startup is now embracing this new phenomenon sweeping the tech
-        industry. Before my first day, I was still in the limbo of the AI world
-        — vaguely aware of things like Claude, Codex, and the rest, but not
+        industry. Before my first day, I was still in the limbo of the AI world:
+        vaguely aware of things like Claude, Codex, and the rest, but not
         really living in it.
       </p>
 
@@ -31,7 +31,7 @@ export default function Summer2026() {
       </p>
 
       <PullQuote>
-        Nearly every line of code is being written by AI agents — with you
+        Nearly every line of code is being written by AI agents, with you
         designing and orchestrating them to get the job done.
       </PullQuote>
     </PostLayout>

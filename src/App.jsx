@@ -17,6 +17,7 @@ import NotFound from "./Components/NotFound";
 import ThemeToggle from "./Components/ThemeToggle";
 import useScrollLock from "./Components/useScrollLock";
 import { Search, Menu, X } from "lucide-react";
+import ResumePDF from "./assets/Luis_Resume_2026.pdf";
 // eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.div> JSX tags below; this config lacks jsx-uses-vars
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
@@ -47,8 +48,8 @@ function useGoSection() {
   );
 }
 
-// Apple's mobile menu: the bar grows into a full-screen sheet of large,
-// bold links that cascade in.
+// Mobile menu: the bar grows into a full-screen sheet of large section
+// links, with the resume last.
 function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
   const reduceMotion = useReducedMotion();
   const panelRef = useRef(null);
@@ -113,13 +114,13 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
         <motion.div
           ref={panelRef}
           id="mobile-nav-panel"
-          className="fixed inset-x-0 top-12 bottom-0 z-40 overflow-y-auto bg-canvas md:hidden"
+          className="fixed inset-0 z-40 overflow-y-auto bg-canvas pt-20 md:hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reduceMotion ? 0 : 0.2 }}
         >
-          <nav aria-label="Sections" className="flex flex-col px-12 pt-6">
+          <nav aria-label="Sections" className="flex flex-col px-6 pt-6">
             {sections.map(({ id, label }, i) => (
               <motion.button
                 key={id}
@@ -128,7 +129,9 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
                   onGo(id);
                 }}
                 aria-current={active === id ? "true" : undefined}
-                className="cursor-pointer py-2 text-left text-[28px] font-semibold tracking-tight text-ink"
+                className={`cursor-pointer py-2 text-left text-h3 font-bold tracking-[-0.02em] ${
+                  active === id ? "text-accent" : "text-ink"
+                }`}
                 initial={reduceMotion ? false : { opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: reduceMotion ? 0 : 0.04 * i + 0.05, duration: 0.3 }}
@@ -136,6 +139,14 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
                 {label}
               </motion.button>
             ))}
+            <a
+              href={ResumePDF}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 border-t border-line pt-6 text-h4 font-semibold text-accent"
+            >
+              View resume (PDF)
+            </a>
           </nav>
         </motion.div>
       )}
@@ -143,9 +154,24 @@ function MobileMenu({ open, onClose, triggerRef, active, onGo }) {
   );
 }
 
-// The global nav: a thin, full-width frosted bar pinned to the top, as on
-// apple.com. Name on the left, section links in the middle, the theme switch
-// and search (the command palette) on the right.
+// True once the page has scrolled past the very top.
+function useScrolled(threshold = 24) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > threshold);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [threshold]);
+  return scrolled;
+}
+
+// The global nav: a floating oval pinned near the top. Once the page scrolls
+// it shrinks (a transform, so nothing reflows) to get out of the content's way.
+// Name on the left, section links in the middle, then the resume, the theme
+// switch and search (the command palette). On mobile the section links move
+// into the menu sheet and search is dropped: the sheet already lists
+// everything.
 function GlobalNav({ paletteOpen, setPaletteOpen }) {
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -154,21 +180,27 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
   const active = useActiveSection(isHome);
   const goSection = useGoSection();
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const scrolled = useScrolled();
 
   useEffect(() => setMenuOpen(false), [location.pathname, paletteOpen]);
+
+  const iconBtn =
+    "inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-mist hover:text-ink";
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 h-12 backdrop-blur-xl backdrop-saturate-[1.8] transition-colors ${
-          menuOpen ? "bg-canvas" : "bg-canvas/80"
-        }`}
+        className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-3"
       >
-        <div className="mx-auto flex h-full max-w-[1024px] items-center justify-between px-4 sm:px-6">
+        <div
+          className={`pointer-events-auto flex h-14 w-full origin-top items-center justify-between gap-3 rounded-full border border-line bg-card py-2 pr-2 pl-5 shadow-[0_6px_24px_-8px_oklch(0.2_0.01_158/0.18)] transition-transform duration-300 ease-out-expo motion-reduce:transition-none md:w-auto md:gap-6 ${
+            scrolled && !menuOpen ? "scale-[0.86]" : "scale-100"
+          }`}
+        >
           <Link
             to="/"
             aria-label="Luis-Angel Moreno, home"
-            className="text-sm font-semibold tracking-tight text-ink"
+            className="shrink-0 text-small font-bold tracking-[-0.02em] text-ink sm:text-body"
           >
             Luis-Angel Moreno
           </Link>
@@ -177,14 +209,23 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
             <TopNavbar active={active} onGo={goSection} />
           </div>
 
-          <div className="flex items-center">
-            <ThemeToggle />
+          <div className="flex items-center gap-1">
+            <a
+              href={ResumePDF}
+              target="_blank"
+              rel="noreferrer"
+              className="mr-1 rounded-full bg-accent px-4 py-2 text-small font-semibold text-on-accent transition-colors hover:bg-accent-hover"
+            >
+              Resume
+            </a>
+            <ThemeToggle className={iconBtn} />
             <button
               onClick={() => setPaletteOpen(true)}
               aria-label="Search (Command K)"
-              className="inline-flex h-11 w-11 cursor-pointer items-center justify-center text-ink/80 transition-colors hover:text-ink"
+              className="hidden h-10 cursor-pointer items-center gap-2 rounded-full px-3 text-ink-2 transition-colors hover:bg-mist hover:text-ink md:inline-flex"
             >
               <Search className="h-4 w-4" strokeWidth={1.75} />
+              <kbd className="rounded border border-line px-1.5 font-sans text-caption">⌘K</kbd>
             </button>
             <button
               ref={menuTriggerRef}
@@ -192,7 +233,7 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav-panel"
-              className="-mr-3 inline-flex h-11 w-11 cursor-pointer items-center justify-center text-ink/80 transition-colors hover:text-ink md:hidden"
+              className={`${iconBtn} md:hidden`}
             >
               {menuOpen ? (
                 <X className="h-[18px] w-[18px]" strokeWidth={1.75} />
@@ -204,8 +245,8 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
         </div>
       </header>
 
-      {/* Outside the header: its backdrop-filter would make it the containing
-          block for this fixed sheet and clip it to the 48px bar. */}
+      {/* Outside the header so the sheet's z-order and inert handling stay
+          independent of the bar. */}
       <MobileMenu
         open={menuOpen && !paletteOpen}
         onClose={closeMenu}
@@ -226,7 +267,7 @@ export default function App() {
       <a
         id="skip-link"
         href="#content"
-        className="sr-only rounded-full bg-blue px-4 py-2 text-sm text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[110]"
+        className="sr-only rounded-lg bg-accent px-4 py-2 text-small text-on-accent focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[110]"
       >
         Skip to content
       </a>
@@ -234,7 +275,7 @@ export default function App() {
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
 
       <GlobalNav paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />
-      <div id="page-content" className="min-h-screen pt-12">
+      <div id="page-content" className="min-h-screen pt-20">
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/summer" element={<AboutSF />} />

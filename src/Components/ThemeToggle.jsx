@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { flushSync } from "react-dom";
 import { Moon, Sun } from "lucide-react";
-// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.span> JSX below; this config lacks jsx-uses-vars
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 
-const THEME_COLOR = { light: "#ffffff", dark: "#000000" };
+// Matches --canvas in each theme (index.css), for the browser chrome.
+const THEME_COLOR = { light: "#f8fbf9", dark: "#0f1110" };
 
 // Writes the theme everywhere it lives: the attribute the CSS variables key
 // off, the browser-chrome colour, and the saved preference.
@@ -20,18 +20,16 @@ function applyTheme(theme) {
   }
 }
 
-// Light/dark switch. The new theme grows out of the button as a circle until
-// it covers the whole screen. That's a View Transition: the browser snapshots
-// the page, we swap the theme, then clip the new snapshot to a circle that
-// expands from the button. Browsers without the API, and anyone with reduced
-// motion on, get an instant swap.
-export default function ThemeToggle() {
+// Light/dark switch. Where View Transitions exist, the swap runs as the
+// browser's cross-fade, shortened to a quick dissolve in index.css. Browsers
+// without the API, and anyone with reduced motion on, get an instant swap.
+export default function ThemeToggle({ className = "" }) {
   const [isDark, setIsDark] = useState(
     () => document.documentElement.dataset.theme === "dark"
   );
   const reduceMotion = useReducedMotion();
 
-  const toggle = (e) => {
+  const toggle = () => {
     const next = isDark ? "light" : "dark";
     const swap = () => {
       applyTheme(next);
@@ -51,56 +49,20 @@ export default function ThemeToggle() {
       return;
     }
 
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = left + width / 2;
-    const y = top + height / 2;
-    // Distance to the farthest corner, so the circle ends fully covering it.
-    const radius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const transition = document.startViewTransition(swap);
-    transition.finished.finally(done);
-    transition.ready.then(() => {
-      root.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${radius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 900,
-          easing: "cubic-bezier(0.76, 0, 0.24, 1)",
-          pseudoElement: "::view-transition-new(root)",
-        }
-      );
-    });
+    document.startViewTransition(swap).finished.finally(done);
   };
 
   return (
     <button
       onClick={toggle}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="inline-flex h-11 w-11 cursor-pointer items-center justify-center text-ink/80 transition-colors hover:text-ink"
+      className={className}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={isDark ? "sun" : "moon"}
-          initial={reduceMotion ? false : { rotate: -90, opacity: 0, scale: 0.5 }}
-          animate={{ rotate: 0, opacity: 1, scale: 1 }}
-          exit={reduceMotion ? undefined : { rotate: 90, opacity: 0, scale: 0.5 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="flex"
-        >
-          {isDark ? (
-            <Sun className="h-4 w-4" strokeWidth={1.75} />
-          ) : (
-            <Moon className="h-4 w-4" strokeWidth={1.75} />
-          )}
-        </motion.span>
-      </AnimatePresence>
+      {isDark ? (
+        <Sun className="h-4 w-4" strokeWidth={1.75} />
+      ) : (
+        <Moon className="h-4 w-4" strokeWidth={1.75} />
+      )}
     </button>
   );
 }

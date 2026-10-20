@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
-  User,
+  ArrowUp,
   Briefcase,
   FolderGit2,
   Wrench,
@@ -44,17 +44,17 @@ export default function CommandPalette({ open, setOpen }) {
 
   const actions = useMemo(
     () => [
-      { id: "top", label: "Go to Top", group: "Navigate", Icon: User, run: () => goSection("top") },
+      { id: "top", label: "Go to top", group: "Navigate", Icon: ArrowUp, run: () => goSection("top") },
       { id: "experience", label: "Go to Experience", group: "Navigate", Icon: Briefcase, run: () => goSection("experience") },
-      { id: "projects", label: "Go to Projects", group: "Navigate", Icon: FolderGit2, run: () => goSection("work") },
+      { id: "work", label: "Go to Work", group: "Navigate", Icon: FolderGit2, run: () => goSection("work") },
       { id: "toolkit", label: "Go to Toolkit", group: "Navigate", Icon: Wrench, run: () => goSection("toolkit") },
       { id: "writing", label: "Go to Writing", group: "Navigate", Icon: PenLine, run: () => goSection("writing") },
       { id: "contact", label: "Go to Contact", group: "Navigate", Icon: Mail, run: () => goSection("contact") },
-      { id: "resume", label: "View resume", group: "Actions", Icon: FileText, run: () => window.open(ResumePDF, "_blank") },
-      { id: "summer", label: "Read: Summer 2025 recap", group: "Actions", Icon: PenLine, run: () => navigate("/summer") },
+      { id: "resume", label: "View resume (PDF)", group: "Actions", Icon: FileText, run: () => window.open(ResumePDF, "_blank") },
+      { id: "summer", label: "Read: Summer 2025 in San Francisco", group: "Actions", Icon: PenLine, run: () => navigate("/summer") },
       { id: "summer-2026", label: "Read: Summer 2026 at Salesforce", group: "Actions", Icon: PenLine, run: () => navigate("/summer-2026") },
-      { id: "github", label: "GitHub — @Luimoe05", group: "Links", Icon: Github, run: () => window.open("https://github.com/Luimoe05", "_blank") },
-      { id: "linkedin", label: "LinkedIn — luisanm", group: "Links", Icon: Linkedin, run: () => window.open("https://www.linkedin.com/in/luisanm/", "_blank") },
+      { id: "github", label: "GitHub (@Luimoe05)", group: "Links", Icon: Github, run: () => window.open("https://github.com/Luimoe05", "_blank") },
+      { id: "linkedin", label: "LinkedIn (luisanm)", group: "Links", Icon: Linkedin, run: () => window.open("https://www.linkedin.com/in/luisanm/", "_blank") },
       { id: "email", label: "Email me", group: "Links", Icon: Mail, run: () => window.open("mailto:lmoreno00528@gmail.com") },
     ],
     [goSection, navigate]
@@ -142,7 +142,7 @@ export default function CommandPalette({ open, setOpen }) {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[70] flex items-start justify-center bg-black/20 px-4 pt-[18vh] backdrop-blur-[4px]"
+          className="fixed inset-0 z-[70] flex items-start justify-center bg-[oklch(0.15_0.02_158/0.45)] px-4 pt-[18vh]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -153,33 +153,33 @@ export default function CommandPalette({ open, setOpen }) {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="w-full max-w-[600px] overflow-hidden rounded-2xl border border-ink/10 bg-card shadow-[0_24px_80px_rgb(0_0_0/0.25)]"
-            initial={{ scale: 0.97, opacity: 0, y: -8 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.97, opacity: 0, y: -8 }}
+            className="w-full max-w-[600px] overflow-hidden rounded-2xl border border-line bg-card shadow-[0_24px_80px_oklch(0.15_0.02_158/0.25)]"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={onKeyDown}
           >
-            <div className="flex items-center gap-3 border-b border-ink/10 px-5 py-4">
+            <div className="flex items-center gap-3 border-b border-line px-5 py-4">
               <Search className="h-5 w-5 text-ink-2" strokeWidth={1.75} />
               <input
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search"
+                placeholder="Jump to a section, the resume, or a link"
                 aria-label="Search the site"
-                className="flex-1 bg-transparent text-[21px] text-ink outline-none placeholder:text-ink-2"
+                className="min-w-0 flex-1 bg-transparent text-h4 text-ink outline-none placeholder:text-ink-2"
               />
-              <kbd className="rounded-md border border-ink/10 px-1.5 py-0.5 font-sans text-[11px] text-ink-2">
+              <kbd className="rounded-md border border-line px-1.5 py-0.5 font-sans text-caption text-ink-2">
                 ESC
               </kbd>
             </div>
 
             <div ref={listRef} className="max-h-80 overflow-y-auto overscroll-contain p-2 [scrollbar-width:none]">
               {filtered.length === 0 && (
-                <p className="px-4 py-6 text-center text-[15px] text-ink-2">
-                  No results for "{query}"
+                <p className="px-4 py-6 text-center text-small text-ink-2">
+                  Nothing matches "{query}". Try "resume", "work", or "email".
                 </p>
               )}
               {filtered.map((action, i) => {
@@ -189,21 +189,21 @@ export default function CommandPalette({ open, setOpen }) {
                   <button
                     key={action.id}
                     ref={isSel ? selectedItemRef : null}
-                    onMouseEnter={() => setSelected(i)}
+                    onMouseMove={() => setSelected(i)}
                     onClick={() => runAction(action)}
-                    className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[15px] ${
-                      isSel ? "bg-blue text-white" : "text-ink"
+                    className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-small ${
+                      isSel ? "bg-accent text-on-accent" : "text-ink"
                     }`}
                   >
                     <Icon
-                      className={`h-4 w-4 shrink-0 ${isSel ? "text-white" : "text-ink-2"}`}
+                      className={`h-4 w-4 shrink-0 ${isSel ? "text-on-accent" : "text-ink-2"}`}
                       strokeWidth={1.75}
                     />
                     <span className="flex-1">{action.label}</span>
-                    <span className={`text-xs ${isSel ? "text-white" : "text-ink-2"}`}>
+                    <span className={`text-caption ${isSel ? "text-on-accent" : "text-ink-2"}`}>
                       {action.group}
                     </span>
-                    {isSel && <CornerDownLeft className="h-3.5 w-3.5 text-white/85" />}
+                    {isSel && <CornerDownLeft className="h-3.5 w-3.5 text-on-accent" />}
                   </button>
                 );
               })}

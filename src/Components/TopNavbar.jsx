@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 export const sections = [
   { id: "experience", label: "Experience" },
   { id: "work", label: "Work" },
+  { id: "toolkit", label: "Toolkit" },
   { id: "writing", label: "Writing" },
   { id: "contact", label: "Contact" },
 ];
@@ -37,19 +38,18 @@ export function useActiveSection(enabled = true) {
   return active;
 }
 
-// The desktop section links in the global nav: small, quiet text links, the
-// way apple.com lays out its top bar. The current section is the only one at
-// full ink.
+// The desktop section links in the global nav. The current section sits in
+// its own small oval; the rest stay quiet.
 export default function TopNavbar({ active, onGo }) {
   return (
-    <nav aria-label="Sections" className="flex items-center gap-8">
+    <nav aria-label="Sections" className="flex items-center gap-1">
       {sections.map(({ id, label }) => (
         <button
           key={id}
           onClick={() => onGo(id)}
           aria-current={active === id ? "true" : undefined}
-          className={`cursor-pointer text-xs tracking-normal transition-colors hover:text-ink ${
-            active === id ? "text-ink" : "text-ink/80"
+          className={`cursor-pointer rounded-full px-3 py-2 text-small font-medium transition-colors hover:text-ink ${
+            active === id ? "bg-mist text-ink" : "text-ink-2"
           }`}
         >
           {label}
