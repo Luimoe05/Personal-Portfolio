@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+// eslint-disable-next-line no-unused-vars -- `motion` is used via <motion.span> JSX tags below; this config lacks jsx-uses-vars
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AnimateIn from "./AnimateIn";
@@ -308,45 +310,164 @@ function ContactForm() {
   );
 }
 
+// The hero's live diagram: the request path from the 2026 Salesforce work.
+// A packet steps down the line and lights each hop in turn, then loops.
+// Reduced motion shows the diagram still, with no packet.
+const flowSteps = [
+  { title: "AI agent", detail: "Asks why a Spark job failed" },
+  { title: "MCP tool", detail: "Served over Envoy mTLS" },
+  { title: "Log search API", detail: "REST search over gzipped logs" },
+  { title: "AWS S3", detail: "Team move off Splunk, ~$300K/month saved" },
+];
+const ROW = 72; // px per step; the packet's y offset is index × ROW
+
+function RequestFlow({ reduce }) {
+  // -1 is the pause between loops, with the packet hidden back at the top.
+  const [step, setStep] = useState(-1);
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => setStep((s) => (s >= flowSteps.length - 1 ? -1 : s + 1)), 1100);
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  return (
+    <figure aria-label="Diagram: an AI agent calls an MCP tool over Envoy mTLS, which queries a log search API backed by AWS S3.">
+      <figcaption className="text-caption font-semibold tracking-[0.08em] text-ink-2 uppercase">
+        Built at Salesforce, 2026
+      </figcaption>
+      <div className="relative mt-4">
+        <span className="absolute top-9 bottom-9 left-[11px] w-px bg-line" aria-hidden="true" />
+        {!reduce && (
+          <motion.span
+            className="absolute top-[31px] left-[7px] h-[9px] w-[9px] rounded-full bg-accent ring-4 ring-accent/20"
+            animate={{ y: Math.max(step, 0) * ROW, opacity: step < 0 ? 0 : 1 }}
+            transition={step <= 0 ? { duration: 0.25 } : { duration: 0.6, ease: EASE }}
+            aria-hidden="true"
+          />
+        )}
+        <ol>
+          {flowSteps.map(({ title, detail }, i) => {
+            const on = step === i;
+            return (
+              <li key={title} className="flex h-[72px] items-center gap-4">
+                <span
+                  className={`relative h-[9px] w-[9px] shrink-0 translate-x-[7px] rounded-full border transition-colors duration-300 ${
+                    on ? "border-accent bg-accent" : "border-field bg-canvas"
+                  }`}
+                  aria-hidden="true"
+                />
+                <div
+                  className={`ml-2 flex-1 rounded-full border px-5 py-2.5 transition-colors duration-300 ${
+                    on ? "border-accent/40 bg-mist" : "border-line"
+                  }`}
+                >
+                  <p className={`text-small font-semibold transition-colors duration-300 ${on ? "text-ink" : "text-ink-2"}`}>{title}</p>
+                  <p className="text-caption text-ink-2">{detail}</p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </figure>
+  );
+}
+
+// The landing animation, about one second end to end: the name rises out of
+// a mask line by line, the copy and links follow, and the fact sheet draws
+// its rule left to right before its rows settle in. Transforms and opacity
+// only; reduced motion shows everything in place.
+const EASE = [0.16, 1, 0.3, 1];
+
+function Hero() {
+  const reduce = useReducedMotion();
+  const rise = (delay) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.7, ease: EASE, delay },
+        };
+
+  return (
+    <section id="top" className={`${column} pt-12 pb-6 md:pt-20 md:pb-10`}>
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)] lg:items-end lg:gap-16">
+        <div>
+          <motion.p {...rise(0)} className="flex items-center gap-2.5 text-small font-semibold text-accent">
+            <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+              {/* Three soft pings, then still: "available" without nagging. */}
+              <span className="absolute inset-0 rounded-full bg-accent opacity-60 motion-safe:animate-ping motion-safe:[animation-iteration-count:3]" />
+              <span className="relative h-2 w-2 rounded-full bg-accent" />
+            </span>
+            Open to new-grad software engineering roles starting summer 2027
+          </motion.p>
+          <h1 className="mt-6 text-hero font-bold tracking-[-0.035em]">
+            {["Luis-Angel", "Moreno"].map((line, i) => (
+              // The padding keeps descenders inside the mask; the negative
+              // margin gives the space back to the line below.
+              <span key={line} className="-mb-[0.2em] block overflow-hidden pb-[0.2em]">
+                <motion.span
+                  className="block"
+                  initial={reduce ? false : { y: "110%" }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.9, ease: EASE, delay: 0.08 + i * 0.09 }}
+                >
+                  {line}
+                </motion.span>
+              </span>
+            ))}
+          </h1>
+          <motion.p {...rise(0.32)} className="mt-7 max-w-[40ch] text-lead text-ink-2">
+            Two-time software engineering intern at Salesforce, most recently
+            on the Spark platform team. I build platform tooling and AI-agent
+            integrations that make hard systems easy to operate.
+          </motion.p>
+          <motion.div {...rise(0.42)} className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+            <a id="hero-resume" href={ResumePDF} target="_blank" rel="noreferrer" className={`${buttonCls} bg-accent text-on-accent hover:bg-accent-hover`}>
+              View resume (PDF)
+            </a>
+            <TextLink href="https://github.com/Luimoe05">GitHub</TextLink>
+            <TextLink href="https://www.linkedin.com/in/luisanm/">LinkedIn</TextLink>
+          </motion.div>
+        </div>
+
+        <div className="flex flex-col gap-12">
+          <motion.div {...rise(0.6)} className="hidden md:block">
+            <RequestFlow reduce={reduce} />
+          </motion.div>
+          <div>
+          <motion.div
+            className="h-0.5 origin-left bg-ink"
+            initial={reduce ? false : { scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}
+            aria-hidden="true"
+          />
+          <dl>
+            {facts.map(({ label, value }, i) => (
+              <motion.div
+                key={label}
+                {...rise(0.5 + i * 0.07)}
+                className="flex items-baseline justify-between gap-6 border-b border-line py-3"
+              >
+                <dt className="text-caption font-semibold tracking-[0.08em] text-ink-2 uppercase">{label}</dt>
+                <dd className="text-right text-small font-medium tabular-nums">{value}</dd>
+              </motion.div>
+            ))}
+          </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function MainPage() {
   return (
     <main id="content" tabIndex={-1} className="outline-none">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section id="top" className={`${column} pt-12 pb-6 md:pt-20 md:pb-10`}>
-        <AnimateIn className="grid gap-12 lg:grid-cols-[minmax(0,8fr)_minmax(0,4fr)] lg:items-end lg:gap-16">
-          <div>
-            <p className="flex items-center gap-2.5 text-small font-semibold text-accent">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-              Open to new-grad software engineering roles starting summer 2027
-            </p>
-            <h1 className="mt-6 text-hero font-bold tracking-[-0.035em]">
-              <span className="block">Luis-Angel</span>
-              <span className="block">Moreno</span>
-            </h1>
-            <p className="mt-7 max-w-[40ch] text-lead text-ink-2">
-              Two-time software engineering intern at Salesforce, most recently
-              on the Spark platform team. I build platform tooling and AI-agent
-              integrations that make hard systems easy to operate.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
-              <a href={ResumePDF} target="_blank" rel="noreferrer" className={`${buttonCls} bg-accent text-on-accent hover:bg-accent-hover`}>
-                View resume (PDF)
-              </a>
-              <TextLink href="https://github.com/Luimoe05">GitHub</TextLink>
-              <TextLink href="https://www.linkedin.com/in/luisanm/">LinkedIn</TextLink>
-            </div>
-          </div>
-
-          <dl className="border-t-2 border-ink">
-            {facts.map(({ label, value }) => (
-              <div key={label} className="flex items-baseline justify-between gap-6 border-b border-line py-3">
-                <dt className="text-caption font-semibold tracking-[0.08em] text-ink-2 uppercase">{label}</dt>
-                <dd className="text-right text-small font-medium tabular-nums">{value}</dd>
-              </div>
-            ))}
-          </dl>
-        </AnimateIn>
-      </section>
+      <Hero />
 
       {/* ── Experience ───────────────────────────────────────────────── */}
       <Section

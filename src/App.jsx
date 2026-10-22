@@ -166,8 +166,29 @@ function useScrolled(threshold = 24) {
   return scrolled;
 }
 
+// Whether the hero's own resume button is on screen. While it is, the nav
+// leaves its Resume button out; off the home page there is no hero, so the
+// nav always offers it.
+function useHeroResumeVisible(isHome) {
+  const [visible, setVisible] = useState(isHome);
+  useEffect(() => {
+    const el = isHome && document.getElementById("hero-resume");
+    if (!el) {
+      setVisible(false);
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      rootMargin: "-80px 0px 0px 0px",
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [isHome]);
+  return visible;
+}
+
 // The global nav: a floating oval pinned near the top. Once the page scrolls
-// it shrinks (a transform, so nothing reflows) to get out of the content's way.
+// it shrinks (a transform, so nothing reflows) to get out of the content's way,
+// and a Resume button joins it once the hero's own one is out of view.
 // Name on the left, section links in the middle, then the resume, the theme
 // switch and search (the command palette). On mobile the section links move
 // into the menu sheet and search is dropped: the sheet already lists
@@ -181,6 +202,7 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
   const goSection = useGoSection();
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const scrolled = useScrolled();
+  const showResume = !useHeroResumeVisible(isHome);
 
   useEffect(() => setMenuOpen(false), [location.pathname, paletteOpen]);
 
@@ -210,14 +232,25 @@ function GlobalNav({ paletteOpen, setPaletteOpen }) {
           </div>
 
           <div className="flex items-center gap-1">
-            <a
-              href={ResumePDF}
-              target="_blank"
-              rel="noreferrer"
-              className="mr-1 rounded-full bg-accent px-4 py-2 text-small font-semibold text-on-accent transition-colors hover:bg-accent-hover"
+            {/* Slides open once the hero's resume button scrolls away. The
+                0fr → 1fr grid column animates the width without measuring. */}
+            <div
+              inert={!showResume}
+              className={`grid transition-[grid-template-columns,opacity] duration-300 ease-out-expo motion-reduce:transition-none ${
+                showResume ? "grid-cols-[1fr] opacity-100" : "grid-cols-[0fr] opacity-0"
+              }`}
             >
-              Resume
-            </a>
+              <div className="min-w-0 overflow-hidden">
+                <a
+                  href={ResumePDF}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mr-1 block rounded-full bg-accent px-4 py-2 text-small font-semibold whitespace-nowrap text-on-accent transition-colors hover:bg-accent-hover"
+                >
+                  Resume
+                </a>
+              </div>
+            </div>
             <ThemeToggle className={iconBtn} />
             <button
               onClick={() => setPaletteOpen(true)}
