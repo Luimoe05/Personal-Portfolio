@@ -24,7 +24,7 @@ export default function PostLayout({ meta = [], title, dek, children, backTo = "
       <div className="mx-auto max-w-[692px]">
         <Link
           to={backTo}
-          className="group mt-6 inline-flex items-center gap-1 text-small font-medium text-accent underline decoration-accent/35 underline-offset-4 hover:decoration-accent"
+          className="group mt-10 inline-flex md:mt-14 items-center gap-1 text-small font-medium text-accent underline decoration-accent/35 underline-offset-4 hover:decoration-accent"
         >
           <ArrowLeft
             className="h-4 w-4 transition-transform motion-safe:group-hover:-translate-x-0.5"
@@ -51,7 +51,7 @@ export default function PostLayout({ meta = [], title, dek, children, backTo = "
         </AnimateIn>
 
         <AnimateIn delay={0.1}>
-          <div className="mt-12 flex flex-col gap-6 text-[1.1875rem] leading-[1.6] [&_h2]:mt-6 [&_h2]:[&_h2]:text-h3 [&_h2]:font-bold [&_h2]:tracking-[-0.02em]">
+          <div className="mt-12 flex flex-col gap-6 text-[1.1875rem] leading-[1.6] [&_h2]:mt-6 [&_h2]:text-h3 [&_h2]:font-bold [&_h2]:tracking-[-0.02em]">
             {children}
           </div>
         </AnimateIn>

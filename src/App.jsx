@@ -307,8 +307,20 @@ export default function App() {
 
       <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} />
 
-      <GlobalNav paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />
-      <div id="page-content" className="min-h-screen pt-20">
+      <Shell paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />
+    </Router>
+  );
+}
+
+// Writing pages are read without the nav: they carry their own way home.
+const POST_PATHS = ["/summer", "/summer-2026"];
+
+function Shell({ paletteOpen, setPaletteOpen }) {
+  const isPost = POST_PATHS.includes(useLocation().pathname);
+  return (
+    <>
+      {!isPost && <GlobalNav paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />}
+      <div id="page-content" className={`min-h-screen ${isPost ? "" : "pt-20"}`}>
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/summer" element={<AboutSF />} />
@@ -316,6 +328,6 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-    </Router>
+    </>
   );
 }
